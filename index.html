@@ -722,10 +722,10 @@ var CATEGORIAS = [
   { id:'desayuno', icon:'🌅', label:'Desayunos',
     grupos:[
       {label:'🍳 Huevo', items:['Huevo revuelto','Huevos divorciados','Huevos rancheros','Machaca con huevo','Omelete con verduras']},
-      {label:'🥐 Pan y dulce', items:['Hotcakes','Pan francés','Waffles','Pan tostado con mermelada','Molletes dulces','Pan dulce','Molletes a la Mexicana']},
+      {label:'🥐 Pan y dulce', items:['Hotcakes','Pan francés','Waffles','Pan tostado con mermelada','Molletes dulces','Pan dulce']},
       {label:'🌮 Guisado', items:['Chilaquiles con arrachera y frijoles','Enfrijoladas','Puntas de filete en salsa','Papas con chorizo','Bagel de salmón ahumado','Bagel de huevo con jamón y aguacate','Taquitos de guisado']},
       {label:'🥗 Saludable', items:['Fruta con yogurt granola y miel','Avena con fruta']},
-      {label:'🫓 Antojitos', items:['Tacos','Quesadillas','Gorditas']},
+      {label:'🫓 Antojitos', items:['Molletes a la Mexicana','Tacos','Quesadillas','Gorditas']},
       {label:'🫘 Complemento', items:['Frijoles','Aguacate','Salsa','Tocino','Fruta','Porción de chilaquiles']}
     ]
   },
@@ -2142,14 +2142,7 @@ function installApp(){
   deferredPrompt.userChoice.then(function(){ deferredPrompt = null; document.getElementById('installBtn').classList.remove('on'); });
 }
 
-// ── Service Worker ──
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('sw.js')
-      .then(function(r){ console.log('SW registered'); })
-      .catch(function(e){ console.log('SW error:', e); });
-  });
-}
+// Service Worker deshabilitado (compatibilidad iOS)
 </script>
 </body>
 </html>
