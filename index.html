@@ -7,6 +7,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mi Cocina">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
 <title>Mi Cocina</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -2137,6 +2140,15 @@ function installApp(){
   if(!deferredPrompt) return;
   deferredPrompt.prompt();
   deferredPrompt.userChoice.then(function(){ deferredPrompt = null; document.getElementById('installBtn').classList.remove('on'); });
+}
+
+// ── Service Worker ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js')
+      .then(function(r){ console.log('SW registered'); })
+      .catch(function(e){ console.log('SW error:', e); });
+  });
 }
 </script>
 </body>
