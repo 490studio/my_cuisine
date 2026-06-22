@@ -797,7 +797,7 @@ var SLOTS = [
 ];
 
 var DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
-var ANTOJITO_OPTS = ['Guisado del día','Frijoles','Queso','Chorizo','Papa con chorizo','Pollo','Tinga','Chicharrón','Rajas con crema','Picadillo','Flor de calabaza'];
+var ANTOJITO_OPTS = ['Guisado del día','Frijoles','Queso','Chorizo','Papa con chorizo','Champiñones','Pollo','Tinga','Chicharrón','Rajas con crema','Picadillo','Flor de calabaza'];
 var OMELETE_OPTS  = ['Espinacas','Champiñones','Queso','A la mexicana','Pollo','Jamón','Salchicha'];
 var HUEVO_OPTS    = ['Jamón','Salchicha','Chorizo','Tocino','A la mexicana','Nopales'];
 
@@ -1759,6 +1759,7 @@ function buildCats(){
           groups += buildSubpanel('at-' + cat.id + '-' + p, '🫓 ¿De qué los quieres?', ANTOJITO_OPTS, 'at-' + p, isOn);
         }
       });
+      groups += '</div>'; // close chips
       // Add button at end of each group
       var gkey = safe(cat.id + '-' + (g.label||'main'));
       groups += '<button class="add-chip-btn" data-cat="' + cat.id + '" data-glabel="' + (g.label||'').replace(/"/g,'&quot;') + '" data-gkey="' + gkey + '">+ Agregar platillo</button>';
@@ -1769,7 +1770,6 @@ function buildCats(){
         + '<button class="btn btn-p btn-sm" data-action="save" data-gkey="' + gkey + '" data-cat="' + cat.id + '" data-glabel="' + (g.label||'').replace(/"/g,'&quot;') + '">Agregar</button>'
         + '<button class="btn btn-g btn-sm" data-action="cancel" data-gkey="' + gkey + '">Cancelar</button>'
         + '</div></div>';
-      groups += '</div>';
     });
 
     sec.innerHTML = hdr + groups;
