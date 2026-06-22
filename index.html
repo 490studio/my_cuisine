@@ -646,6 +646,7 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
         </div>
         <span class="modo-arrow">›</span>
       </div>
+      <button id="btnSkipPerfil" style="display:none;background:none;border:1.5px solid #4A7C59;color:#4A7C59;border-radius:50px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;padding:11px 20px;cursor:pointer;width:100%;margin-top:4px;" onclick="skipPerfil()">✓ Usar mi perfil guardado</button>
     </div>
   </div>
 
@@ -1113,7 +1114,7 @@ var CATEGORIAS = [
       {label:'🥗 Saludable', items:['Fruta con yogurt granola y miel','Avena con fruta','Bowl de açaí','Smoothie bowl','Tazón de frutas con chía','Pancakes de avena','Tostada con mantequilla de cacahuate']},
       {label:'🫓 Antojitos', items:['Molletes a la Mexicana','Tacos','Quesadillas','Gorditas','Crepas saladas']},
       {label:'🥑 Acompañamientos', items:['Frijoles','Aguacate','Tocino','Fruta','Nopales']},
-      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Mermelada','Crema','Queso fresco','Mantequilla','Pan tostado','Bolillo','Tortillas de maíz','Tortillas de harina']},
+      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Mermelada','Crema','Queso fresco','Panela','Mantequilla','Pan tostado','Bolillo','Tortillas de maíz','Tortillas de harina']},
       {label:'☕ Bebidas', items:['Café americano','Café con leche','Capuchino','Té','Jugo de naranja','Jugo verde','Agua fresca','Agua natural','Leche','Licuado de frutas','Licuado de proteína','Smoothie','Chocolate caliente']}
     ]
   },
@@ -1149,7 +1150,7 @@ var CATEGORIAS = [
         {label:'Atún y otros', items:['Croquetas de Atún','Ensalada de Atún','Codo con atún y jamón','Ensalada de surimi']}
       ]},
       { label:'🥦 Vegetariano', sub:[
-        {label:'Guisados', items:['Rajas con crema y elote','Champiñones al ajillo','Espinacas con queso','Calabazas con queso','Nopales guisados','Lentejas guisadas','Flor de calabaza guisada']},
+        {label:'Guisados', items:['Rajas con crema y elote','Champiñones al ajillo','Espinacas con queso','Calabazas con queso','Nopales guisados','Lentejas guisadas','Flor de calabaza guisada','Panela asada en salsa verde','Panela a la plancha']},
         {label:'Pasta y arroz', items:['Espagueti rojo','Espagueti blanco','Espagueti verde','Arroz chino con verduras','Pasta con pesto']},
         {label:'Elaborados', items:['Pastel Azteca','Enchiladas rojas de queso','Quesadillas de flor de calabaza']}
       ]},
@@ -1157,8 +1158,12 @@ var CATEGORIAS = [
         {label:'Arroz chino', items:['Arroz chino con pollo','Arroz chino con res','Arroz chino con camarón']},
         {label:'Mixtos', items:['Encacahuatado','Hamburguesa de res','Papas rellenas','Enchiladas rojas','Enchiladas verdes','Enchiladas suizas']}
       ]},
+      { label:'🫓 Antojitos comida', sub:[
+        {label:'Con relleno', items:['Tacos','Quesadillas','Gorditas']},
+        {label:'Otros', items:['Tostadas de pollo','Burritos de pollo','Tlayudas','Huaraches']}
+      ]},
       {label:'🥑 Acompañamientos', items:['Frijoles','Guacamole','Ensalada verde','Ensalada mixta','Papas al perejil','Puré de papa','Verduras al vapor','Spaghetti rojo','Spaghetti blanco','Spaghetti verde','Arroz rojo','Arroz blanco']},
-      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Queso parmesano','Tortillas de maíz','Tortillas de harina','Pan bolillo','Totopos','Limones','Cilantro','Cebolla','Chiles en vinagre','Aderezo ranch','Aderezo italiano','Gravy']},
+      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Queso parmesano','Panela','Tortillas de maíz','Tortillas de harina','Pan bolillo','Totopos','Limones','Cilantro','Cebolla','Chiles en vinagre','Aderezo ranch','Aderezo italiano','Gravy']},
       {label:'🥤 Bebidas', items:['Agua fresca','Agua natural','Agua mineral','Refresco','Limonada','Jamaica','Horchata','Tepache','Cerveza','Vino','Jugo de naranja']}
     ]
   },
@@ -1182,7 +1187,7 @@ var CATEGORIAS = [
         {label:'Caliente', items:['Croquetas de Atún','Codo con atún y jamón','Sopa de verduras','Sopa de lentejas']}
       ]},
       {label:'🥑 Acompañamientos', items:['Frijoles','Guacamole','Ensalada verde','Verduras al vapor','Puré de papa','Papas al perejil']},
-      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Tortillas de maíz','Tortillas de harina','Totopos','Pan bolillo','Limones','Chiles en vinagre','Cebolla morada encurtida']},
+      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Panela','Tortillas de maíz','Tortillas de harina','Totopos','Pan bolillo','Limones','Chiles en vinagre','Cebolla morada encurtida']},
       {label:'🥤 Bebidas', items:['Agua fresca','Agua natural','Agua mineral','Té','Manzanilla','Leche caliente','Chocolate caliente','Refresco','Limonada','Cerveza','Vino']}
     ]
   }
@@ -2144,6 +2149,31 @@ document.addEventListener('input', function(e){
   if(['inEdad','inPeso','inAltura'].includes(e.target.id)) calcularPreview();
 });
 
+function skipPerfil(){
+  var r=calcTDEE(); calMeta=r.meta;
+  var hk=document.getElementById('hdrKcal'); if(hk) hk.textContent=calMeta+' kcal';
+  var cb=document.getElementById('calsResultBar'); if(cb) cb.style.display='block';
+  var cbk=document.getElementById('calsBarKcal'); if(cbk) cbk.textContent=calMeta+' kcal';
+  var cbd=document.getElementById('calsBarDetail');
+  if(cbd){
+    var cl={embarazo:'🤰',lactancia:'🍼',menopausia:'🌸',hipertension:'❤️',diabetes:'🩸',colesterol:'🫀',hipotiroidismo:'🦋',vegano:'🌱'};
+    var cs=perfil.condiciones.length?' · '+perfil.condiciones.map(function(c){return cl[c]||c;}).join(' '):'';
+    var ol=perfil.objetivo<0?'Bajar de peso':perfil.objetivo>0?'Subir de peso':'Mantenerse';
+    cbd.innerHTML=(perfil.sexo==='M'?'♂ Hombre':'♀ Mujer')+' · '+perfil.edad+' años · '+perfil.peso+'kg · '+perfil.altura+'cm · '+ol+cs;
+  }
+  startApp();
+}
+
+// Show "Usar perfil guardado" if profile exists
+(function(){
+  try{
+    if(localStorage.getItem('micocina_perfil')){
+      var b=document.getElementById('btnSkipPerfil');
+      if(b) b.style.display='block';
+    }
+  }catch(e){}
+})();
+
 function iniciarModoFamilia(){
   // Disable calorie mode completely
   calMode = false;
@@ -2577,6 +2607,196 @@ function limpiarTodo(){
 // ═══════════════════════════════
 // PASO 2: DÍAS
 // ═══════════════════════════════
+function buildDays(){
+  var cont = document.getElementById('daysContainer');
+  cont.innerHTML = '';
+  DIAS.forEach(function(dia){
+    var kcalDia = calcKcalDia(dia);
+    var card = document.createElement('div');
+    card.className = 'day-card anim';
+    card.dataset.dia = dia;
+    var hdr = '<div class="day-card-hdr">'
+      + '<span class="day-card-name">' + dia + '</span>'
+      + (kcalDia > 0 ? '<span class="day-card-kcal">' + (porciones > 1 ? Math.round(kcalDia/porciones) + ' kcal/persona' : kcalDia + ' kcal') + '</span>' + calFlag(kcalDia) : '')
+      + '<button class="day-card-clear" onclick="limpiarDia(this.closest(\'.day-card\').dataset.dia)">× limpiar</button>'
+      + '</div>';
+    var rows = '';
+    SLOTS.forEach(function(slot){
+      var available = [];
+      slot.cats.forEach(function(cid){ available = available.concat([...elegidos[cid]]); });
+      if(!available.length) return;
+      rows += '<div class="meal-row"><span class="meal-icon">' + slot.emoji + '</span><div class="meal-slot">'
+        + '<div class="meal-label">' + slot.label + '</div>'
+        + '<div class="meal-chips" id="mchips-' + safe(dia+'-'+slot.id) + '">';
+      if(!available.length){
+        rows += '<span class="meal-empty">Elige en el paso 1</span>';
+      } else {
+        available.forEach(function(p){
+          var isOn = asignados[dia][slot.id].has(p);
+          rows += '<div class="meal-chip' + (isOn ? ' on' : '') + '" id="mc-' + safe(dia+'-'+slot.id+'-'+p) + '" onclick="toggleAsignar(this.dataset.dia,this.dataset.slot,this.dataset.p)" data-dia="' + dia.replace(/"/g,'&quot;') + '" data-slot="' + slot.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">' + p + '</div>';
+        });
+      }
+      rows += '</div></div></div>';
+    });
+    card.innerHTML = hdr + rows;
+    cont.appendChild(card);
+  });
+}
+
+function calcKcalDia(dia){
+  var total = 0;
+  SLOTS.forEach(function(s){
+    asignados[dia][s.id].forEach(function(p){ total += Math.round((CALS[p]||300)*porciones); });
+  });
+  return total;
+}
+
+function toggleAsignar(dia, slotId, platillo){
+  var set = asignados[dia][slotId];
+  var el = document.getElementById('mc-' + safe(dia + '-' + slotId + '-' + platillo));
+  if(set.has(platillo)){ set.delete(platillo); if(el) el.classList.remove('on'); }
+  else { set.add(platillo); if(el) el.classList.add('on'); }
+  // update kcal badge
+  var kcal = calcKcalDia(dia);
+  var card = document.querySelector('[id^="mc-' + safe(dia) + '"]');
+  // find the day-card-kcal for this day
+  var allCards = document.querySelectorAll('.day-card');
+  allCards.forEach(function(c){
+    var nm = c.querySelector('.day-card-name');
+    if(nm && nm.textContent === dia){
+      var badge = c.querySelector('.day-card-kcal');
+      if(!badge){ badge = document.createElement('span'); badge.className = 'day-card-kcal'; nm.parentNode.insertBefore(badge, nm.nextSibling); }
+      badge.textContent = kcal > 0 ? kcal + ' kcal' : '';
+    }
+  });
+}
+
+function limpiarDia(dia){
+  SLOTS.forEach(function(s){
+    asignados[dia][s.id].forEach(function(p){
+      var el = document.getElementById('mc-' + safe(dia+'-'+s.id+'-'+p));
+      if(el) el.classList.remove('on');
+    });
+    asignados[dia][s.id].clear();
+  });
+  // reset kcal
+  document.querySelectorAll('.day-card').forEach(function(c){
+    var nm = c.querySelector('.day-card-name');
+    if(nm && nm.textContent === dia){
+      var badge = c.querySelector('.day-card-kcal');
+      if(badge) badge.textContent = '';
+    }
+  });
+}
+
+// ═══════════════════════════════
+// SUGERIR MENÚ
+// ═══════════════════════════════
+function sugerirMenu(){
+  // Check there's something selected
+  var hasAny = CATEGORIAS.some(function(c){ return elegidos[c.id].size > 0; });
+  if(!hasAny){ alert('Primero elige platillos en el Paso 1.'); return; }
+
+  // Build pools per category
+  var pool = {};
+  CATEGORIAS.forEach(function(cat){
+    pool[cat.id] = [...elegidos[cat.id]].sort(function(){ return Math.random()-.5; });
+  });
+
+  // Helper: pick item from pool rotating by day index
+  function pick(catId, dayIdx){
+    var p = pool[catId];
+    if(!p||!p.length) return null;
+    return p[dayIdx % p.length];
+  }
+
+  // Categorize items by type within a category
+  function getByLabel(catId, labelKeyword){
+    var cat = CATEGORIAS.find(function(c){ return c.id===catId; });
+    if(!cat) return [];
+    var items = [];
+    cat.grupos.forEach(function(g){
+      var match = !labelKeyword || (g.label&&g.label.toLowerCase().includes(labelKeyword));
+      if(g.sub){
+        g.sub.forEach(function(s){
+          var smatch = !labelKeyword || (s.label&&s.label.toLowerCase().includes(labelKeyword));
+          if(match||smatch) items = items.concat(s.items.filter(function(p){ return elegidos[catId].has(p); }));
+        });
+      } else if(g.items && (match || !labelKeyword)){
+        items = items.concat(g.items.filter(function(p){ return elegidos[catId].has(p); }));
+      }
+    });
+    return items.sort(function(){ return Math.random()-.5; });
+  }
+
+  // Reset all
+  DIAS.forEach(function(d){ SLOTS.forEach(function(s){ asignados[d][s.id].clear(); }); });
+
+  DIAS.forEach(function(d, di){
+    // ── DESAYUNO: platillo + complemento (si lo hay) + bebida ──
+    var desPlatos = getByLabel('desayuno','').filter(function(p){
+      return !['Frijoles','Aguacate','Tocino','Fruta','Nopales',
+               'Salsa verde','Salsa roja','Salsa habanero','Mermelada','Crema',
+               'Queso fresco','Panela','Mantequilla','Pan tostado','Bolillo',
+               'Tortillas de maíz','Tortillas de harina',
+               'Café americano','Café con leche','Capuchino','Té','Jugo de naranja',
+               'Jugo verde','Agua fresca','Agua natural','Leche','Licuado de frutas',
+               'Licuado de proteína','Smoothie','Chocolate caliente'].includes(p);
+    });
+    var desCompls = getByLabel('desayuno','acompañamientos').filter(function(p){ return elegidos['desayuno'].has(p); });
+    var desBebidas = getByLabel('desayuno','bebidas').filter(function(p){ return elegidos['desayuno'].has(p); });
+    if(desPlatos.length)  asignados[d]['desayuno'].add(desPlatos[di % desPlatos.length]);
+    if(desCompls.length)  asignados[d]['desayuno'].add(desCompls[di % desCompls.length]);
+    if(desBebidas.length) asignados[d]['desayuno'].add(desBebidas[di % desBebidas.length]);
+
+    // ── SOPA: sopa o arroz ──
+    var sopas = [...elegidos['sopa']].sort(function(){ return Math.random()-.5; });
+    if(sopas.length) asignados[d]['sopa'].add(sopas[di % sopas.length]);
+
+    // ── PLATO FUERTE: plato + acompañamiento + extra (si los hay) ──
+    var fuerteNoAcomp = [...elegidos['fuerte']].filter(function(p){
+      return !['Frijoles','Guacamole','Ensalada verde','Ensalada mixta','Papas al perejil',
+               'Puré de papa','Verduras al vapor','Spaghetti rojo','Spaghetti blanco',
+               'Spaghetti verde','Arroz rojo','Arroz blanco',
+               'Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco',
+               'Queso parmesano','Panela','Tortillas de maíz','Tortillas de harina',
+               'Pan bolillo','Totopos','Limones','Cilantro','Cebolla',
+               'Chiles en vinagre','Aderezo ranch','Aderezo italiano','Gravy'].includes(p);
+    }).sort(function(){ return Math.random()-.5; });
+    var fuerteAcomp = getByLabel('fuerte','acompañamientos').filter(function(p){ return elegidos['fuerte'].has(p); });
+    var fuerteExtras = getByLabel('fuerte','extras').filter(function(p){ return elegidos['fuerte'].has(p); });
+    if(fuerteNoAcomp.length) asignados[d]['fuerte'].add(fuerteNoAcomp[di % fuerteNoAcomp.length]);
+    if(fuerteAcomp.length)   asignados[d]['fuerte'].add(fuerteAcomp[di % fuerteAcomp.length]);
+    if(fuerteExtras.length)  asignados[d]['fuerte'].add(fuerteExtras[di % fuerteExtras.length]);
+
+    // ── POSTRE ──
+    var postres = [...elegidos['postre']].sort(function(){ return Math.random()-.5; });
+    if(postres.length) asignados[d]['postre'].add(postres[di % postres.length]);
+
+    // ── CENA: platillo + complemento + bebida + extra ──
+    var cenaNoBeb = [...elegidos['cena']].filter(function(p){
+      return !['Frijoles','Guacamole','Ensalada verde','Verduras al vapor','Puré de papa',
+               'Papas al perejil','Salsa verde','Salsa roja','Salsa habanero','Crema',
+               'Queso fresco','Panela','Tortillas de maíz','Tortillas de harina','Totopos',
+               'Pan bolillo','Limones','Chiles en vinagre','Cebolla morada encurtida',
+               'Agua fresca','Agua natural','Agua mineral','Té','Manzanilla',
+               'Leche caliente','Chocolate caliente','Refresco','Limonada','Cerveza','Vino'].includes(p);
+    }).sort(function(){ return Math.random()-.5; });
+    var cenaCompls  = getByLabel('cena','acompañamientos').filter(function(p){ return elegidos['cena'].has(p); });
+    var cenaBebidas = getByLabel('cena','bebidas').filter(function(p){ return elegidos['cena'].has(p); });
+    var cenaExtras  = getByLabel('cena','extras').filter(function(p){ return elegidos['cena'].has(p); });
+    if(cenaNoBeb.length)    asignados[d]['cena'].add(cenaNoBeb[di % cenaNoBeb.length]);
+    if(cenaCompls.length)   asignados[d]['cena'].add(cenaCompls[di % cenaCompls.length]);
+    if(cenaBebidas.length)  asignados[d]['cena'].add(cenaBebidas[di % cenaBebidas.length]);
+    if(cenaExtras.length)   asignados[d]['cena'].add(cenaExtras[di % cenaExtras.length]);
+  });
+
+  buildDays();
+  var first = document.querySelector('.day-card');
+  if(first) first.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+
 function buildDays(){
   var cont = document.getElementById('daysContainer');
   cont.innerHTML = '';
