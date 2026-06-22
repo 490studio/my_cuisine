@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="version" content="1782149205">
+<meta name="version" content="1782151415">
 <meta name="theme-color" content="#FFFFFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2152,25 +2152,35 @@ function cerrarReceta(){ document.getElementById('rmBg').classList.remove('on');
 function abrirPDFMenu(){
   document.getElementById('pdfBoxTitle').textContent = 'Descargar PDF';
   document.getElementById('pdfBoxSub').textContent = 'Elige qué quieres descargar';
-  document.getElementById('pdfBody').innerHTML =
-    '<div class="pdf-menu">'
-    + '<div class="pdf-card" onclick="abrirPDF(\'plan\')">'
-    +   '<span class="pdf-card-icon">📅</span>'
-    +   '<div class="pdf-card-info"><div class="pdf-card-title">Planeación semanal</div><div class="pdf-card-desc">Menú día por día con calorías</div></div>'
-    +   '<span class="pdf-card-arrow">→</span>'
-    + '</div>'
-    + '<div class="pdf-card" onclick="abrirPDF(\'super\')">'
-    +   '<span class="pdf-card-icon">🛒</span>'
-    +   '<div class="pdf-card-info"><div class="pdf-card-title">Lista de compras</div><div class="pdf-card-desc">Ingredientes organizados por categoría</div></div>'
-    +   '<span class="pdf-card-arrow">→</span>'
-    + '</div>'
-    + '<div class="pdf-card" onclick="abrirPDF(\'recetas\')">'
-    +   '<span class="pdf-card-icon">📖</span>'
-    +   '<div class="pdf-card-info"><div class="pdf-card-title">Recetas</div><div class="pdf-card-desc">Ingredientes y preparación de tus platillos</div></div>'
-    +   '<span class="pdf-card-arrow">→</span>'
-    + '</div>'
-    + '</div>';
-  document.getElementById('pdfBoxFoot').innerHTML = '<button class="btn btn-g btn-sm" onclick="cerrarPDF()">Cerrar</button>';
+
+  var body = document.getElementById('pdfBody');
+  body.innerHTML = '';
+  var menu = document.createElement('div');
+  menu.className = 'pdf-menu';
+
+  [
+    {tipo:'plan',    icon:'📅', title:'Planeación semanal',  desc:'Menú día por día con calorías'},
+    {tipo:'super',   icon:'🛒', title:'Lista de compras',     desc:'Ingredientes organizados por categoría'},
+    {tipo:'recetas', icon:'📖', title:'Recetas',              desc:'Ingredientes y preparación de tus platillos'}
+  ].forEach(function(opt){
+    var card = document.createElement('div');
+    card.className = 'pdf-card';
+    card.dataset.tipo = opt.tipo;
+    card.innerHTML = '<span class="pdf-card-icon">' + opt.icon + '</span>'
+      + '<div class="pdf-card-info"><div class="pdf-card-title">' + opt.title + '</div>'
+      + '<div class="pdf-card-desc">' + opt.desc + '</div></div>'
+      + '<span class="pdf-card-arrow">→</span>';
+    card.addEventListener('click', function(){ abrirPDF(opt.tipo); });
+    menu.appendChild(card);
+  });
+
+  body.appendChild(menu);
+  document.getElementById('pdfBoxFoot').innerHTML = '';
+  var closeBtn = document.createElement('button');
+  closeBtn.className = 'btn btn-g btn-sm';
+  closeBtn.textContent = 'Cerrar';
+  closeBtn.onclick = cerrarPDF;
+  document.getElementById('pdfBoxFoot').appendChild(closeBtn);
   document.getElementById('pdfBg').classList.add('on');
 }
 
@@ -2322,4 +2332,7 @@ function imprimirPDF(){
   setTimeout(function(){ w.print(); }, 700);
 }
 
->
+// Service Worker deshabilitado (compatibilidad iOS)
+</script>
+</body>
+</html>
