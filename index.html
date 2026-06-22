@@ -425,6 +425,21 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 .hdr-prof{background:none;border:1.5px solid #E5E0D8;border-radius:20px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#4A443C;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;margin-right:4px;}
 .hdr-prof:hover{background:#F0E4DC;border-color:#C4673A;color:#C4673A;}
 
+.pdf-menu{display:flex;flex-direction:column;gap:10px;padding:4px 0;}
+.pdf-card{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:12px;
+  border:1.5px solid #E5E0D8;background:#FAFAF8;
+  cursor:pointer;transition:all .15s;
+}
+.pdf-card:hover{border-color:#C4673A;background:#FDF9F7;}
+.pdf-card:active{transform:scale(.99);}
+.pdf-card-icon{font-size:28px;flex-shrink:0;}
+.pdf-card-info{flex:1;}
+.pdf-card-title{font-size:14px;font-weight:700;color:#1A1714;margin-bottom:2px;}
+.pdf-card-desc{font-size:12px;color:#8A8178;}
+.pdf-card-arrow{font-size:16px;color:#C4673A;flex-shrink:0;}
+
 /* ── INSTALL ── */
 .install-btn{position:fixed;bottom:20px;right:20px;z-index:100;background:#C4673A;color:#fff;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:10px 16px;cursor:pointer;box-shadow:0 4px 16px rgba(196,103,58,.35);display:none;align-items:center;gap:6px;transition:all .2s;}
 .install-btn.on{display:flex;}
@@ -640,7 +655,7 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
     <div id="superContainer"></div>
     <div style="padding-bottom:16px;"></div>
     <div class="actions">
-      <button class="btn btn-p btn-sm" onclick="abrirPDF()">📄 PDF</button>
+      <button class="btn btn-p btn-sm" onclick="abrirPDFMenu()">📄 Descargar PDF</button>
       <button class="btn btn-g btn-sm" onclick="goStep(2)">← Días</button>
     </div>
   </div>
@@ -656,18 +671,15 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
   </div>
 </div>
 
-<!-- PDF MODAL -->
+<!-- PDF MENU MODAL -->
 <div class="pdf-bg" id="pdfBg" onclick="if(event.target===this)cerrarPDF()">
-  <div class="pdf-box">
+  <div class="pdf-box" id="pdfBox">
     <div class="pdf-boxhdr">
-      <div><div class="pdf-boxhdr-t">Vista previa</div><div class="pdf-boxhdr-s">Ctrl+P para guardar como PDF</div></div>
+      <div><div class="pdf-boxhdr-t" id="pdfBoxTitle">Descargar PDF</div><div class="pdf-boxhdr-s" id="pdfBoxSub">Elige qué quieres descargar</div></div>
       <button class="pdf-boxclose" onclick="cerrarPDF()">×</button>
     </div>
     <div class="pdf-boxbody" id="pdfBody"></div>
-    <div class="pdf-boxfoot">
-      <button class="btn btn-p btn-sm" onclick="imprimirPDF()">🖨 Imprimir / PDF</button>
-      <button class="btn btn-g btn-sm" onclick="cerrarPDF()">Cerrar</button>
-    </div>
+    <div class="pdf-boxfoot" id="pdfBoxFoot"></div>
   </div>
 </div>
 
@@ -2137,115 +2149,177 @@ function cerrarReceta(){ document.getElementById('rmBg').classList.remove('on');
 // ═══════════════════════════════
 // PDF
 // ═══════════════════════════════
-function abrirPDF(){
-  var items = buildSuperList();
-  var date = new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  var diasConPlan = DIAS.filter(function(d){ return SLOTS.some(function(s){ return asignados[d][s.id].size > 0; }); });
-
-  // Menu
-  var menuHTML = '';
-  if(diasConPlan.length){
-    diasConPlan.forEach(function(d){
-      var kcal = calcKcalDia(d);
-      menuHTML += '<div class="pdf-day-block"><div class="pdf-day-name">' + d + (kcal > 0 ? ' <span style="color:#aaa;font-weight:400;font-size:11px;">(' + kcal + ' kcal)</span>' : '') + '</div>';
-      SLOTS.forEach(function(s){
-        var arr = [...asignados[d][s.id]]; if(!arr.length) return;
-        arr.forEach(function(p){
-          menuHTML += '<div class="pdf-meal">' + s.emoji + ' ' + p + (CALS[p] ? ' <span style="color:#aaa;font-size:10px;">· ' + CALS[p] + ' kcal</span>' : '') + '</div>';
-        });
-      });
-      menuHTML += '</div>';
-    });
-  } else {
-    CATEGORIAS.forEach(function(cat){
-      if(!elegidos[cat.id].size) return;
-      menuHTML += '<div class="pdf-day-block"><div class="pdf-day-name">' + cat.label + '</div>';
-      elegidos[cat.id].forEach(function(p){ menuHTML += '<div class="pdf-meal">' + cat.icon + ' ' + p + '</div>'; });
-      menuHTML += '</div>';
-    });
-  }
-
-  // Super
-  var ORDER = ['🥩 Carnes','🥦 Verduras','🧀 Lácteos','🫙 Abarrotes','🌶️ Chiles','🫓 Tortillas y pan','🧄 Básicos'];
-  var superHTML = '<div class="pdf-2col">';
-  ORDER.forEach(function(cat){
-    var set = items[cat]; if(!set || !set.size) return;
-    superHTML += '<div><div class="pdf-cat-title">' + cat + '</div><ul class="pdf-list">';
-    [...set].sort().forEach(function(i){ superHTML += '<li>' + i + '</li>'; });
-    superHTML += '</ul></div>';
-  });
-  superHTML += '</div>';
-
-  // Recetas
-  var recHTML = '';
-  var seen = new Set();
-  CATEGORIAS.forEach(function(cat){
-    elegidos[cat.id].forEach(function(p){
-      if(seen.has(p)) return;
-      var r = RECETAS[p]; if(!r) return;
-      seen.add(p);
-      recHTML += '<div class="pdf-rec-block"><div class="pdf-rec-name">' + p + '</div>'
-        + '<div style="font-size:9px;color:#aaa;margin-bottom:4px;">Rinde ' + r.porciones + ' porciones · ' + (CALS[p]||'—') + ' kcal</div>'
-        + '<div class="pdf-rec-sub">Ingredientes</div>'
-        + '<ul class="pdf-rec-list">' + r.ingredientes.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</ul>'
-        + '<div class="pdf-rec-sub">Preparación</div>'
-        + '<ul class="pdf-rec-list">' + r.pasos.map(function(p,i){ return '<li><b>' + (i+1) + '.</b> ' + p + '</li>'; }).join('') + '</ul>'
-        + '</div>';
-    });
-  });
-
-  document.getElementById('pdfBody').innerHTML = '<div class="pdf-wrap">'
-    + '<div class="pdf-h1">🍳 Mi Plan de Cocina</div>'
-    + '<div class="pdf-script">' + date + ' · Para 2 personas · Meta: ' + calMeta + ' kcal/día</div>'
-    + '<div class="pdf-sec">Menú de la semana</div>' + (menuHTML || '<p style="color:#999;font-size:12px;">Sin menú asignado.</p>')
-    + '<div class="pdf-sec">Lista del súper</div>' + superHTML
-    + (recHTML ? '<div class="pdf-sec">Recetas</div>' + recHTML : '')
+function abrirPDFMenu(){
+  document.getElementById('pdfBoxTitle').textContent = 'Descargar PDF';
+  document.getElementById('pdfBoxSub').textContent = 'Elige qué quieres descargar';
+  document.getElementById('pdfBody').innerHTML =
+    '<div class="pdf-menu">'
+    + '<div class="pdf-card" onclick="abrirPDF(\'plan\')">'
+    +   '<span class="pdf-card-icon">📅</span>'
+    +   '<div class="pdf-card-info"><div class="pdf-card-title">Planeación semanal</div><div class="pdf-card-desc">Menú día por día con calorías</div></div>'
+    +   '<span class="pdf-card-arrow">→</span>'
+    + '</div>'
+    + '<div class="pdf-card" onclick="abrirPDF(\'super\')">'
+    +   '<span class="pdf-card-icon">🛒</span>'
+    +   '<div class="pdf-card-info"><div class="pdf-card-title">Lista de compras</div><div class="pdf-card-desc">Ingredientes organizados por categoría</div></div>'
+    +   '<span class="pdf-card-arrow">→</span>'
+    + '</div>'
+    + '<div class="pdf-card" onclick="abrirPDF(\'recetas\')">'
+    +   '<span class="pdf-card-icon">📖</span>'
+    +   '<div class="pdf-card-info"><div class="pdf-card-title">Recetas</div><div class="pdf-card-desc">Ingredientes y preparación de tus platillos</div></div>'
+    +   '<span class="pdf-card-arrow">→</span>'
+    + '</div>'
     + '</div>';
+  document.getElementById('pdfBoxFoot').innerHTML = '<button class="btn btn-g btn-sm" onclick="cerrarPDF()">Cerrar</button>';
   document.getElementById('pdfBg').classList.add('on');
 }
+
+function abrirPDF(tipo){
+  var items = buildSuperList();
+  var date = new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  if(tipo === 'plan'){
+    document.getElementById('pdfBoxTitle').textContent = '📅 Planeación semanal';
+    document.getElementById('pdfBoxSub').textContent = 'Menú día por día';
+    var diasConPlan = DIAS.filter(function(d){ return SLOTS.some(function(s){ return asignados[d][s.id].size > 0; }); });
+    var menuHTML = '';
+    if(diasConPlan.length){
+      diasConPlan.forEach(function(d){
+        var kcal = calcKcalDia(d);
+        menuHTML += '<div class="pdf-day-block">'
+          + '<div class="pdf-day-name">' + d + (kcal > 0 ? '<span class="pdf-day-kcal">' + kcal + ' kcal</span>' : '') + '</div>';
+        SLOTS.forEach(function(s){
+          var arr = [...asignados[d][s.id]]; if(!arr.length) return;
+          arr.forEach(function(p){
+            menuHTML += '<div class="pdf-meal-row">'
+              + '<span class="pdf-meal-slot">' + s.emoji + ' ' + s.label + '</span>'
+              + '<span class="pdf-meal-name">' + p + (CALS[p] ? '<span class="pdf-meal-cal">' + CALS[p] + ' kcal</span>' : '') + '</span>'
+              + '</div>';
+          });
+        });
+        menuHTML += '</div>';
+      });
+    } else {
+      menuHTML = '<p style="color:#999;font-size:13px;font-family:Arial,sans-serif;">No has asignado platillos a los días todavía.</p>';
+    }
+    var html = buildPDFWrap('Planeación Semanal', date, menuHTML);
+    document.getElementById('pdfBody').innerHTML = html;
+    document.getElementById('pdfBoxFoot').innerHTML =
+      '<button class="btn btn-p btn-sm" onclick="imprimirPDF()">🖨 Imprimir / guardar PDF</button>'
+      + '<button class="btn btn-g btn-sm" onclick="abrirPDFMenu()">← Regresar</button>';
+  }
+
+  else if(tipo === 'super'){
+    document.getElementById('pdfBoxTitle').textContent = '🛒 Lista de compras';
+    document.getElementById('pdfBoxSub').textContent = 'Ingredientes de la semana';
+    var ORDER = ['🥩 Carnes','🥦 Verduras','🧀 Lácteos','🫙 Abarrotes','🌶️ Chiles','🫓 Tortillas y pan','🧄 Básicos'];
+    var superHTML = '';
+    var totalItems = 0;
+    ORDER.forEach(function(cat){
+      var set = items[cat]; if(!set || !set.size) return;
+      totalItems += set.size;
+      superHTML += '<div class="pdf-super-cat">'
+        + '<div class="pdf-super-cat-title">' + cat + '</div>'
+        + '<div class="pdf-super-items">';
+      [...set].sort().forEach(function(item){
+        superHTML += '<div class="pdf-super-item"><span class="pdf-super-check">□</span>' + item + '</div>';
+      });
+      superHTML += '</div></div>';
+    });
+    var html = buildPDFWrap('Lista de Compras', date,
+      '<div class="pdf-super-note">Para 2 personas · ' + totalItems + ' ingredientes</div>' + superHTML);
+    document.getElementById('pdfBody').innerHTML = html;
+    document.getElementById('pdfBoxFoot').innerHTML =
+      '<button class="btn btn-p btn-sm" onclick="imprimirPDF()">🖨 Imprimir / guardar PDF</button>'
+      + '<button class="btn btn-g btn-sm" onclick="abrirPDFMenu()">← Regresar</button>';
+  }
+
+  else if(tipo === 'recetas'){
+    document.getElementById('pdfBoxTitle').textContent = '📖 Recetas';
+    document.getElementById('pdfBoxSub').textContent = 'De tus platillos seleccionados';
+    var recHTML = '';
+    var seen = new Set();
+    CATEGORIAS.forEach(function(cat){
+      elegidos[cat.id].forEach(function(p){
+        if(seen.has(p)) return;
+        var r = RECETAS[p]; if(!r) return;
+        seen.add(p);
+        recHTML += '<div class="pdf-rec-block">'
+          + '<div class="pdf-rec-header">'
+          + '<div class="pdf-rec-name">' + p + '</div>'
+          + '<div class="pdf-rec-meta">Rinde ' + r.porciones + ' porciones · ' + (CALS[p]||'—') + ' kcal</div>'
+          + '</div>'
+          + '<div class="pdf-rec-cols">'
+          + '<div class="pdf-rec-col"><div class="pdf-rec-sub">Ingredientes</div>'
+          + '<ul class="pdf-rec-list">' + r.ingredientes.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</ul></div>'
+          + '<div class="pdf-rec-col"><div class="pdf-rec-sub">Preparación</div>'
+          + '<ol class="pdf-rec-steps">' + r.pasos.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ol></div>'
+          + '</div></div>';
+      });
+    });
+    if(!recHTML) recHTML = '<p style="color:#999;font-size:13px;font-family:Arial,sans-serif;">No hay recetas disponibles para tus platillos seleccionados.</p>';
+    var html = buildPDFWrap('Recetas de la Semana', date, recHTML);
+    document.getElementById('pdfBody').innerHTML = html;
+    document.getElementById('pdfBoxFoot').innerHTML =
+      '<button class="btn btn-p btn-sm" onclick="imprimirPDF()">🖨 Imprimir / guardar PDF</button>'
+      + '<button class="btn btn-g btn-sm" onclick="abrirPDFMenu()">← Regresar</button>';
+  }
+}
+
+function buildPDFWrap(titulo, fecha, contenido){
+  return '<div style="font-family:Georgia,serif;color:#1A1714;">'
+    + '<div style="border-bottom:2px solid #F0D5C5;padding-bottom:12px;margin-bottom:16px;">'
+    + '<div style="font-size:22px;font-weight:900;color:#C4673A;margin-bottom:2px;">🍳 Mi Cocina</div>'
+    + '<div style="font-size:16px;font-weight:700;color:#1A1714;margin-bottom:2px;">' + titulo + '</div>'
+    + '<div style="font-size:11px;color:#8A8178;">' + fecha + ' · Meta: ' + calMeta + ' kcal/día</div>'
+    + '</div>'
+    + contenido
+    + '</div>';
+}
+
 function cerrarPDF(){ document.getElementById('pdfBg').classList.remove('on'); }
+
 function imprimirPDF(){
   var html = document.getElementById('pdfBody').innerHTML;
   var w = window.open('','_blank');
-  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mi Plan de Cocina</title>'
-    + '<style>*{box-sizing:border-box;margin:0;padding:0;}body{padding:28px 36px;font-family:Georgia,serif;color:#1a1a1a;background:#fff;}'
-    + '.pdf-h1{font-size:24px;color:#C4673A;margin-bottom:4px;font-weight:900;}'
-    + '.pdf-script{font-size:12px;color:#999;margin-bottom:20px;}'
-    + '.pdf-sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#C4673A;border-bottom:2px solid #F0D5C5;padding-bottom:4px;margin:22px 0 10px;}'
-    + '.pdf-day-block{margin-bottom:12px;break-inside:avoid;}'
-    + '.pdf-day-name{font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:3px;}'
-    + '.pdf-meal{font-size:11px;padding-left:10px;color:#444;margin-bottom:2px;font-family:Arial,sans-serif;}'
-    + '.pdf-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}'
-    + '.pdf-cat-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#C4673A;border-bottom:1px solid #F0D5C5;padding-bottom:3px;margin:12px 0 6px;}'
-    + '.pdf-list{list-style:none;padding:0;}'
-    + '.pdf-list li{font-size:11px;color:#333;padding:3px 0;border-bottom:1px solid #f0f0f0;font-family:Arial,sans-serif;display:flex;align-items:center;gap:5px;}'
-    + '.pdf-list li::before{content:"□";color:#ccc;font-size:10px;}'
-    + '.pdf-rec-block{break-inside:avoid;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid #F0D5C5;}'
-    + '.pdf-rec-name{font-size:13px;font-weight:900;color:#C4673A;margin-bottom:2px;}'
-    + '.pdf-rec-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#C4673A;border-bottom:1px solid #F0D5C5;padding-bottom:2px;margin:5px 0 4px;}'
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mi Cocina PDF</title>'
+    + '<style>'
+    + '*{box-sizing:border-box;margin:0;padding:0;}'
+    + 'body{padding:28px 32px;font-family:Georgia,serif;color:#1a1a1a;background:#fff;font-size:13px;}'
+    + 'h1{font-size:22px;color:#C4673A;margin-bottom:4px;}'
+    /* Plan */
+    + '.pdf-day-block{margin-bottom:14px;break-inside:avoid;page-break-inside:avoid;}'
+    + '.pdf-day-name{font-size:14px;font-weight:700;color:#1a1a1a;padding:6px 0;border-bottom:2px solid #F0D5C5;margin-bottom:6px;display:flex;align-items:center;gap:10px;}'
+    + '.pdf-day-kcal{font-size:10px;font-weight:600;color:#C4673A;background:#FDF0E8;padding:2px 7px;border-radius:8px;font-family:Arial,sans-serif;}'
+    + '.pdf-meal-row{display:flex;align-items:baseline;gap:8px;padding:3px 0;border-bottom:1px solid #f5f5f5;}'
+    + '.pdf-meal-slot{font-size:10px;font-weight:700;color:#8A8178;min-width:90px;flex-shrink:0;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;}'
+    + '.pdf-meal-name{font-size:12px;color:#1a1a1a;flex:1;font-family:Arial,sans-serif;}'
+    + '.pdf-meal-cal{font-size:10px;color:#aaa;margin-left:6px;font-family:Arial,sans-serif;}'
+    /* Super */
+    + '.pdf-super-note{font-size:11px;color:#8A8178;margin-bottom:16px;font-family:Arial,sans-serif;}'
+    + '.pdf-super-cat{break-inside:avoid;page-break-inside:avoid;margin-bottom:16px;}'
+    + '.pdf-super-cat-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#C4673A;padding-bottom:5px;border-bottom:2px solid #F0D5C5;margin-bottom:8px;}'
+    + '.pdf-super-items{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 12px;}'
+    + '.pdf-super-item{font-size:12px;color:#333;padding:3px 0;border-bottom:1px solid #f5f5f5;font-family:Arial,sans-serif;display:flex;align-items:center;gap:6px;}'
+    + '.pdf-super-check{font-size:13px;color:#ddd;flex-shrink:0;}'
+    /* Recetas */
+    + '.pdf-rec-block{break-inside:avoid;page-break-inside:avoid;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #F0D5C5;}'
+    + '.pdf-rec-header{margin-bottom:8px;}'
+    + '.pdf-rec-name{font-size:15px;font-weight:900;color:#C4673A;}'
+    + '.pdf-rec-meta{font-size:10px;color:#aaa;margin-top:1px;font-family:Arial,sans-serif;}'
+    + '.pdf-rec-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;}'
+    + '.pdf-rec-col{}'
+    + '.pdf-rec-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#C4673A;border-bottom:1px solid #F0D5C5;padding-bottom:3px;margin-bottom:5px;}'
     + '.pdf-rec-list{list-style:none;padding:0;}'
-    + '.pdf-rec-list li{font-size:10px;color:#333;padding:2px 0;border-bottom:1px solid #f8f8f8;font-family:Arial,sans-serif;}'
-    + '@media print{body{padding:14px;}@page{margin:10mm;}}</style>'
-    + '</head><body>' + html + '</body></html>');
+    + '.pdf-rec-list li{font-size:11px;color:#333;padding:2px 0;border-bottom:1px solid #f8f8f8;font-family:Arial,sans-serif;display:flex;gap:5px;align-items:baseline;}'
+    + '.pdf-rec-list li::before{content:"·";color:#C4673A;flex-shrink:0;}'
+    + '.pdf-rec-steps{list-style:none;padding:0;counter-reset:step;}'
+    + '.pdf-rec-steps li{counter-increment:step;font-size:11px;color:#333;padding:3px 0 3px 20px;border-bottom:1px solid #f8f8f8;font-family:Arial,sans-serif;position:relative;line-height:1.5;}'
+    + '.pdf-rec-steps li::before{content:counter(step);position:absolute;left:0;top:3px;width:15px;height:15px;border-radius:50%;background:#F0D5C5;color:#C4673A;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;}'
+    + '@media print{body{padding:12px 16px;}@page{margin:8mm;size:A4;}}'
+    + '</style></head><body>' + html + '</body></html>');
   w.document.close();
-  setTimeout(function(){ w.print(); }, 600);
+  setTimeout(function(){ w.print(); }, 700);
 }
 
-// ═══════════════════════════════
-// PWA
-// ═══════════════════════════════
-var deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', function(e){
-  e.preventDefault(); deferredPrompt = e;
-  document.getElementById('installBtn').classList.add('on');
-});
-function installApp(){
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(function(){ deferredPrompt = null; document.getElementById('installBtn').classList.remove('on'); });
-}
-
-// Service Worker deshabilitado (compatibilidad iOS)
-</script>
-</body>
-</html>
+>
