@@ -397,6 +397,26 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 .hdr-prof{background:none;border:1.5px solid #E5E0D8;border-radius:20px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#4A443C;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;margin-right:4px;}
 .hdr-prof:hover{background:#F0E4DC;border-color:#C4673A;color:#C4673A;}
 
+/* ── MODO SELECTOR ── */
+.modo-cards{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px;margin:0 auto;}
+.modo-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;border-radius:16px;
+  border:1.5px solid #E5E0D8;background:#FFFFFF;
+  cursor:pointer;transition:all .18s;text-align:left;
+  box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.modo-card:hover{border-color:#C4673A;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.modo-card:active{transform:scale(.98);}
+.modo-icon{font-size:32px;flex-shrink:0;}
+.modo-info{flex:1;}
+.modo-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:#1A1714;margin-bottom:3px;}
+.modo-desc{font-size:12px;color:#4A443C;line-height:1.5;}
+.modo-tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:5px;}
+.modo-tag.familia{background:#DDF0E4;color:#4A7C59;}
+.modo-tag.personal{background:#F0E4DC;color:#C4673A;}
+.modo-arrow{font-size:20px;color:#C4673A;flex-shrink:0;}
+
 /* ── DISCLAIMER ── */
 .disclaimer{
   background:#FAFAF8;border:1.5px solid #E5E0D8;border-radius:12px;
@@ -525,12 +545,28 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
     <span class="sp-emoji">🍳</span>
     <div class="sp-title">Mi <span>Cocina</span></div>
     <p class="sp-sub">Planea tu semana, haz una sola compra y cocina sin estrés</p>
-    <div class="sp-badges">
-      <span class="sp-badge a">✓ Menú personalizado</span>
-      <span class="sp-badge b">✓ Calorías exactas</span>
-      <span class="sp-badge c">✓ Lista del súper</span>
+
+    <div class="modo-cards" style="margin-top:28px;">
+      <div class="modo-card" onclick="iniciarModoFamilia()">
+        <span class="modo-icon">🏠</span>
+        <div class="modo-info">
+          <div class="modo-title">Planificador familiar</div>
+          <div class="modo-desc">Elige platillos, asigna días y genera la lista del súper. Sin contar calorías.</div>
+          <span class="modo-tag familia">Para toda la familia</span>
+        </div>
+        <span class="modo-arrow">›</span>
+      </div>
+
+      <div class="modo-card" onclick="showProfile()">
+        <span class="modo-icon">🥗</span>
+        <div class="modo-info">
+          <div class="modo-title">Con seguimiento calórico</div>
+          <div class="modo-desc">Todo lo anterior más cálculo de calorías según tu perfil, objetivo y condición de salud.</div>
+          <span class="modo-tag personal">Personal</span>
+        </div>
+        <span class="modo-arrow">›</span>
+      </div>
     </div>
-    <button class="sp-start" onclick="showProfile()">Comenzar →</button>
   </div>
 
   <div id="spProfile" style="display:none;width:100%;max-width:420px;text-align:left;">
@@ -732,7 +768,7 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
     </div>
     <div class="hdr-nav">
       <button class="planes-btn" onclick="abrirPlanes()">📋</button>
-      <button class="hdr-prof" id="hdrProf" onclick="editarPerfil()">👤 <span id="hdrKcal">—</span> kcal</button>
+      <button class="hdr-prof" id="hdrProf" onclick="editarPerfilOCambiarModo()">👤 <span id="hdrKcal">—</span></button>
       <button class="hn on" id="ht1" onclick="goStep(1)">Elegir</button>
       <button class="hn" id="ht2" onclick="goStep(2)">Días</button>
       <button class="hn" id="ht3" onclick="goStep(3)">Súper</button>
@@ -756,13 +792,13 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
     </div>
 
     <div class="porciones-bar">
-      <span class="porciones-label">Porciones</span>
+      <span class="porciones-label">Porciones a cocinar <span style="font-size:10px;color:#8A8178;font-weight:400;">(el conteo de calorías es individual)</span></span>
       <div class="porciones-btns">
         <button class="porc-btn on" id="porc1" onclick="setPorciones(1)">1</button>
         <button class="porc-btn" id="porc2" onclick="setPorciones(2)">2</button>
         <button class="porc-btn" id="porc4" onclick="setPorciones(4)">4</button>
       </div>
-      <div class="cal-mode-toggle">
+      <div class="cal-mode-toggle" id="calModeToggleWrap">
         <span class="cal-mode-label">Calorías</span>
         <button class="cal-toggle on" id="calToggle" onclick="toggleCalMode()"></button>
       </div>
@@ -771,7 +807,7 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
     <div class="cals-bar" id="calsResultBar" style="display:none;">
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         <div>
-          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#4A443C;">Meta diaria</div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#4A443C;">Tu meta diaria <span style="font-size:10px;font-weight:400;text-transform:none;">(individual)</span></div>
           <div style="font-size:22px;font-weight:900;color:#C4673A;" id="calsBarKcal">—</div>
         </div>
         <div style="flex:1;font-size:11px;color:#8A8178;line-height:1.6;" id="calsBarDetail"></div>
@@ -944,7 +980,8 @@ var CATEGORIAS = [
       {label:'🥗 Saludable', items:['Fruta con yogurt granola y miel','Avena con fruta','Bowl de açaí','Smoothie bowl','Tazón de frutas con chía','Pancakes de avena','Tostada con mantequilla de cacahuate']},
       {label:'🫓 Antojitos', items:['Molletes a la Mexicana','Tacos','Quesadillas','Gorditas','Crepas saladas']},
       {label:'🥑 Acompañamientos', items:['Frijoles','Aguacate','Tocino','Fruta','Nopales']},
-      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Mermelada','Crema','Queso fresco','Mantequilla','Pan tostado','Bolillo','Tortillas de maíz','Tortillas de harina']}
+      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Mermelada','Crema','Queso fresco','Mantequilla','Pan tostado','Bolillo','Tortillas de maíz','Tortillas de harina']},
+      {label:'☕ Bebidas', items:['Café americano','Café con leche','Capuchino','Té','Jugo de naranja','Jugo verde','Agua fresca','Agua natural','Leche','Licuado de frutas','Licuado de proteína','Smoothie','Chocolate caliente']}
     ]
   },
   { id:'sopa', icon:'🍲', label:'Sopas & Arroces',
@@ -988,7 +1025,8 @@ var CATEGORIAS = [
         {label:'Mixtos', items:['Encacahuatado','Hamburguesa de res','Papas rellenas','Enchiladas rojas','Enchiladas verdes','Enchiladas suizas']}
       ]},
       {label:'🥑 Acompañamientos', items:['Frijoles','Guacamole','Ensalada verde','Ensalada mixta','Papas al perejil','Puré de papa','Verduras al vapor','Spaghetti rojo','Spaghetti blanco','Spaghetti verde','Arroz rojo','Arroz blanco']},
-      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Queso parmesano','Tortillas de maíz','Tortillas de harina','Pan bolillo','Totopos','Limones','Cilantro','Cebolla','Chiles en vinagre','Aderezo ranch','Aderezo italiano','Gravy']}
+      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Queso parmesano','Tortillas de maíz','Tortillas de harina','Pan bolillo','Totopos','Limones','Cilantro','Cebolla','Chiles en vinagre','Aderezo ranch','Aderezo italiano','Gravy']},
+      {label:'🥤 Bebidas', items:['Agua fresca','Agua natural','Agua mineral','Refresco','Limonada','Jamaica','Horchata','Tepache','Cerveza','Vino','Jugo de naranja']}
     ]
   },
   { id:'postre', icon:'🍮', label:'Postres',
@@ -1011,7 +1049,8 @@ var CATEGORIAS = [
         {label:'Caliente', items:['Croquetas de Atún','Codo con atún y jamón','Sopa de verduras','Sopa de lentejas']}
       ]},
       {label:'🥑 Acompañamientos', items:['Frijoles','Guacamole','Ensalada verde','Verduras al vapor','Puré de papa','Papas al perejil']},
-      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Tortillas de maíz','Tortillas de harina','Totopos','Pan bolillo','Limones','Chiles en vinagre','Cebolla morada encurtida']}
+      {label:'✨ Extras', items:['Salsa verde','Salsa roja','Salsa habanero','Crema','Queso fresco','Tortillas de maíz','Tortillas de harina','Totopos','Pan bolillo','Limones','Chiles en vinagre','Cebolla morada encurtida']},
+      {label:'🥤 Bebidas', items:['Agua fresca','Agua natural','Agua mineral','Té','Manzanilla','Leche caliente','Chocolate caliente','Refresco','Limonada','Cerveza','Vino']}
     ]
   }
 ];
@@ -1892,7 +1931,7 @@ function guardarPerfil(){
   var r = calcTDEE();
   calMeta = r.meta;
   // Update header
-  document.getElementById('hdrKcal').textContent = calMeta;
+  document.getElementById('hdrKcal').textContent = calMeta + ' kcal';
   // Update cals bar
   var objLabel = perfil.objetivo < 0 ? '⬇️ Bajar de peso' : perfil.objetivo > 0 ? '⬆️ Subir de peso' : '⚖️ Mantenerse';
   document.getElementById('calsBarKcal').textContent = calMeta + ' kcal';
@@ -1903,6 +1942,20 @@ function guardarPerfil(){
     + (perfil.sexo==='M'?'♂ Hombre':'♀ Mujer') + ' · ' + perfil.edad + ' años · ' + perfil.peso + ' kg · ' + perfil.altura + ' cm' + condStr;
   document.getElementById('calsResultBar').style.display = 'block';
   startApp();
+}
+
+function editarPerfilOCambiarModo(){
+  if(calMeta === 0){
+    // In familia mode — offer to switch
+    if(confirm('Estás en modo familiar. ¿Quieres cambiar a modo con seguimiento calórico?')){
+      showWelcome();
+      document.getElementById('splash').style.display = 'flex';
+      document.getElementById('splash').classList.remove('out');
+      document.getElementById('app').style.display = 'none';
+    }
+  } else {
+    editarPerfil();
+  }
 }
 
 function editarPerfil(){
@@ -1924,6 +1977,22 @@ document.addEventListener('input', function(e){
   if(['inEdad','inPeso','inAltura'].includes(e.target.id)) calcularPreview();
 });
 
+function iniciarModoFamilia(){
+  // Disable calorie mode completely
+  calMode = false;
+  calMeta = 0;
+  // Update toggle UI when app loads
+  var toggle = document.getElementById('calToggle');
+  if(toggle) toggle.className = 'cal-toggle';
+  // Hide cals result bar
+  var bar = document.getElementById('calsResultBar');
+  if(bar) bar.style.display = 'none';
+  // Skip profile, go straight to app
+  var hdrKcal = document.getElementById('hdrKcal');
+  if(hdrKcal) hdrKcal.textContent = 'Familiar';
+  startApp();
+}
+
 function startApp(){
   document.getElementById('splash').classList.add('out');
   setTimeout(function(){
@@ -1932,6 +2001,11 @@ function startApp(){
     buildCatStrip();
     buildCats();
     buildDays();
+    // Hide calorie display if familia mode
+    if(!calMode){
+      document.querySelectorAll('.chip-cal').forEach(function(el){ el.style.display='none'; });
+      document.querySelectorAll('.day-card-kcal').forEach(function(el){ el.style.display='none'; });
+    }
     // Show tour first time only, after app loads
     try{
       if(!localStorage.getItem('micocina_tour')){
@@ -2236,7 +2310,7 @@ function buildDays(){
     card.dataset.dia = dia;
     var hdr = '<div class="day-card-hdr">'
       + '<span class="day-card-name">' + dia + '</span>'
-      + (kcalDia > 0 ? '<span class="day-card-kcal">' + kcalDia + ' kcal</span>' + calFlag(kcalDia) : '')
+      + (kcalDia > 0 ? '<span class="day-card-kcal">' + (porciones > 1 ? Math.round(kcalDia/porciones) + ' kcal/persona' : kcalDia + ' kcal') + '</span>' + calFlag(kcalDia) : '')
       + '<button class="day-card-clear" onclick="limpiarDia(this.closest(\'.day-card\').dataset.dia)">× limpiar</button>'
       + '</div>';
     var rows = '';
@@ -2570,8 +2644,10 @@ function toggleCalMode(){
 }
 function calFlag(kcal){
   if(!calMode||!calMeta||kcal===0)return '';
-  var p=kcal/calMeta;
-  if(p<=1.05)return '<span class="cal-flag green">Meta</span>';
+  // calMeta es individual — dividir kcal entre porciones para comparar
+  var kcalInd = porciones > 1 ? Math.round(kcal / porciones) : kcal;
+  var p = kcalInd / calMeta;
+  if(p<=1.05)return '<span class="cal-flag green">✓ Meta</span>';
   if(p<=1.15)return '<span class="cal-flag yellow">+poco</span>';
   return '<span class="cal-flag red">Exceso</span>';
 }
