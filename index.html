@@ -139,7 +139,6 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
   border-bottom:1px solid #E5E0D8;
   padding:12px 16px;
   display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
-  position:sticky;top:108px;z-index:30;
 }
 .cat-strip::-webkit-scrollbar{display:none;}
 .cat-pill{
@@ -207,6 +206,31 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 .chip.on .chip-cal{color:#C4673A;}
 .chip-rec{background:none;border:none;font-size:13px;cursor:pointer;padding:0;opacity:.5;transition:opacity .15s;flex-shrink:0;}
 .chip-rec:hover{opacity:1;}
+
+/* ── ADD PLATILLO ── */
+.add-chip-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;padding:9px 14px;margin-top:4px;
+  border:1.5px dashed #D4CFC5;border-radius:10px;
+  background:none;font-family:'Inter',sans-serif;font-size:12px;
+  font-weight:600;color:#8A8178;cursor:pointer;transition:all .15s;
+}
+.add-chip-btn:hover{border-color:#C4673A;color:#C4673A;background:#FDF9F7;}
+.add-popover{
+  background:#FFFFFF;border:1.5px solid #E5E0D8;border-radius:12px;
+  padding:14px;margin-top:6px;
+  box-shadow:0 4px 16px rgba(0,0,0,0.08);
+  animation:fadeUp .15s ease;
+}
+.add-popover-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#C4673A;margin-bottom:10px;}
+.add-popover-input{
+  width:100%;padding:10px 12px;border-radius:8px;
+  border:1.5px solid #E5E0D8;background:#FAFAF8;
+  font-family:'Inter',sans-serif;font-size:14px;color:#1A1714;
+  outline:none;transition:border-color .15s;-webkit-appearance:none;
+}
+.add-popover-input:focus{border-color:#C4673A;}
+.add-popover-actions{display:flex;gap:8px;margin-top:10px;}
 
 /* ── SUBPANEL ── */
 .subpanel{
@@ -1506,6 +1530,7 @@ DIAS.forEach(function(d){
 
 var superDone = new Set();
 var calMeta = 1800;
+var customOpciones = {};  // customOpciones[catId][groupLabel] = [items]
 var omeRellenos = new Set();
 var huevoRellenos = new Set();
 var antojRellenos = { Tacos: new Set(), Quesadillas: new Set(), Gorditas: new Set() };
@@ -1707,7 +1732,12 @@ function buildCats(){
     cat.grupos.forEach(function(g){
       if(g.label) groups += '<div class="group-label">' + g.label + '</div>';
       groups += '<div class="chips">';
-      g.items.forEach(function(p){
+      // Include custom items for this group
+      var allItems = g.items.slice();
+      if(customOpciones[cat.id] && customOpciones[cat.id][g.label]){
+        customOpciones[cat.id][g.label].forEach(function(ci){ if(allItems.indexOf(ci)===-1) allItems.push(ci); });
+      }
+      allItems.forEach(function(p){
         var isOn = elegidos[cat.id].has(p);
         var cal  = getCal(p);
         var hasR = !!RECETAS[p];
@@ -1729,23 +1759,94 @@ function buildCats(){
           groups += buildSubpanel('at-' + cat.id + '-' + p, '🫓 ¿De qué los quieres?', ANTOJITO_OPTS, 'at-' + p, isOn);
         }
       });
+      // Add button at end of each group
+      var gkey = safe(cat.id + '-' + (g.label||'main'));
+      groups += '<button class="add-chip-btn" data-cat="' + cat.id + '" data-glabel="' + (g.label||'').replace(/"/g,'&quot;') + '" data-gkey="' + gkey + '">+ Agregar platillo</button>';
+      groups += '<div id="addpop-' + gkey + '" style="display:none;" class="add-popover">'
+        + '<div class="add-popover-title">+ Agregar platillo</div>'
+        + '<input class="add-popover-input" id="addinp-' + gkey + '" type="text" placeholder="Nombre del platillo..." autocomplete="off">'
+        + '<div class="add-popover-actions">'
+        + '<button class="btn btn-p btn-sm" data-action="save" data-gkey="' + gkey + '" data-cat="' + cat.id + '" data-glabel="' + (g.label||'').replace(/"/g,'&quot;') + '">Agregar</button>'
+        + '<button class="btn btn-g btn-sm" data-action="cancel" data-gkey="' + gkey + '">Cancelar</button>'
+        + '</div></div>';
       groups += '</div>';
     });
 
     sec.innerHTML = hdr + groups;
     // Event delegation for chips
     sec.addEventListener('click', function(e){
-      var chip = e.target.closest('.chip');
-      var recBtn = e.target.closest('.chip-rec');
+      var chip    = e.target.closest('.chip');
+      var recBtn  = e.target.closest('.chip-rec');
       var subChip = e.target.closest('.sub-chip');
+      var addBtn  = e.target.closest('.add-chip-btn');
+      var actBtn  = e.target.closest('[data-action]');
+
       if(recBtn){ e.stopPropagation(); abrirReceta(recBtn.dataset.rec); return; }
       if(subChip){
         var sp = subChip.closest('.subpanel');
         if(sp) toggleRelleno(sp.dataset.store, subChip.dataset.op, sp.dataset.spid);
         return;
       }
+      if(actBtn){
+        var action = actBtn.dataset.action;
+        var gkey   = actBtn.dataset.gkey;
+        var pop    = document.getElementById('addpop-' + gkey);
+        if(action === 'cancel'){ if(pop) pop.style.display='none'; return; }
+        if(action === 'save'){
+          var inp = document.getElementById('addinp-' + gkey);
+          var val = inp ? inp.value.trim() : '';
+          if(!val) return;
+          var catId   = actBtn.dataset.cat;
+          var glabel  = actBtn.dataset.glabel;
+          if(!customOpciones[catId]) customOpciones[catId] = {};
+          if(!customOpciones[catId][glabel]) customOpciones[catId][glabel] = [];
+          // Check no duplicate
+          var exists = false;
+          CATEGORIAS.forEach(function(c){ if(c.id===catId) c.grupos.forEach(function(g){ if(g.items.indexOf(val)!==-1) exists=true; }); });
+          if(customOpciones[catId][glabel].indexOf(val)!==-1) exists=true;
+          if(exists){ inp.style.borderColor='#C4673A'; inp.placeholder='Ya existe'; inp.value=''; return; }
+          customOpciones[catId][glabel].push(val);
+          if(pop) pop.style.display='none';
+          // Save plan state, rebuild, restore
+          var saved={};
+          CATEGORIAS.forEach(function(c){ saved[c.id]=[...elegidos[c.id]]; });
+          buildCatStrip(); buildCats();
+          CATEGORIAS.forEach(function(c){ saved[c.id].forEach(function(p){ elegidos[c.id].add(p); var el=document.getElementById('chip-'+safe(c.id+'-'+p)); if(el){el.classList.add('on');el.querySelector('.chip-check').textContent='✓';} }); updatePill(c.id); });
+          return;
+        }
+      }
+      if(addBtn){
+        var gkey = addBtn.dataset.gkey;
+        var pop  = document.getElementById('addpop-' + gkey);
+        if(!pop) return;
+        var isOpen = pop.style.display === 'block';
+        // Close all other popovers
+        document.querySelectorAll('.add-popover').forEach(function(p){ p.style.display='none'; });
+        if(!isOpen){
+          pop.style.display = 'block';
+          var inp = document.getElementById('addinp-' + gkey);
+          if(inp){ inp.value=''; inp.style.borderColor=''; inp.placeholder='Nombre del platillo...'; inp.focus(); }
+        }
+        return;
+      }
       if(chip && !recBtn){ toggleChip(chip.dataset.cat, chip.dataset.p); }
     });
+    // Enter key on add inputs
+    sec.querySelectorAll && setTimeout(function(){
+      sec.querySelectorAll('.add-popover-input').forEach(function(inp){
+        inp.addEventListener('keydown', function(e){
+          if(e.key==='Enter'){
+            var gkey = inp.id.replace('addinp-','');
+            var saveBtn = sec.querySelector('[data-action="save"][data-gkey="'+gkey+'"]');
+            if(saveBtn) saveBtn.click();
+          }
+          if(e.key==='Escape'){
+            var pop = document.getElementById('addpop-'+inp.id.replace('addinp-',''));
+            if(pop) pop.style.display='none';
+          }
+        });
+      });
+    },0);
     cont.appendChild(sec);
   });
 }
