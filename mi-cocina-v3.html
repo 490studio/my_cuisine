@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi Cocina">
+<title>Mi Cocina</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root{
+  --bg: #FAFAF8;
+  --bg2: #F4F1EC;
+  --bg3: #EDE9E1;
+  --white: #FFFFFF;
+  --ink: #1A1714;
+  --ink2: #4A443C;
+  --ink3: #8A8178;
+  --terra: #C4673A;
+  --terra-l: #F0E4DC;
+  --terra-b: rgba(196,103,58,0.2);
+  --verde: #4A7C59;
+  --verde-l: #DDF0E4;
+  --verde-b: rgba(74,124,89,0.18);
+  --gold: #B8860B;
+  --gold-l: #FDF6DC;
+  --border: #E5E0D8;
+  --border2: #D4CFC5;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --r: 16px;
+  --rs: 10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{background:#FAFAF8;}
+body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);color:#1A1714;color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ── SPLASH ── */
+#splash{
+  position:fixed;inset:0;z-index:300;
+  background:#FAFAF8;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:40px 28px;
+  transition:opacity .45s,transform .45s;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#splash.profile-mode{
+  justify-content:flex-start;
+  padding-top:32px;
+  padding-bottom:40px;
+}
+#splash.out{opacity:0;transform:scale(.98);pointer-events:none;}
+.sp-emoji{font-size:52px;margin-bottom:24px;display:block;}
+.sp-title{font-family:'Playfair Display',serif;font-size:38px;font-weight:900;color:#1A1714;line-height:1.05;margin-bottom:8px;}
+.sp-title span{color:#C4673A;}
+.sp-sub{font-size:14px;color:#8A8178;line-height:1.6;max-width:280px;margin:0 auto 36px;}
+.sp-start{
+  background:#C4673A;color:#fff;border:none;border-radius:50px;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+  letter-spacing:.02em;padding:14px 40px;cursor:pointer;
+  transition:background .2s,transform .1s;
+  box-shadow:0 4px 16px rgba(196,103,58,0.35);
+}
+.sp-start:hover{background:#B05A30;}
+.sp-start:active{transform:scale(.97);}
+.sp-badges{display:flex;gap:8px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;}
+.sp-badge{font-size:11px;font-weight:600;padding:5px 10px;border-radius:20px;letter-spacing:.03em;}
+.sp-badge.a{background:#DDF0E4;color:#4A7C59;}
+.sp-badge.b{background:#F0E4DC;color:#C4673A;}
+.sp-badge.c{background:#FDF6DC;color:#B8860B;}
+
+/* ── APP ── */
+#app{display:none;}
+
+/* ── HEADER ── */
+.hdr{
+  background:rgba(250,250,248,0.95);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid #E5E0D8;
+  padding:12px 16px;
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:50;
+}
+.hdr-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:#1A1714;}
+.hdr-title span{color:#C4673A;}
+.hdr-nav{margin-left:auto;display:flex;gap:4px;}
+.hn{background:none;border:none;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#8A8178;padding:6px 11px;border-radius:20px;cursor:pointer;transition:all .15s;letter-spacing:.03em;}
+.hn.on{background:#F0E4DC;color:#C4673A;}
+
+/* ── PROGRESS ── */
+.pbar{height:3px;background:#E5E0D8;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,#C4673A,#4A7C59);transition:width .4s ease;}
+
+/* ── STEP TABS ── */
+.steps{display:flex;background:#FFFFFF;border-bottom:1px solid #E5E0D8;padding:0 4px;}
+.stab{
+  flex:1;padding:10px 4px;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:#8A8178;cursor:pointer;background:none;border:none;
+  border-bottom:2px solid transparent;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+}
+.stab.on{color:#C4673A;border-bottom-color:#C4673A;}
+.stab-n{
+  width:16px;height:16px;border-radius:50%;
+  background:#E5E0D8;font-size:9px;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.stab.on .stab-n{background:#C4673A;color:#fff;}
+
+/* ── SECTIONS ── */
+.sec{display:none;background:#FAFAF8;min-height:calc(100vh - 120px);}
+.sec.on{display:block;}
+
+/* ── PASO 1: ELEGIR ── */
+.paso-hero{
+  background:#FFFFFF;
+  padding:24px 20px 20px;
+  border-bottom:1px solid #E5E0D8;
+}
+.paso-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#C4673A;margin-bottom:6px;}
+.paso-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:#1A1714;margin-bottom:4px;}
+.paso-sub{font-size:12px;color:#8A8178;line-height:1.5;}
+
+/* ── CATEGORY COUNTER STRIP ── */
+.cat-strip{
+  background:#FFFFFF;
+  border-bottom:1px solid #E5E0D8;
+  padding:12px 16px;
+  display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;
+  position:sticky;top:108px;z-index:30;
+}
+.cat-strip::-webkit-scrollbar{display:none;}
+.cat-pill{
+  flex-shrink:0;display:flex;align-items:center;gap:5px;
+  padding:6px 11px;border-radius:20px;border:1.5px solid #E5E0D8;
+  background:#FAFAF8;cursor:pointer;transition:all .15s;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#8A8178;
+}
+.cat-pill.active{border-color:#C4673A;background:#F0E4DC;color:#C4673A;}
+.cat-pill-ct{
+  background:#E5E0D8;color:#4A443C;
+  min-width:17px;height:17px;border-radius:9px;
+  font-size:9px;font-weight:700;display:inline-flex;
+  align-items:center;justify-content:center;padding:0 4px;
+  transition:all .15s;
+}
+.cat-pill.active .cat-pill-ct{background:#C4673A;color:#fff;}
+
+/* ── CAT SECTION ── */
+.cat-section{padding:20px 16px 8px;}
+.cat-section-hdr{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1.5px solid #E5E0D8;
+}
+.cat-section-icon{font-size:22px;}
+.cat-section-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#1A1714;}
+.cat-section-badge{
+  margin-left:auto;
+  background:#E5E0D8;color:#4A443C;
+  padding:3px 9px;border-radius:12px;
+  font-size:11px;font-weight:700;
+  transition:all .2s;
+}
+.cat-section-badge.has{background:#F0E4DC;color:#C4673A;}
+
+.group-label{
+  font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:#8A8178;margin:12px 0 8px;
+}
+
+/* ── CHIPS ── */
+.chips{display:flex;flex-direction:column;gap:6px;margin-bottom:4px;}
+.chip{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:var(--rs);
+  border:1.5px solid #E5E0D8;background:#FFFFFF;
+  cursor:pointer;transition:all .15s;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:#1A1714;
+}
+.chip:active{transform:scale(.99);}
+.chip.on{
+  border-color:#C4673A;background:#F0E4DC;
+  box-shadow:0 1px 4px rgba(196,103,58,0.15);
+}
+.chip-check{
+  width:18px;height:18px;border-radius:50%;
+  border:1.5px solid #D4CFC5;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;transition:all .15s;
+}
+.chip.on .chip-check{background:#C4673A;border-color:#C4673A;}
+.chip-name{flex:1;line-height:1.3;}
+.chip-cal{font-size:10px;font-weight:600;color:#8A8178;flex-shrink:0;}
+.chip.on .chip-cal{color:#C4673A;}
+.chip-rec{background:none;border:none;font-size:13px;cursor:pointer;padding:0;opacity:.5;transition:opacity .15s;flex-shrink:0;}
+.chip-rec:hover{opacity:1;}
+
+/* ── SUBPANEL ── */
+.subpanel{
+  display:none;margin:2px 0 4px 28px;
+  background:#FDF9F7;border:1.5px solid #F0D5C5;
+  border-radius:var(--rs);padding:10px 12px;
+}
+.subpanel.on{display:block;}
+.sub-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#C4673A;margin-bottom:8px;}
+.sub-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.sub-chip{
+  padding:4px 10px;border-radius:14px;
+  border:1.5px solid #E5E0D8;background:#FFFFFF;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;color:#4A443C;
+  cursor:pointer;transition:all .12s;
+}
+.sub-chip.on{background:#F0E4DC;border-color:#C4673A;color:#C4673A;font-weight:600;}
+.sub-note{font-size:11px;color:#C4673A;margin-top:7px;font-style:italic;}
+
+/* ── CALS OBJETIVO ── */
+.cals-bar{
+  background:#FFFFFF;border-bottom:1px solid #E5E0D8;
+  padding:14px 16px;
+}
+.cals-bar-title{font-size:12px;font-weight:700;color:#1A1714;margin-bottom:10px;}
+.cals-options{display:flex;gap:6px;flex-wrap:wrap;}
+.cal-opt{
+  flex:1;min-width:72px;padding:8px 6px;border-radius:var(--rs);
+  border:1.5px solid #E5E0D8;background:#FAFAF8;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+  color:#4A443C;cursor:pointer;text-align:center;transition:all .15s;
+}
+.cal-opt.on{border-color:#4A7C59;background:#DDF0E4;color:#4A7C59;}
+.cal-opt-kcal{font-size:14px;font-weight:700;display:block;color:#1A1714;}
+.cal-opt.on .cal-opt-kcal{color:#4A7C59;}
+
+/* ── PASO 2: DÍAS ── */
+.suggest-bar{
+  background:#FFFFFF;border-bottom:1px solid #E5E0D8;
+  padding:14px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.suggest-info{flex:1;}
+.suggest-info-t{font-size:13px;font-weight:700;color:#1A1714;}
+.suggest-info-s{font-size:11px;color:#8A8178;margin-top:2px;}
+.suggest-btn{
+  background:#4A7C59;color:#fff;border:none;border-radius:50px;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:700;
+  padding:10px 18px;cursor:pointer;transition:background .2s;
+  white-space:nowrap;flex-shrink:0;
+}
+.suggest-btn:hover{background:#3D6649;}
+.suggest-btn:active{transform:scale(.97);}
+
+.day-card{
+  background:#FFFFFF;margin:12px 16px 0;
+  border-radius:var(--r);border:1.5px solid #E5E0D8;
+  overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+.day-card-hdr{
+  padding:12px 16px;background:#F4F1EC;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid #E5E0D8;
+}
+.day-card-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#1A1714;flex:1;}
+.day-card-kcal{font-size:11px;font-weight:700;color:#4A7C59;background:#DDF0E4;padding:3px 8px;border-radius:10px;}
+.day-card-clear{background:none;border:none;font-size:11px;color:#8A8178;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;transition:color .15s;}
+.day-card-clear:hover{color:#C4673A;}
+
+.meal-row{padding:10px 16px;border-bottom:1px solid #F0ECE6;display:flex;align-items:flex-start;gap:8px;}
+.meal-row:last-child{border-bottom:none;}
+.meal-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.meal-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8A8178;margin-bottom:4px;}
+.meal-chips{display:flex;flex-wrap:wrap;gap:5px;}
+.meal-chip{
+  padding:5px 10px;border-radius:14px;
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .12s;white-space:nowrap;
+  border:1.5px solid #E5E0D8;background:#FAFAF8;color:#4A443C;
+}
+.meal-chip.on{background:#F0E4DC;border-color:#C4673A;color:#C4673A;font-weight:600;}
+.meal-slot{flex:1;}
+.meal-empty{font-size:11px;color:#C0BAB0;font-style:italic;}
+
+/* ── PASO 3: SÚPER ── */
+.super-hdr{background:#FFFFFF;padding:20px 16px 14px;border-bottom:1px solid #E5E0D8;}
+.super-hdr-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#1A1714;margin-bottom:2px;}
+.super-hdr-sub{font-size:12px;color:#8A8178;}
+.super-summary{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.super-stat{flex:1;min-width:80px;background:#F4F1EC;border-radius:var(--rs);padding:8px 10px;text-align:center;}
+.super-stat-n{font-size:18px;font-weight:700;color:#C4673A;display:block;}
+.super-stat-l{font-size:10px;color:#8A8178;font-weight:500;}
+
+.super-cat-card{background:#FFFFFF;margin:10px 16px 0;border-radius:var(--r);border:1.5px solid #E5E0D8;overflow:hidden;}
+.super-cat-title{padding:10px 14px;background:#F4F1EC;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A443C;border-bottom:1px solid #E5E0D8;}
+.s-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid #F4F1EC;cursor:pointer;transition:background .12s;}
+.s-item:last-child{border-bottom:none;}
+.s-item:active{background:#F4F1EC;}
+.s-check{width:18px;height:18px;border-radius:4px;border:1.5px solid #D4CFC5;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;}
+.s-item.done .s-check{background:#4A7C59;border-color:#4A7C59;color:#fff;}
+.s-text{font-size:13px;color:#1A1714;flex:1;}
+.s-item.done .s-text{text-decoration:line-through;color:#C0BAB0;}
+
+/* ── RECETA MODAL ── */
+.rm-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px);}
+.rm-bg.on{display:flex;}
+.rm-sheet{background:#FFFFFF;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:24px 20px 40px;}
+.rm-sheet::-webkit-scrollbar{width:0;}
+.rm-handle{width:36px;height:4px;background:#E5E0D8;border-radius:2px;margin:0 auto 20px;}
+.rm-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:#1A1714;margin-bottom:4px;}
+.rm-por{font-size:11px;font-weight:600;color:#8A8178;margin-bottom:18px;}
+.rm-sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#C4673A;margin-bottom:8px;margin-top:16px;padding-bottom:6px;border-bottom:1.5px solid #E5E0D8;}
+.rm-ings{list-style:none;padding:0;}
+.rm-ings li{font-size:13px;color:#1A1714;padding:6px 0;border-bottom:1px solid #F4F1EC;display:flex;gap:8px;align-items:baseline;}
+.rm-ings li::before{content:"·";color:#C4673A;font-weight:700;flex-shrink:0;}
+.rm-steps{list-style:none;padding:0;counter-reset:st;}
+.rm-steps li{font-size:13px;color:#1A1714;padding:8px 0 8px 32px;border-bottom:1px solid #F4F1EC;position:relative;counter-increment:st;line-height:1.55;}
+.rm-steps li::before{content:counter(st);position:absolute;left:0;top:8px;width:20px;height:20px;border-radius:50%;background:#F0E4DC;color:#C4673A;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;}
+.rm-close{position:absolute;top:20px;right:20px;background:#F4F1EC;border:none;border-radius:50%;width:30px;height:30px;font-size:16px;cursor:pointer;color:#4A443C;display:flex;align-items:center;justify-content:center;}
+.rm-sheet{position:relative;}
+
+/* ── PDF MODAL ── */
+.pdf-bg{position:fixed;inset:0;z-index:210;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px;}
+.pdf-bg.on{display:flex;}
+.pdf-box{background:#fff;border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.pdf-boxhdr{padding:14px 18px;border-bottom:1px solid #E5E0D8;display:flex;align-items:center;gap:10px;}
+.pdf-boxhdr-t{font-size:14px;font-weight:700;color:#1A1714;}
+.pdf-boxhdr-s{font-size:11px;color:#8A8178;margin-top:1px;}
+.pdf-boxclose{margin-left:auto;background:#F4F1EC;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;color:#4A443C;}
+.pdf-boxbody{overflow-y:auto;padding:20px;flex:1;}
+.pdf-boxfoot{padding:12px 18px;border-top:1px solid #E5E0D8;display:flex;gap:8px;}
+
+/* ── BUTTONS ── */
+.btn{padding:10px 20px;border-radius:50px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;letter-spacing:.04em;transition:all .15s;white-space:nowrap;}
+.btn:active{transform:scale(.97);}
+.btn-p{background:#C4673A;color:#fff;}
+.btn-p:hover{background:#B05A30;}
+.btn-g{background:none;border:1.5px solid #E5E0D8;color:#4A443C;}
+.btn-g:hover{background:#F4F1EC;}
+.btn-sm{padding:7px 14px;font-size:11px;}
+.btn-green{background:#4A7C59;color:#fff;}
+.btn-green:hover{background:#3D6649;}
+
+/* ── ACTIONS ── */
+.actions{padding:16px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid #E5E0D8;background:#FFFFFF;margin-top:8px;}
+
+/* ── EMPTY ── */
+.empty{text-align:center;padding:60px 20px;color:#8A8178;}
+.empty-ico{font-size:40px;margin-bottom:12px;}
+.empty-t{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#1A1714;margin-bottom:6px;}
+.empty-d{font-size:12px;}
+
+/* ── PROFILE SETUP ── */
+.prof-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:#1A1714;margin-bottom:4px;}
+.prof-sub{font-size:13px;color:#8A8178;margin-bottom:24px;}
+.prof-field{margin-bottom:18px;}
+.prof-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A443C;margin-bottom:8px;}
+.prof-toggle{display:flex;gap:8px;}
+.ptog{flex:1;padding:10px;border-radius:10px;border:1.5px solid #E5E0D8;background:#FAFAF8;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:#4A443C;cursor:pointer;transition:all .15s;}
+.ptog.on{background:#F0E4DC;border-color:#C4673A;color:#C4673A;}
+.prof-input-row{display:flex;align-items:center;gap:8px;}
+.prof-input{flex:1;padding:11px 14px;border-radius:10px;border:1.5px solid #E5E0D8;background:#FAFAF8;font-family:'Inter',sans-serif;font-size:16px;font-weight:600;color:#1A1714;outline:none;transition:border-color .15s;-webkit-appearance:none;}
+.prof-input:focus{border-color:#C4673A;}
+.prof-unit{font-size:13px;font-weight:600;color:#8A8178;min-width:28px;}
+.prof-acts{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+@media(min-width:380px){.prof-acts{grid-template-columns:repeat(4,1fr);}}
+.pact{padding:10px 10px 8px;border-radius:10px;border:1.5px solid #E5E0D8;background:#FAFAF8;cursor:pointer;transition:all .15s;text-align:center;}
+.pact.on{background:#DDF0E4;border-color:#4A7C59;}
+.pact-ico{font-size:18px;display:block;margin-bottom:3px;}
+.pact-name{font-size:12px;font-weight:700;color:#1A1714;display:block;}
+.pact-desc{font-size:10px;color:#8A8178;}
+.pact.on .pact-name{color:#4A7C59;}
+.prof-objs{display:flex;flex-direction:column;gap:6px;}
+.pobj{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid #E5E0D8;background:#FAFAF8;cursor:pointer;transition:all .15s;}
+.pobj.on{background:#FDF6DC;border-color:#B8860B;}
+.pobj-ico{font-size:18px;flex-shrink:0;}
+.pobj-name{font-size:13px;font-weight:700;color:#1A1714;flex:1;}
+.pobj-desc{font-size:11px;color:#8A8178;flex-shrink:0;}
+.pobj.on .pobj-name{color:#B8860B;}
+.prof-result{
+  background:linear-gradient(135deg,#F0E4DC,#FDF6DC);
+  border:1.5px solid #E5C896;border-radius:12px;
+  padding:14px 16px;margin-top:4px;display:none;
+}
+.prof-result.show{display:block;}
+.prof-result-kcal{font-size:28px;font-weight:900;color:#C4673A;margin-bottom:2px;}
+.prof-result-label{font-size:11px;color:#8A8178;margin-bottom:8px;}
+.prof-result-detail{font-size:11px;color:#4A443C;line-height:1.6;}
+
+/* edit profile button in header */
+.hdr-prof{background:none;border:1.5px solid #E5E0D8;border-radius:20px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#4A443C;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;margin-right:4px;}
+.hdr-prof:hover{background:#F0E4DC;border-color:#C4673A;color:#C4673A;}
+
+/* ── INSTALL ── */
+.install-btn{position:fixed;bottom:20px;right:20px;z-index:100;background:#C4673A;color:#fff;border:none;border-radius:50px;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:10px 16px;cursor:pointer;box-shadow:0 4px 16px rgba(196,103,58,.35);display:none;align-items:center;gap:6px;transition:all .2s;}
+.install-btn.on{display:flex;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.anim{animation:fadeUp .2s ease;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH / PERFIL -->
+<div id="splash">
+  <div id="spWelcome">
+    <span class="sp-emoji">🍳</span>
+    <div class="sp-title">Mi <span>Cocina</span></div>
+    <p class="sp-sub">Planea tu semana, haz una sola compra y cocina sin estrés</p>
+    <div class="sp-badges">
+      <span class="sp-badge a">✓ Menú personalizado</span>
+      <span class="sp-badge b">✓ Calorías exactas</span>
+      <span class="sp-badge c">✓ Lista del súper</span>
+    </div>
+    <button class="sp-start" onclick="showProfile()">Comenzar →</button>
+  </div>
+
+  <div id="spProfile" style="display:none;width:100%;max-width:420px;text-align:left;">
+    <div class="prof-title">Tu perfil</div>
+    <div class="prof-sub">Para calcular tus calorías exactas</div>
+
+    <!-- Sexo -->
+    <div class="prof-field">
+      <div class="prof-label">Sexo biológico</div>
+      <div class="prof-toggle">
+        <button class="ptog on" id="togM" onclick="setSexo('M')">♂ Hombre</button>
+        <button class="ptog" id="togF" onclick="setSexo('F')">♀ Mujer</button>
+      </div>
+    </div>
+
+    <!-- Edad -->
+    <div class="prof-field">
+      <div class="prof-label">Edad</div>
+      <div class="prof-input-row">
+        <input class="prof-input" id="inEdad" type="number" min="10" max="100" placeholder="años" value="35">
+        <span class="prof-unit">años</span>
+      </div>
+    </div>
+
+    <!-- Peso -->
+    <div class="prof-field">
+      <div class="prof-label">Peso actual</div>
+      <div class="prof-input-row">
+        <input class="prof-input" id="inPeso" type="number" min="30" max="250" placeholder="kg" value="70">
+        <span class="prof-unit">kg</span>
+      </div>
+    </div>
+
+    <!-- Estatura -->
+    <div class="prof-field">
+      <div class="prof-label">Estatura</div>
+      <div class="prof-input-row">
+        <input class="prof-input" id="inAltura" type="number" min="100" max="220" placeholder="cm" value="165">
+        <span class="prof-unit">cm</span>
+      </div>
+    </div>
+
+    <!-- Actividad -->
+    <div class="prof-field">
+      <div class="prof-label">Nivel de actividad</div>
+      <div class="prof-acts">
+        <div class="pact" data-val="1.2" onclick="setAct(this)">
+          <span class="pact-ico">🛋️</span>
+          <span class="pact-name">Sedentario</span>
+          <span class="pact-desc">Sin ejercicio</span>
+        </div>
+        <div class="pact on" data-val="1.375" onclick="setAct(this)">
+          <span class="pact-ico">🚶</span>
+          <span class="pact-name">Ligero</span>
+          <span class="pact-desc">1-3 días/sem</span>
+        </div>
+        <div class="pact" data-val="1.55" onclick="setAct(this)">
+          <span class="pact-ico">🏃</span>
+          <span class="pact-name">Moderado</span>
+          <span class="pact-desc">3-5 días/sem</span>
+        </div>
+        <div class="pact" data-val="1.725" onclick="setAct(this)">
+          <span class="pact-ico">💪</span>
+          <span class="pact-name">Intenso</span>
+          <span class="pact-desc">6-7 días/sem</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Objetivo -->
+    <div class="prof-field">
+      <div class="prof-label">Objetivo</div>
+      <div class="prof-objs">
+        <div class="pobj" data-adj="-500" onclick="setObj(this)">
+          <span class="pobj-ico">⬇️</span>
+          <div class="pobj-name">Bajar de peso</div>
+          <div class="pobj-desc">Déficit de 500 kcal</div>
+        </div>
+        <div class="pobj" data-adj="-250" onclick="setObj(this)">
+          <span class="pobj-ico">📉</span>
+          <div class="pobj-name">Bajar suave</div>
+          <div class="pobj-desc">Déficit de 250 kcal</div>
+        </div>
+        <div class="pobj on" data-adj="0" onclick="setObj(this)">
+          <span class="pobj-ico">⚖️</span>
+          <div class="pobj-name">Mantenerse</div>
+          <div class="pobj-desc">Sin cambios</div>
+        </div>
+        <div class="pobj" data-adj="250" onclick="setObj(this)">
+          <span class="pobj-ico">📈</span>
+          <div class="pobj-name">Subir suave</div>
+          <div class="pobj-desc">Superávit de 250 kcal</div>
+        </div>
+        <div class="pobj" data-adj="500" onclick="setObj(this)">
+          <span class="pobj-ico">⬆️</span>
+          <div class="pobj-name">Ganar músculo</div>
+          <div class="pobj-desc">Superávit de 500 kcal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resultado preview -->
+    <div class="prof-result" id="profResult"></div>
+
+    <button class="sp-start" style="width:100%;margin-top:8px;" onclick="guardarPerfil()">Ver mi plan →</button>
+    <button style="background:none;border:none;color:#8A8178;font-size:12px;margin-top:12px;cursor:pointer;font-family:Inter,sans-serif;" onclick="showWelcome()">← Regresar</button>
+  </div>
+</div>
+
+<!-- INSTALL -->
+<button class="install-btn" id="installBtn" onclick="installApp()">📲 Agregar a inicio</button>
+
+<!-- APP -->
+<div id="app">
+
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">Mi <span>Cocina</span></div>
+    </div>
+    <div class="hdr-nav">
+      <button class="hdr-prof" id="hdrProf" onclick="editarPerfil()">👤 <span id="hdrKcal">—</span> kcal</button>
+      <button class="hn on" id="ht1" onclick="goStep(1)">Elegir</button>
+      <button class="hn" id="ht2" onclick="goStep(2)">Días</button>
+      <button class="hn" id="ht3" onclick="goStep(3)">Súper</button>
+    </div>
+  </div>
+
+  <div class="pbar"><div class="pfill" id="pfill" style="width:33%"></div></div>
+
+  <div class="steps">
+    <button class="stab on" id="sb1" onclick="goStep(1)"><span class="stab-n">1</span>Platillos</button>
+    <button class="stab" id="sb2" onclick="goStep(2)"><span class="stab-n">2</span>Días</button>
+    <button class="stab" id="sb3" onclick="goStep(3)"><span class="stab-n">3</span>Súper</button>
+  </div>
+
+  <!-- PASO 1 -->
+  <div class="sec on" id="step1">
+    <div class="paso-hero">
+      <div class="paso-tag">Paso 1 — Elige tus platillos</div>
+      <div class="paso-title">¿Qué cocinas esta semana?</div>
+      <div class="paso-sub">Selecciona sin pensar en días · los días los asignas después</div>
+    </div>
+
+    <!-- Calorías calculadas del perfil -->
+    <div class="cals-bar" id="calsResultBar" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#4A443C;">Meta diaria</div>
+          <div style="font-size:22px;font-weight:900;color:#C4673A;" id="calsBarKcal">—</div>
+        </div>
+        <div style="flex:1;font-size:11px;color:#8A8178;line-height:1.6;" id="calsBarDetail"></div>
+        <button class="btn btn-g btn-sm" onclick="editarPerfil()">Editar perfil</button>
+      </div>
+    </div>
+
+    <!-- Cat strip -->
+    <div class="cat-strip" id="catStrip"></div>
+
+    <!-- Categories -->
+    <div id="catsContainer"></div>
+
+    <div class="actions">
+      <button class="btn btn-p" onclick="goStep(2)">Asignar a días →</button>
+      <button class="btn btn-g" onclick="limpiarTodo()">Limpiar todo</button>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="sec" id="step2">
+    <div class="suggest-bar">
+      <div class="suggest-info">
+        <div class="suggest-info-t">✨ Armar menú automático</div>
+        <div class="suggest-info-s">Distribuye tus platillos en los 7 días respetando las calorías</div>
+      </div>
+      <button class="btn btn-green" onclick="sugerirMenu()">Sugerir</button>
+    </div>
+    <div id="daysContainer"></div>
+    <div class="actions">
+      <button class="btn btn-p" onclick="goStep(3)">Ver lista del súper →</button>
+      <button class="btn btn-g" onclick="goStep(1)">← Editar platillos</button>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="sec" id="step3">
+    <div class="super-hdr">
+      <div class="super-hdr-title">Lista del súper</div>
+      <div class="super-hdr-sub">Toca cada ingrediente para tacharlo</div>
+      <div class="super-summary" id="superSummary"></div>
+    </div>
+    <div id="superContainer"></div>
+    <div style="padding-bottom:16px;"></div>
+    <div class="actions">
+      <button class="btn btn-p btn-sm" onclick="abrirPDF()">📄 PDF</button>
+      <button class="btn btn-g btn-sm" onclick="goStep(2)">← Días</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- RECETA MODAL -->
+<div class="rm-bg" id="rmBg" onclick="if(event.target===this)cerrarReceta()">
+  <div class="rm-sheet" id="rmSheet">
+    <div class="rm-handle"></div>
+    <button class="rm-close" onclick="cerrarReceta()">×</button>
+    <div id="rmContent"></div>
+  </div>
+</div>
+
+<!-- PDF MODAL -->
+<div class="pdf-bg" id="pdfBg" onclick="if(event.target===this)cerrarPDF()">
+  <div class="pdf-box">
+    <div class="pdf-boxhdr">
+      <div><div class="pdf-boxhdr-t">Vista previa</div><div class="pdf-boxhdr-s">Ctrl+P para guardar como PDF</div></div>
+      <button class="pdf-boxclose" onclick="cerrarPDF()">×</button>
+    </div>
+    <div class="pdf-boxbody" id="pdfBody"></div>
+    <div class="pdf-boxfoot">
+      <button class="btn btn-p btn-sm" onclick="imprimirPDF()">🖨 Imprimir / PDF</button>
+      <button class="btn btn-g btn-sm" onclick="cerrarPDF()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════
+
+// Calorías aproximadas por platillo (para 2 personas)
+var CALS = {
+  // Desayunos
+  'Huevo revuelto':280,'Huevos divorciados':320,'Huevos rancheros':340,
+  'Machaca con huevo':380,'Omelete con verduras':260,
+  'Hotcakes':420,'Pan francés':360,'Waffles':440,
+  'Pan tostado con mermelada':220,'Molletes dulces':300,'Pan dulce':320,
+  'Molletes a la Mexicana':380,'Chilaquiles con arrachera y frijoles':580,
+  'Enfrijoladas':420,'Puntas de filete en salsa':460,
+  'Papas con chorizo':380,'Bagel de salmón ahumado':380,
+  'Bagel de huevo con jamón y aguacate':420,
+  'Taquitos de guisado':360,'Fruta con yogurt granola y miel':280,
+  'Avena con fruta':240,'Café':40,'Agua fresca de temporada':60,
+  'Jugo de naranja':120,'Licuado':200,'Frijoles':160,
+  'Aguacate':160,'Salsa':20,'Tocino':180,'Fruta':80,
+  'Porción de chilaquiles':300,'Pan dulce':320,
+  'Tacos':320,'Quesadillas':380,'Gorditas':360,
+  // Sopas
+  'Caldo Tlalpeño':180,'Caldo de Pollo':160,
+  'Crema de calabaza':200,'Crema de zanahoria':180,'Crema de chayote':160,
+  'Crema de champiñones':220,'Crema de elote':240,
+  'Sopa de pasta':260,'Sopa de tortilla':220,'Sopa de papa':200,
+  'Sopa de verduras':140,'Sopa de lentejas':220,
+  'Arroz rojo':280,'Arroz blanco':260,'Arroz verde':270,
+  // Platos fuertes
+  'Albóndigas rellenas de philadelphia':480,'Alambre de bistec':520,
+  'Alambre de chuleta ahumada':500,'Bistec a la Mexicana':420,
+  'Bistec en chile pasilla':400,'Carne al pastor':460,
+  'Carne en su jugo':440,'Carne asada con pasta y papas asadas':640,
+  'Costillas BBQ':580,'Espagueti a la Boloñesa':560,
+  'Lasaña':620,'Lengua en salsa verde':460,'Pastel de Carne':520,
+  'Picadillo':420,'Puntas al chipotle con papas':500,'Ropa vieja':400,
+  'Burritos de pollo':520,'Enmoladas':460,'Entomatadas':420,
+  'Milanesa empanizada':480,'Pechuga Cordon Blue':520,
+  'Pollo agridulce':420,'Pollo a la mostaza':400,'Pollo con Mole':500,
+  'Pollo en jitomate con verduras':380,'Tacos de pollo':360,
+  'Tinga':360,'Tortitas de pollo':400,'Tostadas de pollo':380,
+  'Verdolagas con pollo en jitomate':340,
+  'Carne de puerco con verdolagas':420,'Chicharrón guisado':460,
+  'Chicharrón prensado guisado':440,'Chuletas ahumadas':480,
+  'Cochinita Pibil':440,'Costillas BBQ de cerdo':560,'Espinazo':380,
+  'Verdolagas con espinazo en salsa verde':360,
+  'Aguachile':240,'Camarones al ajillo':320,'Camarones a la diabla':300,
+  'Croquetas de Atún':340,'Ensalada de Atún':280,'Ensalada de surimi':260,
+  'Filete empanizado':400,'Codo con atún y jamón':460,
+  'Arroz chino con pollo':480,'Arroz chino con res':500,'Arroz chino con camarón':460,
+  'Encacahuatado':520,'Enchiladas rojas':480,'Enchiladas verdes':440,
+  'Enchiladas suizas':500,'Hamburguesa de res':580,'Pastel Azteca':540,'Papas rellenas':500,
+  // Guarniciones
+  'Frijoles':160,'Guacamole':180,'Ensalada verde':60,'Ensalada mixta':80,
+  'Papas al perejil':200,'Puré de papa':240,'Verduras al vapor':80,
+  'Spaghetti rojo':320,'Spaghetti blanco':380,'Spaghetti verde':340,
+  // Postres
+  'Arroz con leche':280,'Ensalada de manzana':240,'Flan Napolitano':320,'Gelatina':80,
+  // Cena
+  'Hotdogs':420,'Molletes a la Mexicana':380,'Taquitos de guisado':360,
+  'Tacos de pollo':360,'Carne al pastor':460,'Cochinita Pibil':440,
+  'Tinga':360,'Chicharrón guisado':460,'Chicharrón prensado guisado':440,
+  'Papas con chorizo':380,'Enfrijoladas':420,'Enmoladas':460,
+  'Entomatadas':420,'Enchiladas rojas':480,'Enchiladas verdes':440,
+  'Enchiladas suizas':500,'Ensalada de Atún':280,'Ensalada de surimi':260,
+  'Croquetas de Atún':340,'Codo con atún y jamón':460,
+  'Burritos de pollo':520,'Tostadas de pollo':380,
+  'Bagel de huevo con jamón y aguacate':420,
+  'Agua fresca de temporada':60,'Té':5,'Leche':120,'Licuado':200,
+  'Salsa':20,'Tortillas de maíz':160,'Guacamole':180
+};
+
+var CATEGORIAS = [
+  { id:'desayuno', icon:'🌅', label:'Desayunos',
+    grupos:[
+      {label:'🍳 Huevo', items:['Huevo revuelto','Huevos divorciados','Huevos rancheros','Machaca con huevo','Omelete con verduras']},
+      {label:'🥐 Pan y dulce', items:['Hotcakes','Pan francés','Waffles','Pan tostado con mermelada','Molletes dulces','Pan dulce','Molletes a la Mexicana']},
+      {label:'🌮 Guisado', items:['Chilaquiles con arrachera y frijoles','Enfrijoladas','Puntas de filete en salsa','Papas con chorizo','Bagel de salmón ahumado','Bagel de huevo con jamón y aguacate','Taquitos de guisado']},
+      {label:'🥗 Saludable', items:['Fruta con yogurt granola y miel','Avena con fruta']},
+      {label:'🫓 Antojitos', items:['Tacos','Quesadillas','Gorditas']},
+      {label:'🫘 Complemento', items:['Frijoles','Aguacate','Salsa','Tocino','Fruta','Porción de chilaquiles']}
+    ]
+  },
+  { id:'sopa', icon:'🍲', label:'Sopas & Arroces',
+    grupos:[
+      {label:'🥣 Caldos', items:['Caldo Tlalpeño','Caldo de Pollo']},
+      {label:'🫕 Cremas', items:['Crema de calabaza','Crema de zanahoria','Crema de chayote','Crema de champiñones','Crema de elote']},
+      {label:'🍜 Sopas', items:['Sopa de pasta','Sopa de tortilla','Sopa de papa','Sopa de verduras','Sopa de lentejas']},
+      {label:'🍚 Arroz', items:['Arroz rojo','Arroz blanco','Arroz verde']}
+    ]
+  },
+  { id:'fuerte', icon:'🍽️', label:'Platos Fuertes',
+    grupos:[
+      {label:'🥩 Res', items:['Albóndigas rellenas de philadelphia','Alambre de bistec','Alambre de chuleta ahumada','Bistec a la Mexicana','Bistec en chile pasilla','Carne al pastor','Carne en su jugo','Carne asada con pasta y papas asadas','Costillas BBQ','Espagueti a la Boloñesa','Lasaña','Lengua en salsa verde','Pastel de Carne','Picadillo','Puntas al chipotle con papas','Ropa vieja']},
+      {label:'🍗 Pollo', items:['Burritos de pollo','Enmoladas','Entomatadas','Milanesa empanizada','Pechuga Cordon Blue','Pollo agridulce','Pollo a la mostaza','Pollo con Mole','Pollo en jitomate con verduras','Tacos de pollo','Tinga','Tortitas de pollo','Tostadas de pollo','Verdolagas con pollo en jitomate']},
+      {label:'🐷 Cerdo', items:['Carne de puerco con verdolagas','Chicharrón guisado','Chicharrón prensado guisado','Chuletas ahumadas','Cochinita Pibil','Costillas BBQ de cerdo','Espinazo','Verdolagas con espinazo en salsa verde']},
+      {label:'🐟 Mariscos', items:['Aguachile','Camarones al ajillo','Camarones a la diabla','Croquetas de Atún','Ensalada de Atún','Ensalada de surimi','Filete empanizado','Codo con atún y jamón']},
+      {label:'🍝 Mixto', items:['Arroz chino con pollo','Arroz chino con res','Arroz chino con camarón','Encacahuatado','Enchiladas rojas','Enchiladas verdes','Enchiladas suizas','Hamburguesa de res','Pastel Azteca','Papas rellenas']}
+    ]
+  },
+  { id:'guarni', icon:'🫘', label:'Guarniciones',
+    grupos:[{label:'', items:['Frijoles','Guacamole','Ensalada verde','Ensalada mixta','Papas al perejil','Puré de papa','Verduras al vapor','Spaghetti rojo','Spaghetti blanco','Spaghetti verde']}]
+  },
+  { id:'postre', icon:'🍮', label:'Postres',
+    grupos:[{label:'', items:['Arroz con leche','Ensalada de manzana','Flan Napolitano','Gelatina']}]
+  },
+  { id:'cena', icon:'🌙', label:'Cenas',
+    grupos:[
+      {label:'🌮 Guisados', items:['Taquitos de guisado','Tacos de pollo','Carne al pastor','Cochinita Pibil','Tinga','Chicharrón guisado','Chicharrón prensado guisado','Papas con chorizo','Enfrijoladas','Enmoladas','Entomatadas','Enchiladas rojas','Enchiladas verdes','Enchiladas suizas','Molletes a la Mexicana']},
+      {label:'🥙 Antojitos', items:['Hotdogs','Hamburguesa de res','Burritos de pollo','Tostadas de pollo','Bagel de huevo con jamón y aguacate']},
+      {label:'🫓 Con relleno', items:['Tacos','Quesadillas','Gorditas']},
+      {label:'🐟 Ligero', items:['Ensalada de Atún','Ensalada de surimi','Croquetas de Atún','Codo con atún y jamón']},
+      {label:'🫘 Complemento', items:['Frijoles','Guacamole','Salsa','Tortillas de maíz']}
+    ]
+  }
+];
+
+var SLOTS = [
+  {id:'desayuno', label:'Desayuno', emoji:'🌅', cats:['desayuno']},
+  {id:'sopa',     label:'Sopa',     emoji:'🍲', cats:['sopa']},
+  {id:'fuerte',   label:'Plato fuerte', emoji:'🍽️', cats:['fuerte']},
+  {id:'guarni',   label:'Guarnición',   emoji:'🫘', cats:['guarni']},
+  {id:'postre',   label:'Postre',   emoji:'🍮', cats:['postre']},
+  {id:'cena',     label:'Cena',     emoji:'🌙', cats:['cena']}
+];
+
+var DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+var ANTOJITO_OPTS = ['Guisado del día','Frijoles','Queso','Chorizo','Papa con chorizo','Pollo','Tinga','Chicharrón','Rajas con crema','Picadillo','Flor de calabaza'];
+var OMELETE_OPTS  = ['Espinacas','Champiñones','Queso','A la mexicana','Pollo','Jamón','Salchicha'];
+var HUEVO_OPTS    = ['Jamón','Salchicha','Chorizo','Tocino','A la mexicana','Nopales'];
+
+var ACOMP = {
+  'Cochinita Pibil':['Cebollas encurtidas','Habanero','Tortillas','Limones'],
+  'Bistec a la Mexicana':['Frijoles','Tortillas','Salsa verde','Limones'],
+  'Tinga':['Tostadas','Crema','Queso fresco','Aguacate'],
+  'Enmoladas':['Crema','Queso fresco','Ajonjolí'],
+  'Pollo con Mole':['Arroz rojo','Ajonjolí','Tortillas'],
+  'Enchiladas rojas':['Crema','Queso fresco','Cebolla','Lechuga'],
+  'Enchiladas verdes':['Crema','Queso fresco','Cebolla'],
+  'Enchiladas suizas':['Crema','Queso manchego'],
+  'Chilaquiles con Costilla rojos':['Crema','Queso fresco','Cebolla','Aguacate'],
+  'Chilaquiles con Costilla verdes':['Crema','Queso fresco','Cebolla'],
+  'Tacos de pollo':['Guacamole','Salsa roja','Salsa verde','Cebolla','Cilantro','Limones'],
+  'Carne al pastor':['Piña','Cebolla','Cilantro','Salsa verde','Tortillas'],
+  'Carne en su jugo':['Frijoles','Tortillas','Limones','Cilantro','Chile serrano'],
+  'Aguachile':['Tostadas','Limones','Pepino','Cebolla morada'],
+  'Camarones al ajillo':['Arroz blanco','Limones'],
+  'Camarones a la diabla':['Arroz blanco','Tortillas','Limones'],
+  'Milanesa empanizada':['Ensalada','Limones'],
+  'Pastel Azteca':['Crema','Queso manchego','Aguacate'],
+  'Gorditas de queso y chorizo':['Salsa verde','Salsa roja','Crema'],
+  'Espagueti a la Boloñesa':['Queso parmesano'],
+  'Lasaña':['Queso parmesano'],
+  'Caldo de Pollo':['Limones','Chile serrano','Cilantro','Tortillas'],
+  'Sopa de tortilla':['Crema','Queso fresco','Chile pasilla'],
+  'Lengua en salsa verde':['Tortillas','Frijoles'],
+  'Puntas al chipotle con papas':['Crema','Arroz'],
+  'Molletes a la Mexicana':['Frijoles refritos','Pico de gallo'],
+  'Chilaquiles con arrachera y frijoles':['Crema','Queso fresco','Aguacate','Frijoles'],
+  'Enfrijoladas':['Crema','Queso fresco','Aguacate'],
+  'Bagel de salmón ahumado':['Alcaparras','Aguacate','Cebolla morada'],
+  'Bagel de huevo con jamón y aguacate':['Aguacate'],
+  'Huevos con jamón y aguacate':['Frijoles','Aguacate','Tortillas'],
+  'Carne asada con pasta y papas asadas':['Queso parmesano','Limones'],
+  'Tostadas de pollo':['Crema','Queso fresco','Aguacate','Lechuga'],
+  'Burritos de pollo':['Crema','Queso fresco','Salsa','Guacamole'],
+  'Hamburguesa de res':['Lechuga','Jitomate','Cebolla'],
+  'Hotdogs':['Catsup','Mostaza','Mayonesa','Jalapeño'],
+  'Taquitos de guisado':['Crema','Queso fresco','Salsa'],
+  'Guisado de cochinita pibil':['Cebollas encurtidas','Habanero','Tortillas'],
+};
+var INGREDIENTES = {
+  'Albóndigas rellenas de philadelphia':{'🥩 Carnes':['Carne molida'],'🧀 Lácteos':['Queso Philadelphia'],'🥦 Verduras':['Jitomate','Cebolla','Ajo'],'🧄 Básicos':['Huevo','Arroz']},
+  'Alambre de bistec':{'🥩 Carnes':['Bistec de res'],'🥦 Verduras':['Pimiento morón','Cebolla'],'🧀 Lácteos':['Queso Oaxaca'],'🫓 Tortillas y pan':['Tortillas de harina']},
+  'Alambre de chuleta ahumada':{'🥩 Carnes':['Chuleta ahumada'],'🥦 Verduras':['Pimiento morón','Cebolla'],'🧀 Lácteos':['Queso Oaxaca'],'🫓 Tortillas y pan':['Tortillas de harina']},
+  'Bistec a la Mexicana':{'🥩 Carnes':['Bistec de res'],'🥦 Verduras':['Jitomate','Cebolla','Chile serrano'],'🧄 Básicos':['Ajo']},
+  'Bistec en chile pasilla':{'🥩 Carnes':['Bistec de res'],'🌶️ Chiles':['Chile pasilla'],'🥦 Verduras':['Cebolla','Jitomate']},
+  'Carne al pastor':{'🥩 Carnes':['Carne para pastor'],'🌶️ Chiles':['Chile guajillo','Chile ancho','Achiote'],'🥦 Verduras':['Piña','Cebolla','Cilantro'],'🫓 Tortillas y pan':['Tortillas'],'🧄 Básicos':['Ajo','Vinagre']},
+  'Carne en su jugo':{'🥩 Carnes':['Falda de res','Tocino'],'🫙 Abarrotes':['Frijoles'],'🥦 Verduras':['Tomatillo','Cebolla','Cilantro','Chile serrano'],'🧄 Básicos':['Ajo']},
+  'Costillas BBQ':{'🥩 Carnes':['Costillas de res'],'🫙 Abarrotes':['Salsa BBQ']},
+  'Espagueti a la Boloñesa':{'🥩 Carnes':['Carne molida'],'🫙 Abarrotes':['Espagueti','Pasta de tomate'],'🥦 Verduras':['Cebolla','Zanahoria'],'🧀 Lácteos':['Queso parmesano'],'🧄 Básicos':['Ajo']},
+  'Lasaña':{'🥩 Carnes':['Carne molida'],'🫙 Abarrotes':['Láminas de lasaña','Pasta de tomate'],'🧀 Lácteos':['Queso manchego','Crema','Leche'],'🧄 Básicos':['Ajo','Mantequilla','Harina']},
+  'Lengua en salsa verde':{'🥩 Carnes':['Lengua de res'],'🥦 Verduras':['Tomatillo','Cebolla','Cilantro'],'🌶️ Chiles':['Chile serrano']},
+  'Pastel de Carne':{'🥩 Carnes':['Carne molida'],'🥦 Verduras':['Zanahoria','Chícharos'],'🧄 Básicos':['Huevo','Pan molido']},
+  'Picadillo':{'🥩 Carnes':['Carne molida'],'🥦 Verduras':['Jitomate','Papa','Zanahoria','Cebolla'],'🌶️ Chiles':['Chile serrano']},
+  'Puntas al chipotle con papas':{'🥩 Carnes':['Puntas de res'],'🌶️ Chiles':['Chipotle en adobo'],'🥦 Verduras':['Papa','Cebolla'],'🧀 Lácteos':['Crema'],'🧄 Básicos':['Ajo']},
+  'Ropa vieja':{'🥩 Carnes':['Falda de res'],'🥦 Verduras':['Pimiento','Cebolla','Jitomate'],'🧄 Básicos':['Ajo']},
+  'Caldo de Pollo':{'🥩 Carnes':['Pollo entero o piezas'],'🥦 Verduras':['Zanahoria','Chayote','Ejotes','Calabaza','Cebolla','Cilantro'],'🧄 Básicos':['Ajo']},
+  'Enmoladas':{'🥩 Carnes':['Pechuga de pollo'],'🫙 Abarrotes':['Mole en pasta'],'🧀 Lácteos':['Crema','Queso fresco'],'🫓 Tortillas y pan':['Tortillas']},
+  'Entomatadas':{'🥩 Carnes':['Pechuga de pollo'],'🥦 Verduras':['Jitomate','Cebolla'],'🧀 Lácteos':['Crema','Queso fresco'],'🫓 Tortillas y pan':['Tortillas']},
+  'Milanesa empanizada':{'🥩 Carnes':['Milanesa de pollo'],'🧄 Básicos':['Huevo','Pan molido'],'🥦 Verduras':['Limón','Lechuga']},
+  'Pechuga Cordon Blue':{'🥩 Carnes':['Pechuga de pollo','Jamón de pierna'],'🧀 Lácteos':['Queso manchego'],'🧄 Básicos':['Huevo','Pan molido']},
+  'Pollo agridulce':{'🥩 Carnes':['Pechuga de pollo'],'🥦 Verduras':['Pimiento','Piña'],'🫙 Abarrotes':['Salsa de soya','Vinagre'],'🧄 Básicos':['Maicena']},
+  'Pollo a la mostaza':{'🥩 Carnes':['Piezas de pollo'],'🫙 Abarrotes':['Mostaza'],'🧀 Lácteos':['Crema']},
+  'Pollo con Mole':{'🥩 Carnes':['Piezas de pollo'],'🫙 Abarrotes':['Mole en pasta'],'🫓 Tortillas y pan':['Tortillas']},
+  'Pollo en jitomate con verduras':{'🥩 Carnes':['Piezas de pollo'],'🥦 Verduras':['Jitomate','Zanahoria','Chícharos','Cebolla'],'🫙 Abarrotes':['Arroz'],'🧄 Básicos':['Ajo']},
+  'Tacos de pollo':{'🥩 Carnes':['Pechuga de pollo'],'🥦 Verduras':['Cebolla','Cilantro','Limón','Aguacate'],'🫓 Tortillas y pan':['Tortillas'],'🌶️ Chiles':['Chile serrano']},
+  'Tinga':{'🥩 Carnes':['Pechuga de pollo'],'🥦 Verduras':['Jitomate','Cebolla'],'🌶️ Chiles':['Chipotle en adobo'],'🫓 Tortillas y pan':['Tostadas'],'🧀 Lácteos':['Crema','Queso fresco']},
+  'Tortitas de pollo':{'🥩 Carnes':['Pechuga deshebrada'],'🧄 Básicos':['Huevo'],'🥦 Verduras':['Jitomate','Cebolla']},
+  'Verdolagas con pollo en jitomate':{'🥩 Carnes':['Pollo'],'🥦 Verduras':['Verdolagas','Jitomate','Cebolla'],'🌶️ Chiles':['Chile serrano']},
+  'Carne de puerco con verdolagas':{'🥩 Carnes':['Costilla de cerdo'],'🥦 Verduras':['Verdolagas','Tomatillo','Cebolla'],'🌶️ Chiles':['Chile serrano']},
+  'Chicharrón guisado':{'🥩 Carnes':['Chicharrón'],'🥦 Verduras':['Jitomate','Cebolla'],'🌶️ Chiles':['Chile serrano']},
+  'Chicharrón prensado guisado':{'🥩 Carnes':['Chicharrón prensado'],'🥦 Verduras':['Jitomate','Cebolla'],'🌶️ Chiles':['Chile pasilla']},
+  'Chuletas ahumadas':{'🥩 Carnes':['Chuletas ahumadas'],'🥦 Verduras':['Cebolla']},
+  'Cochinita Pibil':{'🥩 Carnes':['Pierna de cerdo'],'🌶️ Chiles':['Achiote','Chile ancho','Chile guajillo'],'🥦 Verduras':['Cebolla morada','Naranja agria','Limón'],'🫓 Tortillas y pan':['Tortillas']},
+  'Costillas BBQ de cerdo':{'🥩 Carnes':['Costillas de cerdo'],'🫙 Abarrotes':['Salsa BBQ']},
+  'Espinazo':{'🥩 Carnes':['Espinazo de cerdo'],'🥦 Verduras':['Tomatillo','Papa','Cebolla'],'🌶️ Chiles':['Chile serrano']},
+  'Gorditas de queso y chorizo':{'🥩 Carnes':['Chorizo'],'🧀 Lácteos':['Queso Oaxaca'],'🫙 Abarrotes':['Masa para gorditas']},
+  'Papas con chorizo':{'🥩 Carnes':['Chorizo'],'🥦 Verduras':['Papa','Cebolla'],'🫓 Tortillas y pan':['Tortillas']},
+  'Verdolagas con espinazo en salsa verde':{'🥩 Carnes':['Espinazo'],'🥦 Verduras':['Verdolagas','Tomatillo','Cebolla'],'🌶️ Chiles':['Chile serrano']},
+  'Aguachile':{'🥩 Carnes':['Camarón fresco'],'🥦 Verduras':['Pepino','Cebolla morada','Limón'],'🌶️ Chiles':['Chile serrano'],'🫓 Tortillas y pan':['Tostadas']},
+  'Camarones al ajillo':{'🥩 Carnes':['Camarones'],'🧄 Básicos':['Ajo','Aceite de oliva','Mantequilla'],'🌶️ Chiles':['Chile de árbol'],'🥦 Verduras':['Limón']},
+  'Camarones a la diabla':{'🥩 Carnes':['Camarones'],'🌶️ Chiles':['Chile de árbol','Chile morita'],'🥦 Verduras':['Jitomate','Cebolla']},
+  'Croquetas de Atún':{'🫙 Abarrotes':['Atún en lata'],'🧄 Básicos':['Huevo','Pan molido','Mayonesa']},
+  'Ensalada de Atún':{'🫙 Abarrotes':['Atún en lata'],'🧄 Básicos':['Mayonesa'],'🥦 Verduras':['Aguacate','Jitomate','Lechuga']},
+  'Ensalada de surimi':{'🥩 Carnes':['Surimi'],'🧄 Básicos':['Mayonesa'],'🥦 Verduras':['Pepino','Jitomate','Limón']},
+  'Filete empanizado':{'🥩 Carnes':['Filete de pescado'],'🧄 Básicos':['Huevo','Pan molido'],'🥦 Verduras':['Limón']},
+  'Codo con atún y jamón':{'🫙 Abarrotes':['Codo (pasta)','Atún en lata'],'🥩 Carnes':['Jamón'],'🧄 Básicos':['Mayonesa'],'🥦 Verduras':['Zanahoria','Chícharos']},
+  'Huevo con chile':{'🧄 Básicos':['Huevo'],'🌶️ Chiles':['Chile serrano'],'🥦 Verduras':['Jitomate','Cebolla']},
+  'Machaca con huevo':{'🥩 Carnes':['Machaca'],'🧄 Básicos':['Huevo'],'🥦 Verduras':['Jitomate','Cebolla']},
+  'Molletes a la Mexicana':{'🫓 Tortillas y pan':['Pan bolillo'],'🫙 Abarrotes':['Frijoles refritos'],'🧀 Lácteos':['Queso manchego'],'🥦 Verduras':['Jitomate','Cebolla','Chile serrano']},
+  'Tortas de Coliflor':{'🥦 Verduras':['Coliflor','Cebolla','Jitomate'],'🧄 Básicos':['Huevo']},
+  'Tortas de papa':{'🥦 Verduras':['Papa','Cebolla'],'🧄 Básicos':['Huevo']},
+  'Arroz chino con pollo':{'🥩 Carnes':['Pechuga de pollo'],'🫙 Abarrotes':['Arroz','Salsa de soya'],'🥦 Verduras':['Zanahoria','Chícharos','Cebolla'],'🧄 Básicos':['Huevo']},
+  'Arroz chino con res':{'🥩 Carnes':['Res en tiras'],'🫙 Abarrotes':['Arroz','Salsa de soya'],'🥦 Verduras':['Zanahoria','Chícharos','Cebolla'],'🧄 Básicos':['Huevo']},
+  'Arroz chino con camarón':{'🥩 Carnes':['Camarones'],'🫙 Abarrotes':['Arroz','Salsa de soya'],'🥦 Verduras':['Zanahoria','Chícharos','Cebolla'],'🧄 Básicos':['Huevo']},
+  'Chilaquiles con Costilla rojos':{'🥩 Carnes':['Costilla de cerdo'],'🫓 Tortillas y pan':['Totopos'],'🌶️ Chiles':['Chile guajillo','Chile ancho'],'🧀 Lácteos':['Crema','Queso fresco'],'🥦 Verduras':['Cebolla','Aguacate']},
+  'Chilaquiles con Costilla verdes':{'🥩 Carnes':['Costilla de cerdo'],'🫓 Tortillas y pan':['Totopos'],'🥦 Verduras':['Tomatillo','Cebolla','Cilantro'],'🧀 Lácteos':['Crema','Queso fresco']},
+  'Encacahuatado':{'🫙 Abarrotes':['Cacahuate'],'🌶️ Chiles':['Chile mulato','Chipotle'],'🥦 Verduras':['Jitomate','Cebolla']},
+  'Enchiladas rojas':{'🫓 Tortillas y pan':['Tortillas'],'🌶️ Chiles':['Chile guajillo','Chile ancho'],'🧀 Lácteos':['Crema','Queso fresco'],'🥦 Verduras':['Cebolla','Lechuga']},
+  'Enchiladas verdes':{'🫓 Tortillas y pan':['Tortillas'],'🥦 Verduras':['Tomatillo','Cebolla','Cilantro'],'🧀 Lácteos':['Crema','Queso fresco']},
+  'Enchiladas suizas':{'🫓 Tortillas y pan':['Tortillas'],'🥦 Verduras':['Tomatillo','Cebolla'],'🧀 Lácteos':['Crema','Queso manchego']},
+  'Pastel Azteca':{'🫓 Tortillas y pan':['Tortillas'],'🥩 Carnes':['Pechuga de pollo'],'🌶️ Chiles':['Chile poblano'],'🧀 Lácteos':['Crema','Queso manchego'],'🥦 Verduras':['Jitomate','Cebolla']},
+  'Papas rellenas':{'🥦 Verduras':['Papas grandes'],'🥩 Carnes':['Carne molida'],'🧀 Lácteos':['Queso manchego','Crema']},
+  'Caldo Tlalpeño':{'🥩 Carnes':['Pechuga de pollo'],'🫙 Abarrotes':['Garbanzos'],'🥦 Verduras':['Zanahoria','Calabaza','Epazote'],'🌶️ Chiles':['Chile chipotle']},
+  'Crema de calabaza':{'🥦 Verduras':['Calabaza','Cebolla'],'🧀 Lácteos':['Crema'],'🧄 Básicos':['Ajo','Caldo de verduras']},
+  'Crema de zanahoria':{'🥦 Verduras':['Zanahoria','Cebolla'],'🧀 Lácteos':['Crema'],'🧄 Básicos':['Ajo','Caldo de verduras']},
+  'Crema de chayote':{'🥦 Verduras':['Chayote','Cebolla'],'🧀 Lácteos':['Crema'],'🧄 Básicos':['Caldo de verduras']},
+  'Crema de champiñones':{'🥦 Verduras':['Champiñones','Cebolla'],'🧀 Lácteos':['Crema'],'🧄 Básicos':['Ajo','Mantequilla']},
+  'Crema de elote':{'🥦 Verduras':['Elote','Cebolla'],'🧀 Lácteos':['Crema','Leche'],'🧄 Básicos':['Ajo']},
+  'Sopa de pasta':{'🫙 Abarrotes':['Pasta para sopa'],'🥦 Verduras':['Jitomate','Cebolla'],'🧄 Básicos':['Ajo','Caldo']},
+  'Sopa de tortilla':{'🫓 Tortillas y pan':['Tortillas'],'🌶️ Chiles':['Chile pasilla'],'🥦 Verduras':['Jitomate','Cebolla'],'🧀 Lácteos':['Crema','Queso fresco']},
+  'Sopa de papa':{'🥦 Verduras':['Papa','Cebolla'],'🧀 Lácteos':['Crema'],'🧄 Básicos':['Ajo','Caldo']},
+  'Sopa de verduras':{'🥦 Verduras':['Zanahoria','Papa','Ejotes','Chícharos','Calabaza','Cebolla']},
+  'Sopa de lentejas':{'🫙 Abarrotes':['Lentejas'],'🥦 Verduras':['Jitomate','Cebolla','Zanahoria'],'🥩 Carnes':['Tocino (opcional)']},
+  'Arroz rojo':{'🫙 Abarrotes':['Arroz'],'🥦 Verduras':['Jitomate','Cebolla','Zanahoria','Chícharos'],'🧄 Básicos':['Ajo']},
+  'Arroz verde':{'🫙 Abarrotes':['Arroz'],'🥦 Verduras':['Poblano','Cebolla','Cilantro'],'🧄 Básicos':['Ajo']},
+  'Arroz blanco':{'🫙 Abarrotes':['Arroz'],'🥦 Verduras':['Cebolla'],'🧄 Básicos':['Ajo']},
+  'Ensalada verde':{'🥦 Verduras':['Lechuga','Jitomate','Pepino']},
+  'Ensalada mixta':{'🥦 Verduras':['Lechuga','Jitomate','Pepino','Zanahoria']},
+  'Frijoles':{'🫙 Abarrotes':['Frijoles'],'🥦 Verduras':['Cebolla','Epazote']},
+  'Papas al perejil':{'🥦 Verduras':['Papa','Perejil'],'🧄 Básicos':['Mantequilla','Ajo']},
+  'Puré de papa':{'🥦 Verduras':['Papa'],'🧀 Lácteos':['Leche','Mantequilla']},
+  'Spaghetti rojo':{'🫙 Abarrotes':['Espagueti'],'🥦 Verduras':['Jitomate','Cebolla'],'🧄 Básicos':['Ajo']},
+  'Spaghetti blanco':{'🫙 Abarrotes':['Espagueti'],'🧀 Lácteos':['Crema','Queso manchego'],'🧄 Básicos':['Ajo','Mantequilla']},
+  'Spaghetti verde':{'🫙 Abarrotes':['Espagueti'],'🥦 Verduras':['Poblano','Cebolla'],'🧀 Lácteos':['Crema']},
+  'Verduras al vapor':{'🥦 Verduras':['Brócoli','Zanahoria','Ejotes','Calabaza']},
+  'Arroz con leche':{'🫙 Abarrotes':['Arroz','Azúcar'],'🧀 Lácteos':['Leche'],'🌶️ Chiles':['Canela']},
+  'Ensalada de manzana':{'🥦 Verduras':['Manzana','Plátano'],'🧀 Lácteos':['Crema'],'🫙 Abarrotes':['Nuez','Cacahuate','Azúcar']},
+  'Flan Napolitano':{'🧄 Básicos':['Huevo'],'🧀 Lácteos':['Leche condensada','Queso crema','Leche evaporada'],'🫙 Abarrotes':['Azúcar']},
+  'Gelatina':{'🫙 Abarrotes':['Gelatina en polvo','Azúcar']},
+  'Hot Cakes':{'🫙 Abarrotes':['Mezcla para hot cakes','Miel de maple'],'🧄 Básicos':['Huevo','Mantequilla'],'🧀 Lácteos':['Leche']},
+  // ── NUEVOS ──
+  'Chilaquiles con arrachera y frijoles':{'🥩 Carnes':['Arrachera'],'🫓 Tortillas y pan':['Totopos'],'🥦 Verduras':['Tomate','Cebolla','Cilantro'],'🧀 Lácteos':['Crema','Queso fresco'],'🫙 Abarrotes':['Salsa para chilaquiles','Frijoles']},
+  'Fruta con yogurt granola y miel':{'🥦 Verduras':['Uvas','Papaya','Melón'],'🧀 Lácteos':['Yogurt natural'],'🫙 Abarrotes':['Granola','Miel de abeja']},
+  'Café de olla':{'🫙 Abarrotes':['Café','Splenda'],'🧀 Lácteos':['Leche Carnation']},
+  'Agua fresca de temporada':{'🥦 Verduras':['Fresas congeladas','Mango congelado','Piña congelada'],'🫙 Abarrotes':['Splenda para repostería']},
+  'Enfrijoladas':{'🫙 Abarrotes':['Frijoles'],'🫓 Tortillas y pan':['Tortillas'],'🧀 Lácteos':['Crema','Queso fresco'],'🥦 Verduras':['Aguacate']},
+  'Bagel de salmón ahumado':{'🥩 Carnes':['Salmón ahumado'],'🫓 Tortillas y pan':['Bagels'],'🧀 Lácteos':['Queso crema'],'🫙 Abarrotes':['Alcaparras'],'🥦 Verduras':['Aguacate','Cebolla morada']},
+  'Bagel de huevo con jamón y aguacate':{'🥩 Carnes':['Jamón de pierna'],'🫓 Tortillas y pan':['Bagels'],'🧄 Básicos':['Huevo'],'🥦 Verduras':['Aguacate']},
+  'Huevos con jamón y aguacate':{'🥩 Carnes':['Jamón de pierna'],'🧄 Básicos':['Huevo'],'🥦 Verduras':['Aguacate'],'🫙 Abarrotes':['Frijoles refritos']},
+  'Carne asada con pasta y papas asadas':{'🥩 Carnes':['Carne para asar'],'🫙 Abarrotes':['Espagueti','Pasta de tomate'],'🧀 Lácteos':['Queso parmesano'],'🥦 Verduras':['Papa','Cebolla'],'🌶️ Chiles':['Especias para asar']},
+  'Tostadas de pollo':{'🥩 Carnes':['Pechuga de pollo'],'🫓 Tortillas y pan':['Tostadas'],'🧀 Lácteos':['Crema','Queso fresco'],'🥦 Verduras':['Aguacate','Lechuga','Jitomate']},
+  'Burritos de pollo':{'🥩 Carnes':['Pechuga de pollo'],'🫓 Tortillas y pan':['Tortillas de harina'],'🧀 Lácteos':['Crema','Queso fresco'],'🥦 Verduras':['Jitomate','Aguacate','Lechuga'],'🫙 Abarrotes':['Salsa']},
+  'Hamburguesa de res':{'🥩 Carnes':['Carne para hamburguesa'],'🫓 Tortillas y pan':['Pan de hamburguesa'],'🥦 Verduras':['Jitomate','Cebolla','Lechuga','Aguacate'],'🫙 Abarrotes':['Catsup','Mostaza','Mayonesa']},
+  'Hotdogs':{'🥩 Carnes':['Salchichas'],'🫓 Tortillas y pan':['Pan para hotdog'],'🥦 Verduras':['Jitomate','Cebolla'],'🌶️ Chiles':['Jalapeño'],'🫙 Abarrotes':['Catsup','Mostaza','Mayonesa']},
+  'Taquitos de guisado':{'🫓 Tortillas y pan':['Tortillas de maíz'],'🧀 Lácteos':['Crema','Queso fresco'],'🫙 Abarrotes':['Salsa']},
+  // ── NUEVOS DESAYUNOS ──
+  'Huevo revuelto':{'🧄 Básicos':['Huevo','Aceite o mantequilla']},
+  'Hotcakes':{'🫙 Abarrotes':['Mezcla para hotcakes','Miel de maple'],'🧄 Básicos':['Huevo','Mantequilla'],'🧀 Lácteos':['Leche']},
+  'Pan francés':{'🫓 Tortillas y pan':['Pan de caja o baguette'],'🧄 Básicos':['Huevo','Mantequilla'],'🧀 Lácteos':['Leche'],'🫙 Abarrotes':['Azúcar','Canela']},
+  'Waffles':{'🫙 Abarrotes':['Mezcla para waffles','Miel de maple'],'🧄 Básicos':['Huevo','Mantequilla'],'🧀 Lácteos':['Leche']},
+  'Puntas de filete en salsa':{'🥩 Carnes':['Puntas de filete'],'🥦 Verduras':['Jitomate','Cebolla','Chile poblano'],'🧄 Básicos':['Ajo']},
+  'Huevos a la mexicana':{'🧄 Básicos':['Huevo'],'🥦 Verduras':['Jitomate','Cebolla','Chile serrano']},
+  'Huevos divorciados':{'🧄 Básicos':['Huevo'],'🥦 Verduras':['Tomatillo','Jitomate','Cebolla','Chile serrano'],'🫓 Tortillas y pan':['Tortillas']},
+  'Huevos rancheros':{'🧄 Básicos':['Huevo'],'🥦 Verduras':['Jitomate','Cebolla','Chile serrano'],'🫓 Tortillas y pan':['Tortillas']},
+  'Huevos con nopales':{'🧄 Básicos':['Huevo'],'🥦 Verduras':['Nopales','Cebolla','Jitomate','Chile serrano']},
+  'Omelete con verduras':{'🧄 Básicos':['Huevo','Mantequilla'],'🥦 Verduras':['Espinaca','Champiñones'],'🧀 Lácteos':['Queso manchego']},
+  'Pan tostado con mermelada':{'🫓 Tortillas y pan':['Pan de caja'],'🫙 Abarrotes':['Mermelada','Mantequilla']},
+  'Molletes dulces':{'🫓 Tortillas y pan':['Pan bolillo'],'🫙 Abarrotes':['Mermelada','Mantequilla']},
+  'Pan dulce':{'🫙 Abarrotes':['Pan dulce surtido']},
+  'Quesadillas':{'🫓 Tortillas y pan':['Tortillas de maíz'],'🧀 Lácteos':['Queso Oaxaca']},
+  'Guacamole':{'🥦 Verduras':['Aguacate','Cebolla','Jitomate','Cilantro','Limón']},
+  'Salsa':{'🥦 Verduras':['Jitomate','Tomate','Cebolla','Chile cuaresmeño o serrano']},
+  'Agua de jamaica':{'🫙 Abarrotes':['Jamaica','Azúcar o Splenda']},
+  'Limonada':{'🥦 Verduras':['Limón'],'🫙 Abarrotes':['Azúcar o Splenda']},
+  'Té':{'🫙 Abarrotes':['Té de tu preferencia']},
+  'Leche':{'🧀 Lácteos':['Leche']},
+  'Licuado':{'🥦 Verduras':['Fruta de temporada'],'🧀 Lácteos':['Leche']},
+  'Jugo de naranja':{'🥦 Verduras':['Naranjas']},
+  'Avena con fruta':{'🫙 Abarrotes':['Avena','Miel de abeja'],'🧀 Lácteos':['Leche'],'🥦 Verduras':['Fruta de temporada']},
+  'Café':{'🫙 Abarrotes':['Café','Splenda'],'🧀 Lácteos':['Leche Carnation']},
+  'Tortillas de maíz':{'🫓 Tortillas y pan':['Tortillas de maíz']},
+};
+var RELLENO_ING = {
+  'Espinacas':    {'🥦 Verduras':['Espinacas']},
+  'Champiñones':  {'🥦 Verduras':['Champiñones']},
+  'Queso':        {'🧀 Lácteos':['Queso manchego']},
+  'A la mexicana':{'🥦 Verduras':['Jitomate','Cebolla','Chile serrano']},
+  'Pollo':        {'🥩 Carnes':['Pechuga de pollo']},
+  'Jamón':        {'🥩 Carnes':['Jamón de pierna']},
+  'Salchicha':    {'🥩 Carnes':['Salchichas']},
+};
+var HUEVO_RELLENO_ING = {
+  'Jamón':        {'🥩 Carnes':['Jamón de pierna']},
+  'Salchicha':    {'🥩 Carnes':['Salchichas']},
+  'Chorizo':      {'🥩 Carnes':['Chorizo']},
+  'Tocino':       {'🥩 Carnes':['Tocino']},
+  'A la mexicana':{'🥦 Verduras':['Jitomate','Cebolla','Chile serrano']},
+  'Nopales':      {'🥦 Verduras':['Nopales','Cebolla','Chile serrano']},
+};
+var RECETAS = {
+  // ── DESAYUNOS ──
+  'Huevo revuelto': {
+    porciones: 2,
+    ingredientes: ['4 huevos','2 cdas de mantequilla o aceite','Sal y pimienta al gusto'],
+    pasos: ['Bate los huevos con sal y pimienta.','Calienta la mantequilla en sartén a fuego medio.','Vierte los huevos y mueve despacio con espátula hasta que cuajen pero queden húmedos.','Sirve de inmediato con tortillas o pan.']
+  },
+  'Huevos divorciados': {
+    porciones: 2,
+    ingredientes: ['4 huevos','2 tortillas','Salsa verde (tomatillo, chile serrano, cilantro)','Salsa roja (jitomate, chile, ajo)','Aceite','Sal'],
+    pasos: ['Fríe las tortillas ligeramente y colócalas en el plato.','Fríe los huevos en aceite y sirve dos sobre cada tortilla.','Cubre uno con salsa verde y el otro con salsa roja.']
+  },
+  'Huevos rancheros': {
+    porciones: 2,
+    ingredientes: ['4 huevos','4 tortillas de maíz','3 jitomates','1 chile serrano','¼ cebolla','1 diente de ajo','Aceite','Sal'],
+    pasos: ['Licúa jitomate, chile, cebolla y ajo. Fríe la salsa en aceite caliente 5 min.','Fríe las tortillas en poco aceite.','Fríe los huevos al gusto.','Sirve 2 huevos sobre tortillas y baña con la salsa.']
+  },
+  'Machaca con huevo': {
+    porciones: 2,
+    ingredientes: ['150 g de machaca','4 huevos','½ jitomate picado','¼ cebolla picada','1 chile serrano picado','Aceite'],
+    pasos: ['Saltea cebolla y chile en aceite. Agrega jitomate y cocina 2 min.','Incorpora la machaca y mezcla bien.','Añade los huevos batidos y revuelve hasta cuajar.','Sirve con tortillas.']
+  },
+  'Omelete con verduras': {
+    porciones: 1,
+    ingredientes: ['3 huevos','1 cda mantequilla','Relleno al gusto (espinacas, champiñones, queso, jamón)','Sal y pimienta'],
+    pasos: ['Bate los huevos con sal y pimienta.','Derrite mantequilla en sartén a fuego medio-alto.','Vierte los huevos y deja cuajar los bordes.','Coloca el relleno en el centro, dobla el omelete a la mitad y sirve.']
+  },
+  'Hotcakes': {
+    porciones: 4,
+    ingredientes: ['1 taza de mezcla para hotcakes','¾ taza de leche','1 huevo','1 cda de mantequilla derretida','Miel de maple para servir'],
+    pasos: ['Mezcla todos los ingredientes hasta obtener masa homogénea (unos grumos están bien).','Calienta sartén con poco aceite o mantequilla.','Vierte ¼ de taza de masa por hotcake. Cocina hasta que aparezcan burbujas, voltea y dora 1 min más.','Sirve con miel de maple.']
+  },
+  'Pan francés': {
+    porciones: 2,
+    ingredientes: ['4 rebanadas de pan de caja o baguette','2 huevos','¼ taza de leche','Azúcar y canela al gusto','Mantequilla'],
+    pasos: ['Bate huevos con leche, azúcar y canela.','Remoja el pan en la mezcla.','Dora en mantequilla a fuego medio por ambos lados.','Sirve con miel o mermelada.']
+  },
+  'Waffles': {
+    porciones: 4,
+    ingredientes: ['1 taza de mezcla para waffles','¾ taza de leche','1 huevo','2 cdas de mantequilla derretida','Miel de maple'],
+    pasos: ['Mezcla ingredientes hasta integrar.','Precalienta la wafflera y engrasa ligeramente.','Vierte la mezcla y cocina hasta dorar.','Sirve con miel.']
+  },
+  'Molletes a la Mexicana': {
+    porciones: 2,
+    ingredientes: ['2 bolillos','½ taza de frijoles refritos','½ taza de queso manchego rallado','2 jitomates picados','¼ cebolla picada','1 chile serrano picado','Cilantro'],
+    pasos: ['Parte y tuesta los bolillos en el horno o sartén.','Unta frijoles refritos y cubre con queso.','Gratina en horno o microondas hasta derretir el queso.','Sirve con pico de gallo (jitomate, cebolla, chile y cilantro).']
+  },
+  'Molletes dulces': {
+    porciones: 2,
+    ingredientes: ['2 bolillos','4 cdas de mantequilla','4 cdas de mermelada de tu preferencia'],
+    pasos: ['Parte los bolillos y tuesta en sartén o comal.','Unta mantequilla generosamente.','Agrega mermelada encima y sirve.']
+  },
+  'Chilaquiles con arrachera y frijoles': {
+    porciones: 4,
+    ingredientes: ['300 g totopos','200 g arrachera en tiras','1 taza de salsa verde o roja','Frijoles refritos','Crema','Queso fresco','Cebolla morada','Cilantro','Aceite','Sal'],
+    pasos: ['Asa la arrachera sazonada con sal. Rebana en tiras.','Fríe la salsa en aceite caliente 3 min.','Añade los totopos y revuelve para bañarlos en salsa.','Sirve de inmediato con arrachera, frijoles, crema, queso y cebolla.']
+  },
+  'Enfrijoladas': {
+    porciones: 4,
+    ingredientes: ['12 tortillas de maíz','2 tazas de frijoles negros cocidos','2 chiles pasilla','¼ cebolla','1 diente de ajo','Crema','Queso fresco','Aceite','Sal'],
+    pasos: ['Licúa frijoles con chiles (asados), cebolla y ajo. Cuela y fríe en aceite 5 min. Salpimenta.','Sumerge cada tortilla en la salsa de frijol y dobla en cuatro.','Sirve con crema, queso fresco y aguacate.']
+  },
+  'Puntas de filete en salsa': {
+    porciones: 4,
+    ingredientes: ['500 g puntas de filete','3 chiles poblanos en rajas','2 jitomates en cubos','½ cebolla en julianas','2 dientes de ajo','Crema','Sal y pimienta','Aceite'],
+    pasos: ['Sella las puntas en aceite bien caliente. Retira.','En el mismo aceite saltea cebolla, ajo, chile y jitomate 5 min.','Regresa la carne, añade crema y cocina 3 min más.','Sirve con arroz y tortillas.']
+  },
+  'Papas con chorizo': {
+    porciones: 4,
+    ingredientes: ['500 g papa en cubos','200 g chorizo','½ cebolla picada','2 dientes de ajo','Sal','Aceite','Tortillas para servir'],
+    pasos: ['Cuece las papas al vapor o en agua 10 min. Escurre.','Fríe el chorizo hasta dorar, agrega cebolla y ajo.','Incorpora las papas y mezcla bien. Cocina 5 min.','Sirve con tortillas.']
+  },
+  'Bagel de salmón ahumado': {
+    porciones: 2,
+    ingredientes: ['2 bagels','100 g salmón ahumado','4 cdas queso crema','Alcaparras','Cebolla morada en láminas','Aguacate','Limón'],
+    pasos: ['Parte y tuesta los bagels.','Unta generosamente queso crema.','Coloca salmón ahumado, alcaparras, cebolla y aguacate.','Exprime limón encima y sirve.']
+  },
+  'Bagel de huevo con jamón y aguacate': {
+    porciones: 2,
+    ingredientes: ['2 bagels','4 huevos','4 rebanadas de jamón de pierna','1 aguacate','Sal y pimienta','Mantequilla'],
+    pasos: ['Parte y tuesta los bagels.','Fríe los huevos en mantequilla al gusto.','Arma: bagel + jamón + huevo + aguacate. Salpimenta.']
+  },
+  'Fruta con yogurt granola y miel': {
+    porciones: 2,
+    ingredientes: ['1 taza de fruta variada (papaya, melón, uvas)','1 taza de yogurt natural','½ taza de granola','2 cdas de miel de abeja'],
+    pasos: ['Corta la fruta en trozos.','Sirve en tazón: yogurt, fruta, granola y miel.']
+  },
+  'Avena con fruta': {
+    porciones: 2,
+    ingredientes: ['1 taza de avena','2 tazas de leche','Fruta de temporada','Miel o azúcar al gusto','Canela'],
+    pasos: ['Hierve la leche. Agrega la avena y mueve constantemente.','Cocina 5 min a fuego bajo hasta espesar.','Sirve con fruta picada, miel y canela.']
+  },
+  'Taquitos de guisado': {
+    porciones: 4,
+    ingredientes: ['12 tortillas de maíz','2 tazas del guisado de tu preferencia','Aceite para freír','Crema','Queso fresco','Salsa al gusto'],
+    pasos: ['Calienta el guisado. Rellena cada tortilla y enrolla bien.','Fríe los taquitos en aceite caliente hasta dorar y crujientes.','Escurre en papel absorbente.','Sirve con crema, queso y salsa.']
+  },
+
+  // ── SOPAS Y ARROCES ──
+  'Caldo Tlalpeño': {
+    porciones: 6,
+    ingredientes: ['1 pechuga de pollo','1 lata de garbanzos','2 zanahorias','2 calabazas','2 chiles chipotles en adobo','Epazote','Sal','Aceite'],
+    pasos: ['Cuece el pollo en agua con sal 20 min. Deshebra.','En el caldo agrega zanahoria, calabaza y garbanzos. Cuece 10 min.','Licúa los chiles con un poco de caldo y agrega al caldo.','Incorpora el pollo y epazote. Hierve 5 min más.']
+  },
+  'Caldo de Pollo': {
+    porciones: 6,
+    ingredientes: ['1 pollo en piezas','2 zanahorias','2 chayotes','Ejotes','2 calabazas','½ cebolla','Cilantro','2 dientes de ajo','Sal'],
+    pasos: ['Pon el pollo en agua con cebolla, ajo y sal. Hierve y desespuma.','Agrega zanahoria y chayote. Cocina 15 min.','Añade ejotes y calabaza. Cocina 10 min más.','Sirve con cilantro, limón y chile serrano.']
+  },
+  'Crema de calabaza': {
+    porciones: 4,
+    ingredientes: ['500 g calabaza en cubos','½ cebolla','2 dientes de ajo','1 taza de crema','1 litro de caldo de verduras','Sal y pimienta','Aceite'],
+    pasos: ['Saltea cebolla y ajo en aceite. Agrega calabaza y caldo.','Cocina 20 min hasta que la calabaza esté muy suave.','Licúa hasta obtener crema lisa. Regresa al fuego.','Agrega crema, salpimenta y sirve.']
+  },
+  'Crema de zanahoria': {
+    porciones: 4,
+    ingredientes: ['500 g zanahoria en cubos','½ cebolla','2 dientes de ajo','1 taza de crema','1 litro de caldo de verduras','Sal y pimienta','Aceite'],
+    pasos: ['Saltea cebolla y ajo. Agrega zanahoria y caldo.','Cocina 20 min hasta suavizar.','Licúa. Regresa al fuego, agrega crema y salpimenta.']
+  },
+  'Crema de chayote': {
+    porciones: 4,
+    ingredientes: ['3 chayotes en cubos','½ cebolla','2 dientes de ajo','1 taza de crema','1 litro de caldo de verduras','Sal y pimienta'],
+    pasos: ['Cuece chayote con cebolla y ajo en caldo 20 min.','Licúa hasta obtener textura lisa.','Regresa al fuego, agrega crema, salpimenta y sirve.']
+  },
+  'Crema de champiñones': {
+    porciones: 4,
+    ingredientes: ['400 g champiñones rebanados','½ cebolla','2 dientes de ajo','2 cdas de mantequilla','1 taza de crema','1 litro de caldo de pollo','Sal y pimienta'],
+    pasos: ['Saltea cebolla y ajo en mantequilla. Agrega champiñones y dora bien.','Añade caldo y cocina 10 min.','Licúa. Regresa al fuego, agrega crema y salpimenta.']
+  },
+  'Crema de elote': {
+    porciones: 4,
+    ingredientes: ['4 elotes (granos)','½ cebolla','2 dientes de ajo','1 taza de crema','1 taza de leche','Sal y pimienta','Aceite'],
+    pasos: ['Saltea cebolla y ajo. Agrega granos de elote y sofríe 3 min.','Añade leche y cocina 10 min.','Licúa. Agrega crema, salpimenta y sirve.']
+  },
+  'Sopa de pasta': {
+    porciones: 4,
+    ingredientes: ['200 g pasta para sopa (fideo o codito)','3 jitomates','¼ cebolla','1 diente de ajo','1 litro de caldo de pollo','Sal','Aceite'],
+    pasos: ['Licúa jitomate, cebolla y ajo.','Fríe la pasta en aceite hasta dorar. Agrega la salsa colada y fríe 2 min.','Añade el caldo caliente. Cocina a fuego bajo 12 min sin mover.']
+  },
+  'Sopa de tortilla': {
+    porciones: 4,
+    ingredientes: ['6 tortillas en tiras','4 jitomates','¼ cebolla','2 dientes de ajo','2 chiles pasilla','1 litro de caldo de pollo','Crema','Queso fresco','Aceite'],
+    pasos: ['Fríe las tiras de tortilla hasta crujientes. Escurre.','Asa los chiles, remoja 10 min y licúa con jitomate, cebolla y ajo.','Fríe la salsa en aceite 5 min. Agrega caldo y hierve 10 min.','Sirve la sopa con tiras de tortilla, crema y queso.']
+  },
+  'Sopa de papa': {
+    porciones: 4,
+    ingredientes: ['4 papas medianas en cubos','½ cebolla','2 dientes de ajo','1 taza de crema','1 litro de caldo de pollo','Sal y pimienta','Aceite'],
+    pasos: ['Saltea cebolla y ajo. Agrega papa y caldo.','Cocina 20 min hasta suavizar.','Licúa la mitad para dar cuerpo. Mezcla con crema y salpimenta.']
+  },
+  'Sopa de verduras': {
+    porciones: 4,
+    ingredientes: ['2 zanahorias','2 papas','Ejotes','Chícharos','2 calabazas','½ cebolla','Sal','Aceite'],
+    pasos: ['Saltea cebolla en aceite. Agrega todas las verduras en cubos.','Cubre con agua o caldo. Sazona con sal.','Cocina 20 min hasta que todas las verduras estén suaves.']
+  },
+  'Sopa de lentejas': {
+    porciones: 6,
+    ingredientes: ['2 tazas de lentejas','3 jitomates','½ cebolla','2 zanahorias en cubos','Tocino (opcional)','Sal','Aceite'],
+    pasos: ['Remoja las lentejas 30 min. Escurre.','Fríe tocino (si usas). Licúa jitomate y cebolla y fríe 3 min.','Agrega lentejas, zanahoria y agua suficiente.','Cocina 30 min hasta suavizar. Sazona.']
+  },
+  'Arroz rojo': {
+    porciones: 4,
+    ingredientes: ['2 tazas de arroz','3 jitomates','¼ cebolla','2 dientes de ajo','1 zanahoria en cubos','Chícharos','Sal','Aceite'],
+    pasos: ['Lava y seca el arroz. Fríe en aceite hasta dorar.','Licúa jitomate, cebolla y ajo. Agrega al arroz y fríe 2 min.','Añade agua caliente (proporción 1:1.5), zanahoria y chícharos.','Tapa y cocina a fuego bajo 20 min sin abrir.']
+  },
+  'Arroz blanco': {
+    porciones: 4,
+    ingredientes: ['2 tazas de arroz','¼ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Lava y seca el arroz. Fríe en aceite con cebolla y ajo hasta dorar.','Agrega agua caliente (1:1.5) y sal. Tapa.','Cocina a fuego bajo 20 min sin abrir.']
+  },
+  'Arroz verde': {
+    porciones: 4,
+    ingredientes: ['2 tazas de arroz','2 chiles poblanos','¼ cebolla','Cilantro','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Asa y pela los chiles. Licúa con cebolla, cilantro y ajo.','Fríe el arroz en aceite hasta dorar. Agrega la salsa verde y fríe 2 min.','Agrega agua caliente y sal. Tapa y cocina 20 min.']
+  },
+
+  // ── PLATOS FUERTES RES ──
+  'Albóndigas rellenas de philadelphia': {
+    porciones: 4,
+    ingredientes: ['500 g carne molida de res','1 huevo','Pan molido','100 g queso Philadelphia','3 jitomates','¼ cebolla','2 dientes de ajo','Arroz cocido','Sal y pimienta','Aceite'],
+    pasos: ['Mezcla carne, huevo, pan molido, sal y pimienta.','Forma albóndigas y rellena cada una con un cubo de Philadelphia.','Licúa jitomate, cebolla y ajo. Fríe la salsa en aceite 5 min.','Agrega albóndigas y cocina tapado 20 min. Sirve con arroz.']
+  },
+  'Alambre de bistec': {
+    porciones: 4,
+    ingredientes: ['500 g bistec en cubos','1 pimiento morrón rojo y 1 verde','1 cebolla en julianas','200 g queso Oaxaca','Sal y pimienta','Aceite','Tortillas de harina'],
+    pasos: ['Saltea bistec en aceite bien caliente. Reserva.','En el mismo aceite saltea pimiento y cebolla 5 min.','Regresa la carne. Cubre con queso desebrado y tapa 2 min.','Sirve con tortillas de harina.']
+  },
+  'Alambre de chuleta ahumada': {
+    porciones: 4,
+    ingredientes: ['400 g chuleta ahumada en cubos','1 pimiento morrón','1 cebolla','200 g queso Oaxaca','Aceite','Tortillas de harina'],
+    pasos: ['Saltea chuleta en aceite. Retira.','Saltea pimiento y cebolla en el mismo aceite.','Mezcla con la chuleta. Cubre con queso y tapa 2 min hasta derretir.','Sirve con tortillas.']
+  },
+  'Bistec a la Mexicana': {
+    porciones: 4,
+    ingredientes: ['500 g bistec en tiras','3 jitomates en cubos','½ cebolla en julianas','2 chiles serranos','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Sella el bistec en aceite muy caliente. Reserva.','En el mismo aceite fríe cebolla, ajo y chile 3 min.','Agrega jitomate y cocina 5 min.','Regresa el bistec, mezcla y sazona. Sirve con frijoles y tortillas.']
+  },
+  'Bistec en chile pasilla': {
+    porciones: 4,
+    ingredientes: ['500 g bistec en tiras','3 chiles pasilla','2 jitomates','½ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Asa y desvena los chiles. Remoja en agua caliente 10 min.','Licúa con jitomate, cebolla y ajo.','Sella el bistec en aceite. Agrega la salsa y cocina 10 min.']
+  },
+  'Carne al pastor': {
+    porciones: 6,
+    ingredientes: ['1 kg carne para pastor (cerdo)','3 chiles guajillo','2 chiles anchos','Achiote','Piña en rodajas','Cebolla','Cilantro','Tortillas','Vinagre','2 dientes de ajo'],
+    pasos: ['Licúa chiles (remojados), achiote, ajo y vinagre. Marina la carne 2 horas.','Asa en comal o sartén bien caliente con piña.','Rebana en trozos. Sirve en tortillas con cebolla, cilantro y piña.']
+  },
+  'Carne en su jugo': {
+    porciones: 6,
+    ingredientes: ['500 g falda de res en tiras','200 g tocino en trozos','1 taza de frijoles cocidos','6 tomatillos','½ cebolla','Cilantro','2 chiles serranos','2 dientes de ajo','Sal'],
+    pasos: ['Fríe el tocino hasta dorar. Agrega la carne y sella.','Licúa tomatillo, chile, ajo y cebolla. Agrega a la carne.','Añade frijoles y agua suficiente. Cocina 25 min.','Sirve con cilantro, cebolla y tortillas.']
+  },
+  'Carne asada con pasta y papas asadas': {
+    porciones: 4,
+    ingredientes: ['600 g carne para asar','4 papas medianas','200 g espagueti','1 taza de salsa de tomate','Queso parmesano','Sal','Pimienta','Especias para asar','Aceite'],
+    pasos: ['Sazona la carne y las papas (enteras) con sal, pimienta y especias. Asa en parrilla o sartén.','Cuece el espagueti al dente. Saltea con salsa de tomate.','Sirve carne rebanada con pasta y papa al lado. Espolvorea parmesano.']
+  },
+  'Costillas BBQ': {
+    porciones: 4,
+    ingredientes: ['1 kg costillas de res','1 botella de salsa BBQ','Sal','Pimienta'],
+    pasos: ['Sazona las costillas con sal y pimienta.','Asa a fuego bajo 1.5 horas volteando ocasionalmente.','Barniza con salsa BBQ los últimos 20 min. Sirve.']
+  },
+  'Espagueti a la Boloñesa': {
+    porciones: 4,
+    ingredientes: ['400 g espagueti','400 g carne molida','1 zanahoria picada','½ cebolla picada','2 dientes de ajo','1 lata de pasta de tomate','Queso parmesano','Sal y pimienta','Aceite'],
+    pasos: ['Sofríe cebolla, ajo y zanahoria en aceite. Agrega la carne y dora.','Añade pasta de tomate y 1 taza de agua. Cocina 20 min a fuego bajo.','Cuece el espagueti al dente. Mezcla con la salsa y sirve con parmesano.']
+  },
+  'Lasaña': {
+    porciones: 6,
+    ingredientes: ['400 g láminas de lasaña','400 g carne molida','1 lata pasta de tomate','500 ml leche','2 cdas mantequilla','2 cdas harina','200 g queso manchego rallado','Crema','Sal y pimienta'],
+    pasos: ['Prepara salsa boloñesa: dora carne con cebolla y ajo, agrega pasta de tomate y agua, cocina 15 min.','Prepara bechamel: derrite mantequilla, agrega harina, vierte leche poco a poco moviendo hasta espesar.','Arma en refractaria: láminas de pasta, boloñesa, bechamel, queso. Repite capas.','Hornea a 180°C por 35 min hasta gratinar.']
+  },
+  'Lengua en salsa verde': {
+    porciones: 6,
+    ingredientes: ['1 lengua de res','10 tomatillos','3 chiles serranos','½ cebolla','Cilantro','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Cuece la lengua en olla express con sal, cebolla y ajo 45 min. Pela y rebana.','Asa tomatillos, chiles y ajo. Licúa con cilantro y cebolla.','Fríe la salsa 5 min. Agrega la lengua y cocina 10 min. Sirve con tortillas.']
+  },
+  'Pastel de Carne': {
+    porciones: 6,
+    ingredientes: ['700 g carne molida','2 huevos','½ taza pan molido','1 zanahoria rallada','½ taza chícharos','½ cebolla picada','Sal y pimienta','Salsa catsup para barnizar'],
+    pasos: ['Mezcla todos los ingredientes excepto catsup.','Forma un rollo en molde para pan y barniza con catsup.','Hornea a 180°C por 45 min.','Reposa 10 min antes de rebanar.']
+  },
+  'Picadillo': {
+    porciones: 4,
+    ingredientes: ['500 g carne molida','3 papas en cubitos','2 zanahorias en cubitos','3 jitomates','¼ cebolla','2 dientes de ajo','1 chile serrano','Sal','Aceite'],
+    pasos: ['Fríe la carne hasta dorar. Agrega cebolla, ajo y chile.','Licúa jitomate y agrega a la carne. Cocina 5 min.','Añade papa y zanahoria con ½ taza de agua. Cocina 15 min tapado.']
+  },
+  'Puntas al chipotle con papas': {
+    porciones: 4,
+    ingredientes: ['500 g puntas de res','3 papas en cubos cocidas','2 chiles chipotles en adobo','½ cebolla','2 dientes de ajo','1 taza de crema','Sal y pimienta','Aceite'],
+    pasos: ['Sella las puntas en aceite bien caliente. Reserva.','Saltea cebolla y ajo. Agrega chipotles licuados y crema.','Incorpora puntas y papas. Cocina 5 min. Sirve.']
+  },
+  'Ropa vieja': {
+    porciones: 4,
+    ingredientes: ['500 g falda de res','1 pimiento morrón en tiras','1 cebolla en tiras','2 jitomates en cubos','2 dientes de ajo','Sal y pimienta','Aceite'],
+    pasos: ['Cuece la falda en agua con sal y ajo 40 min. Deshebra.','Saltea cebolla, pimiento y jitomate en aceite 8 min.','Agrega la carne deshebrada y sazona. Cocina 5 min más.']
+  },
+
+  // ── PLATOS FUERTES POLLO ──
+  'Burritos de pollo': {
+    porciones: 4,
+    ingredientes: ['2 pechugas de pollo cocidas y deshebradas','4 tortillas de harina grandes','½ taza crema','½ taza queso fresco','1 aguacate','1 jitomate','Lechuga','Salsa al gusto'],
+    pasos: ['Calienta las tortillas.','Distribuye todos los ingredientes en el centro de cada tortilla.','Dobla los lados y enrolla bien. Sirve cortado a la mitad.']
+  },
+  'Enmoladas': {
+    porciones: 4,
+    ingredientes: ['12 tortillas de maíz','2 pechugas de pollo cocidas y deshebradas','1 frasco de mole en pasta','Caldo de pollo','Crema','Queso fresco','Ajonjolí','Aceite'],
+    pasos: ['Disuelve el mole en caldo caliente, moviendo hasta lograr salsa espesa.','Sumerge cada tortilla en el mole, rellena con pollo y dobla.','Sirve bañadas con más mole, crema, queso y ajonjolí.']
+  },
+  'Entomatadas': {
+    porciones: 4,
+    ingredientes: ['12 tortillas de maíz','2 pechugas de pollo deshebradas','5 jitomates','½ cebolla','2 dientes de ajo','Crema','Queso fresco','Aceite','Sal'],
+    pasos: ['Licúa jitomate, cebolla y ajo. Fríe la salsa en aceite 5 min.','Sumerge las tortillas en la salsa, rellena con pollo y dobla.','Sirve con más salsa, crema y queso fresco.']
+  },
+  'Milanesa empanizada': {
+    porciones: 4,
+    ingredientes: ['4 milanesas de pollo','2 huevos batidos','1 taza de pan molido','Sal y pimienta','Aceite para freír','Limón','Lechuga'],
+    pasos: ['Sazona las milanesas. Pasa por huevo y luego por pan molido.','Fríe en aceite caliente 3-4 min por lado hasta dorar.','Escurre. Sirve con limón y ensalada.']
+  },
+  'Pechuga Cordon Blue': {
+    porciones: 4,
+    ingredientes: ['4 pechugas de pollo aplanadas','4 rebanadas de jamón','4 rebanadas de queso manchego','2 huevos batidos','Pan molido','Sal y pimienta','Aceite'],
+    pasos: ['Rellena cada pechuga con jamón y queso. Cierra con palillos o enrolla.','Pasa por huevo y luego por pan molido.','Fríe en aceite caliente o dora en sartén y termina en horno 180°C 15 min.']
+  },
+  'Pollo agridulce': {
+    porciones: 4,
+    ingredientes: ['2 pechugas en cubos','1 pimiento en cubos','1 taza de piña en trozos','3 cdas de salsa de soya','2 cdas de vinagre','2 cdas de azúcar o miel','1 cda de maicena','Aceite'],
+    pasos: ['Sella el pollo en aceite. Retira.','Saltea pimiento y piña. Mezcla soya, vinagre, azúcar y maicena disuelta.','Regresa el pollo, agrega la salsa y cocina moviendo hasta espesar.']
+  },
+  'Pollo a la mostaza': {
+    porciones: 4,
+    ingredientes: ['1 pollo en piezas','3 cdas de mostaza','1 taza de crema','½ cebolla','Sal y pimienta','Aceite'],
+    pasos: ['Sella las piezas de pollo en aceite. Reserva.','Fríe cebolla. Agrega mostaza y crema. Mezcla bien.','Regresa el pollo a la salsa y cocina tapado 20 min a fuego bajo.']
+  },
+  'Pollo con Mole': {
+    porciones: 4,
+    ingredientes: ['1 pollo en piezas cocidas','1 frasco de mole en pasta','Caldo de pollo','Ajonjolí','Tortillas'],
+    pasos: ['Disuelve el mole en caldo caliente hasta obtener salsa.','Agrega las piezas de pollo cocidas y hierve 10 min.','Sirve con ajonjolí tostado, arroz y tortillas.']
+  },
+  'Pollo en jitomate con verduras': {
+    porciones: 4,
+    ingredientes: ['1 pollo en piezas','4 jitomates','½ cebolla','2 zanahorias','1 taza de chícharos','2 dientes de ajo','1 taza de arroz cocido','Sal','Aceite'],
+    pasos: ['Sella el pollo. Licúa jitomate, cebolla y ajo.','Agrega la salsa al pollo y cocina 10 min.','Incorpora zanahoria y chícharos. Cocina 15 min más tapado.']
+  },
+  'Tacos de pollo': {
+    porciones: 4,
+    ingredientes: ['2 pechugas de pollo','½ cebolla','2 dientes de ajo','Cilantro','Cebolla picada','Limones','Salsa roja y verde','Tortillas','Chile serrano','Aguacate'],
+    pasos: ['Cuece el pollo con cebolla, ajo y sal. Deshebra.','Calienta las tortillas en comal.','Arma los tacos con pollo, cebolla, cilantro y salsa.']
+  },
+  'Tinga': {
+    porciones: 4,
+    ingredientes: ['2 pechugas de pollo deshebradas','3 jitomates','½ cebolla en julianas','2 chiles chipotles en adobo','2 dientes de ajo','Tostadas','Crema','Queso fresco','Aceite'],
+    pasos: ['Licúa jitomate, chipotle y ajo.','Fríe cebolla hasta transparente. Agrega la salsa y cocina 5 min.','Incorpora el pollo y mezcla bien. Cocina 10 min.','Sirve en tostadas con crema y queso.']
+  },
+  'Tortitas de pollo': {
+    porciones: 4,
+    ingredientes: ['2 pechugas cocidas y deshebradas','2 huevos','¼ cebolla picada','2 jitomates en cubos','Salsa de jitomate','Sal y pimienta','Aceite'],
+    pasos: ['Mezcla pollo deshebrado con huevo, cebolla y sal. Forma tortitas.','Fríe en aceite hasta dorar por ambos lados.','Sirve en salsa de jitomate con arroz.']
+  },
+  'Tostadas de pollo': {
+    porciones: 4,
+    ingredientes: ['8 tostadas','2 pechugas cocidas y deshebradas','Crema','Queso fresco desmoronado','Aguacate rebanado','Lechuga','1 jitomate','Sal'],
+    pasos: ['Sazona el pollo deshebrado con sal.','Arma las tostadas: lechuga, pollo, crema, queso, aguacate y jitomate.']
+  },
+  'Verdolagas con pollo en jitomate': {
+    porciones: 4,
+    ingredientes: ['1 manojo de verdolagas','1 pollo en piezas','4 jitomates','½ cebolla','2 chiles serranos','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Cuece el pollo. Licúa jitomate, cebolla, ajo y chile.','Fríe la salsa y agrega el pollo cocido.','Incorpora las verdolagas y cocina 8 min. Sirve con arroz.']
+  },
+
+  // ── PLATOS FUERTES CERDO ──
+  'Carne de puerco con verdolagas': {
+    porciones: 4,
+    ingredientes: ['500 g costilla de cerdo en trozos','1 manojo de verdolagas','6 tomatillos','2 chiles serranos','½ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Dora la costilla en su propia grasa. Reserva.','Cuece tomatillos y chiles. Licúa con cebolla y ajo.','Fríe la salsa, agrega la carne y cocina 15 min.','Incorpora las verdolagas y cocina 8 min más.']
+  },
+  'Chicharrón guisado': {
+    porciones: 4,
+    ingredientes: ['300 g chicharrón en trozos','3 jitomates','½ cebolla','1 chile serrano','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Licúa jitomate, cebolla, ajo y chile. Fríe la salsa en aceite 5 min.','Agrega el chicharrón y cocina 10 min hasta suavizar.','Sirve con tortillas y frijoles.']
+  },
+  'Chicharrón prensado guisado': {
+    porciones: 4,
+    ingredientes: ['300 g chicharrón prensado desmoronado','3 jitomates','½ cebolla','2 chiles pasilla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Asa los chiles, remoja y licúa con jitomate, cebolla y ajo.','Fríe la salsa en aceite 5 min.','Agrega el chicharrón y cocina 10 min. Sirve con tortillas.']
+  },
+  'Chuletas ahumadas': {
+    porciones: 4,
+    ingredientes: ['4 chuletas ahumadas','½ cebolla en aros','Mostaza','Miel','Sal y pimienta','Aceite'],
+    pasos: ['Barniza las chuletas con mezcla de mostaza y miel.','Dora en sartén con aceite 3-4 min por lado.','Sirve con cebolla dorada, puré de papa o arroz.']
+  },
+  'Cochinita Pibil': {
+    porciones: 8,
+    ingredientes: ['1.5 kg pierna de cerdo','Pasta de achiote','3 chiles guajillo','2 chiles anchos','Naranja agria','Cebolla morada','Limón','Tortillas','Habanero'],
+    pasos: ['Licúa achiote, chiles (remojados), naranja agria y ajo. Marina la carne toda la noche.','Envuelve en papel aluminio o plátano. Hornea a 160°C por 3 horas.','Deshebra la carne. Sirve en tortillas con cebollas encurtidas y habanero.']
+  },
+  'Costillas BBQ de cerdo': {
+    porciones: 4,
+    ingredientes: ['1 kg costillas de cerdo','Salsa BBQ','Sal','Pimienta','Ajo en polvo'],
+    pasos: ['Sazona las costillas con sal, pimienta y ajo.','Hornea a 160°C por 1.5 horas cubiertas con papel aluminio.','Barniza con BBQ y hornea 20 min más destapadas.']
+  },
+  'Espinazo': {
+    porciones: 4,
+    ingredientes: ['600 g espinazo de cerdo','3 papas en cubos','6 tomatillos','2 chiles serranos','½ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Cuece el espinazo en agua con sal 30 min.','Licúa tomatillo, chile, cebolla y ajo. Fríe la salsa.','Agrega espinazo, papas y caldo. Cocina 15 min más.']
+  },
+  'Verdolagas con espinazo en salsa verde': {
+    porciones: 4,
+    ingredientes: ['500 g espinazo','1 manojo verdolagas','8 tomatillos','2 chiles serranos','½ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Cuece el espinazo. Licúa tomatillo, chile, cebolla y ajo.','Fríe la salsa, agrega espinazo y caldo. Cocina 10 min.','Incorpora verdolagas y cocina 8 min más.']
+  },
+
+  // ── MARISCOS ──
+  'Aguachile': {
+    porciones: 4,
+    ingredientes: ['500 g camarón fresco pelado y limpio','½ taza de jugo de limón','2 chiles serranos','½ pepino en medias lunas','½ cebolla morada','Cilantro','Sal','Tostadas'],
+    pasos: ['Licúa limón, chiles y cilantro. Sazona con sal.','Abre los camarones a la mitad. Sumerge en el caldo y marina 10 min.','Sirve con pepino, cebolla morada y tostadas.']
+  },
+  'Camarones al ajillo': {
+    porciones: 4,
+    ingredientes: ['500 g camarones pelados','6 dientes de ajo rebanados','3 chiles de árbol','3 cdas de mantequilla','Jugo de limón','Aceite de oliva','Sal','Perejil'],
+    pasos: ['Calienta aceite y mantequilla a fuego medio.','Fríe el ajo hasta dorar. Agrega chiles y camarones.','Cocina 3-4 min por lado. Exprime limón y decora con perejil.']
+  },
+  'Camarones a la diabla': {
+    porciones: 4,
+    ingredientes: ['500 g camarones pelados','5 chiles de árbol','3 chiles morita','3 jitomates','½ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Licúa los chiles (asados), jitomate, cebolla y ajo.','Fríe la salsa en aceite hasta reducir 5 min.','Agrega camarones y cocina 5 min. Sirve con arroz.']
+  },
+  'Croquetas de Atún': {
+    porciones: 4,
+    ingredientes: ['2 latas de atún escurrido','2 huevos','½ taza pan molido','2 cdas mayonesa','½ cebolla picada finamente','Sal y pimienta','Aceite para freír'],
+    pasos: ['Mezcla atún, huevo, mayonesa, cebolla, sal y pimienta.','Forma croquetas y empaniza en pan molido.','Fríe en aceite caliente hasta dorar por ambos lados.']
+  },
+  'Ensalada de Atún': {
+    porciones: 2,
+    ingredientes: ['2 latas de atún','1 aguacate','1 jitomate en cubos','Lechuga','Mayonesa','Limón','Sal y pimienta'],
+    pasos: ['Escurre el atún y mezcla con mayonesa, limón, sal y pimienta.','Sirve sobre lechuga con jitomate y aguacate rebanado.']
+  },
+  'Ensalada de surimi': {
+    porciones: 2,
+    ingredientes: ['200 g surimi desmenuzado','1 pepino en cubos','1 jitomate en cubos','Mayonesa','Limón','Sal y pimienta'],
+    pasos: ['Mezcla surimi, pepino y jitomate.','Adereza con mayonesa, limón, sal y pimienta. Sirve frío.']
+  },
+  'Filete empanizado': {
+    porciones: 4,
+    ingredientes: ['4 filetes de pescado','2 huevos batidos','1 taza de pan molido','Sal y pimienta','Aceite','Limón'],
+    pasos: ['Sazona los filetes. Pasa por huevo y luego pan molido.','Fríe en aceite caliente 3 min por lado hasta dorar.','Sirve con limón y ensalada.']
+  },
+  'Codo con atún y jamón': {
+    porciones: 6,
+    ingredientes: ['500 g codo (pasta)','2 latas de atún','200 g jamón en cubos','2 zanahorias cocidas en cubos','1 taza de chícharos cocidos','Mayonesa','Sal y pimienta'],
+    pasos: ['Cuece la pasta al dente. Enjuaga con agua fría.','Mezcla pasta con atún, jamón, zanahoria, chícharos y mayonesa.','Salpimenta y refrigera 30 min antes de servir.']
+  },
+
+  // ── PLATOS MIXTOS ──
+  'Arroz chino con pollo': {
+    porciones: 4,
+    ingredientes: ['2 tazas de arroz cocido (de preferencia frío)','1 pechuga en cubos','2 zanahorias en cubos','1 taza de chícharos','1 cebolla picada','2 huevos','3 cdas de salsa de soya','Aceite'],
+    pasos: ['Saltea el pollo en aceite bien caliente. Reserva.','Fríe cebolla, zanahoria y chícharos. Empuja al lado.','Agrega huevos y revuelve. Incorpora arroz y salsa de soya.','Regresa el pollo, mezcla todo y saltea 3 min.']
+  },
+  'Arroz chino con res': {
+    porciones: 4,
+    ingredientes: ['2 tazas arroz cocido frío','200 g res en tiras','2 zanahorias','1 taza chícharos','1 cebolla','2 huevos','3 cdas salsa de soya','Aceite'],
+    pasos: ['Saltea la res en aceite muy caliente. Reserva.','Fríe verduras. Agrega huevos y revuelve.','Incorpora arroz, soya y la res. Saltea 3 min.']
+  },
+  'Arroz chino con camarón': {
+    porciones: 4,
+    ingredientes: ['2 tazas arroz cocido frío','300 g camarones','2 zanahorias','1 taza chícharos','1 cebolla','2 huevos','3 cdas salsa de soya','Aceite'],
+    pasos: ['Saltea camarones en aceite muy caliente. Reserva.','Fríe verduras. Agrega huevos y revuelve.','Incorpora arroz, soya y camarones. Saltea 3 min.']
+  },
+  'Encacahuatado': {
+    porciones: 4,
+    ingredientes: ['1 pollo en piezas (o bistec)','1 taza de cacahuate tostado','2 chiles mulatos','2 chipotles','3 jitomates','½ cebolla','2 dientes de ajo','Sal','Aceite'],
+    pasos: ['Asa los chiles, remoja y licúa con jitomate, cebolla, ajo y cacahuate.','Fríe la salsa en aceite 5 min hasta reducir.','Agrega la carne cocida y cocina 10 min. Sirve con arroz.']
+  },
+  'Enchiladas rojas': {
+    porciones: 4,
+    ingredientes: ['12 tortillas de maíz','3 chiles guajillo','2 chiles anchos','2 dientes de ajo','½ cebolla','2 tazas de pollo o res deshebrados','Crema','Queso fresco','Lechuga','Aceite'],
+    pasos: ['Asa los chiles, remoja 15 min, licúa con ajo y cebolla. Fríe la salsa 5 min.','Sumerge cada tortilla en la salsa, rellena con carne y dobla.','Sirve bañadas con más salsa, crema, queso y lechuga.']
+  },
+  'Enchiladas verdes': {
+    porciones: 4,
+    ingredientes: ['12 tortillas','10 tomatillos','2 chiles serranos','2 dientes de ajo','½ cebolla','Cilantro','2 tazas de pollo deshebrado','Crema','Queso fresco'],
+    pasos: ['Cuece tomatillos y chiles. Licúa con ajo, cebolla y cilantro.','Fríe la salsa 5 min.','Sumerge tortillas, rellena con pollo y dobla.','Sirve con crema y queso fresco.']
+  },
+  'Enchiladas suizas': {
+    porciones: 4,
+    ingredientes: ['12 tortillas','10 tomatillos','2 chiles serranos','½ cebolla','2 tazas de pollo deshebrado','1 taza de crema','100 g queso manchego rallado'],
+    pasos: ['Prepara salsa verde. Rellena tortillas con pollo y enrolla.','Coloca en refractaria. Baña con salsa verde mezclada con crema.','Cubre con queso manchego y gratina en horno 200°C por 15 min.']
+  },
+  'Hamburguesa de res': {
+    porciones: 4,
+    ingredientes: ['500 g carne molida para hamburguesa','4 panes para hamburguesa','Jitomate','Cebolla','Lechuga','Aguacate','Queso amarillo','Catsup','Mostaza','Mayonesa','Sal y pimienta'],
+    pasos: ['Forma 4 hamburguesas. Sazona con sal y pimienta.','Asa en parrilla o sartén 4 min por lado.','Agrega queso y tapa para derretir.','Arma con los ingredientes y salsas al gusto.']
+  },
+  'Pastel Azteca': {
+    porciones: 6,
+    ingredientes: ['12 tortillas de maíz','2 pechugas cocidas y deshebradas','2 chiles poblanos en rajas','3 jitomates','½ cebolla','Crema','Queso manchego','Aceite','Sal'],
+    pasos: ['Prepara salsa: licúa jitomate y cebolla, fríe 5 min.','En refractaria: capa de salsa, tortillas, pollo, rajas, crema, queso. Repite.','Hornea a 180°C por 20 min hasta gratinar.']
+  },
+  'Papas rellenas': {
+    porciones: 4,
+    ingredientes: ['4 papas grandes','300 g carne molida','½ cebolla','2 dientes de ajo','1 jitomate','100 g queso manchego','Crema','Sal y pimienta','Aceite'],
+    pasos: ['Hornea las papas a 200°C por 1 hora. Abre y vacía el centro.','Prepara picadillo con carne, cebolla, ajo y jitomate.','Rellena las papas, cubre con queso y crema.','Hornea 10 min más para gratinar.']
+  },
+
+  // ── GUARNICIONES ──
+  'Frijoles': {
+    porciones: 6,
+    ingredientes: ['500 g frijoles negros o bayos','1 cebolla','2 ramas de epazote','Sal','Aceite'],
+    pasos: ['Remoja los frijoles 4 horas (opcional). Escurre.','Cuece en olla express con cebolla y aceite 25 min (o en olla normal 2 horas).','Agrega epazote y sal al final.']
+  },
+  'Guacamole': {
+    porciones: 4,
+    ingredientes: ['3 aguacates maduros','1 jitomate picado','¼ cebolla picada finamente','Cilantro','1-2 chiles serranos','Jugo de limón','Sal'],
+    pasos: ['Machaca el aguacate con un tenedor (deja algo de textura).','Incorpora jitomate, cebolla, chile y cilantro.','Agrega limón y sal al gusto. Sirve inmediatamente.']
+  },
+  'Puré de papa': {
+    porciones: 4,
+    ingredientes: ['6 papas medianas','3 cdas de mantequilla','½ taza de leche caliente','Sal y pimienta'],
+    pasos: ['Cuece las papas en agua con sal hasta suavizar.','Escurre y machaca con mantequilla y leche caliente.','Salpimenta y sirve.']
+  },
+  'Verduras al vapor': {
+    porciones: 4,
+    ingredientes: ['Brócoli','Zanahoria','Ejotes','Calabaza','Sal','Aceite de oliva','Limón'],
+    pasos: ['Corta todas las verduras en trozos similares.','Cuece al vapor 8-10 min hasta que estén tiernas pero firmes.','Adovera con aceite de oliva, limón y sal.']
+  },
+  'Ensalada verde': {
+    porciones: 4,
+    ingredientes: ['1 lechuga romana','2 jitomates','1 pepino','Aceite de oliva','Vinagre','Sal y pimienta'],
+    pasos: ['Lava y seca la lechuga. Pica jitomate y pepino.','Mezcla en tazón grande.','Adereza con aceite, vinagre, sal y pimienta.']
+  },
+
+  // ── POSTRES ──
+  'Arroz con leche': {
+    porciones: 6,
+    ingredientes: ['1 taza de arroz','1 litro de leche','½ taza de azúcar','1 raja de canela','Canela molida para espolvorear'],
+    pasos: ['Cuece el arroz en 1 taza de agua con canela 10 min.','Agrega la leche y azúcar. Cocina a fuego bajo moviendo constantemente 20 min.','Sirve tibio o frío con canela molida.']
+  },
+  'Ensalada de manzana': {
+    porciones: 6,
+    ingredientes: ['4 manzanas en cubos','2 plátanos en rodajas','1 taza de crema','½ taza de nuez','¼ taza de cacahuate','Azúcar al gusto'],
+    pasos: ['Mezcla manzana y plátano en tazón.','Agrega crema, azúcar, nuez y cacahuate.','Refrigera 30 min antes de servir.']
+  },
+  'Flan Napolitano': {
+    porciones: 8,
+    ingredientes: ['1 lata leche condensada','1 lata leche evaporada','200 g queso crema','4 huevos','½ taza azúcar (para caramelo)'],
+    pasos: ['Derrite el azúcar hasta obtener caramelo. Vierte en molde y cubre el fondo.','Licúa leche condensada, evaporada, queso crema y huevos.','Vierte en molde. Hornea a baño María 180°C por 45 min.','Enfría y desmolda.']
+  },
+  'Gelatina': {
+    porciones: 6,
+    ingredientes: ['2 sobres de gelatina de sabor','2 tazas de agua caliente','2 tazas de agua fría'],
+    pasos: ['Disuelve la gelatina en agua caliente. Agrega agua fría.','Vierte en molde. Refrigera 2 horas hasta cuajar.']
+  },
+
+  // ── CENA ──
+  'Hotdogs': {
+    porciones: 4,
+    ingredientes: ['4 salchichas','4 panes para hotdog','Cebolla','Jitomate','Catsup','Mostaza','Mayonesa','Jalapeño'],
+    pasos: ['Calienta las salchichas en agua o sartén.','Tuesta los panes.','Arma con salchicha y agrega los toppings al gusto.']
+  },
+  'Pan tostado con mermelada': {
+    porciones: 2,
+    ingredientes: ['4 rebanadas de pan de caja','Mantequilla','Mermelada de tu preferencia'],
+    pasos: ['Tuesta el pan en tostadora o sartén.','Unta mantequilla y luego mermelada. Sirve.']
+  },
+};
+
+// ── State ──
+var elegidos = {};
+CATEGORIAS.forEach(function(c){ elegidos[c.id] = new Set(); });
+
+var asignados = {};
+DIAS.forEach(function(d){
+  asignados[d] = {};
+  SLOTS.forEach(function(s){ asignados[d][s.id] = new Set(); });
+});
+
+var superDone = new Set();
+var calMeta = 1800;
+var omeRellenos = new Set();
+var huevoRellenos = new Set();
+var antojRellenos = { Tacos: new Set(), Quesadillas: new Set(), Gorditas: new Set() };
+
+// ── Helpers ──
+function safe(s){ return s.replace(/[^a-zA-Z0-9]/g, '-'); }
+function esc(s){ var r=''; for(var i=0;i<s.length;i++){ var c=s[i]; if(c=="'")r+="\\'"; else if(c=='\\')r+='\\\\'; else r+=c; } return r; }
+function getCal(p){ return CALS[p] || 300; }
+
+// ═══════════════════════════════
+// SPLASH → APP
+// ═══════════════════════════════
+// ═══════════════════════════════
+// PERFIL Y CALORÍAS
+// ═══════════════════════════════
+var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo:0 };
+var calMeta = 1800; // kcal diarias para UNA persona (planeamos para 2)
+
+function showProfile(){
+  document.getElementById('spWelcome').style.display = 'none';
+  document.getElementById('spProfile').style.display = 'block';
+  document.getElementById('splash').classList.add('profile-mode');
+  document.getElementById('splash').scrollTop = 0;
+  calcularPreview();
+}
+function showWelcome(){
+  document.getElementById('spProfile').style.display = 'none';
+  document.getElementById('spWelcome').style.display = 'block';
+  document.getElementById('splash').classList.remove('profile-mode');
+  document.getElementById('splash').scrollTop = 0;
+}
+function setSexo(s){
+  perfil.sexo = s;
+  document.getElementById('togM').className = 'ptog' + (s==='M'?' on':'');
+  document.getElementById('togF').className = 'ptog' + (s==='F'?' on':'');
+  calcularPreview();
+}
+function setAct(el){
+  document.querySelectorAll('.pact').forEach(function(e){ e.classList.remove('on'); });
+  el.classList.add('on');
+  perfil.actividad = parseFloat(el.dataset.val);
+  calcularPreview();
+}
+function setObj(el){
+  document.querySelectorAll('.pobj').forEach(function(e){ e.classList.remove('on'); });
+  el.classList.add('on');
+  perfil.objetivo = parseInt(el.dataset.adj);
+  calcularPreview();
+}
+
+function calcTDEE(){
+  var edad = parseInt(document.getElementById('inEdad').value) || 35;
+  var peso = parseFloat(document.getElementById('inPeso').value) || 70;
+  var altura = parseFloat(document.getElementById('inAltura').value) || 165;
+  // Mifflin-St Jeor
+  var bmr = perfil.sexo === 'M'
+    ? (10 * peso) + (6.25 * altura) - (5 * edad) + 5
+    : (10 * peso) + (6.25 * altura) - (5 * edad) - 161;
+  var tdee = Math.round(bmr * perfil.actividad);
+  var meta = tdee + perfil.objetivo;
+  return { bmr: Math.round(bmr), tdee: tdee, meta: meta };
+}
+
+function calcularPreview(){
+  // read current input values
+  var r = calcTDEE();
+  var result = document.getElementById('profResult');
+  var objLabel = perfil.objetivo < 0 ? 'bajar de peso' : perfil.objetivo > 0 ? 'subir de peso' : 'mantenerse';
+  result.innerHTML =
+    '<div class="prof-result-kcal">' + r.meta + ' kcal/día</div>'
+    + '<div class="prof-result-label">Tu meta para ' + objLabel + '</div>'
+    + '<div class="prof-result-detail">'
+    + '🔥 Metabolismo basal: <b>' + r.bmr + ' kcal</b><br>'
+    + '⚡ Gasto total (TDEE): <b>' + r.tdee + ' kcal</b><br>'
+    + (perfil.objetivo !== 0 ? '🎯 Ajuste por objetivo: <b>' + (perfil.objetivo > 0 ? '+' : '') + perfil.objetivo + ' kcal</b>' : '🎯 Sin ajuste — mantenimiento')
+    + '</div>';
+  result.className = 'prof-result show';
+}
+
+function guardarPerfil(){
+  var edad = parseInt(document.getElementById('inEdad').value);
+  var peso = parseFloat(document.getElementById('inPeso').value);
+  var altura = parseFloat(document.getElementById('inAltura').value);
+  if(!edad || !peso || !altura || edad < 10 || peso < 30 || altura < 100){
+    alert('Por favor completa todos los datos correctamente.');
+    return;
+  }
+  perfil.edad = edad; perfil.peso = peso; perfil.altura = altura;
+  var r = calcTDEE();
+  calMeta = r.meta;
+  // Update header
+  document.getElementById('hdrKcal').textContent = calMeta;
+  // Update cals bar
+  var objLabel = perfil.objetivo < 0 ? '⬇️ Bajar de peso' : perfil.objetivo > 0 ? '⬆️ Subir de peso' : '⚖️ Mantenerse';
+  document.getElementById('calsBarKcal').textContent = calMeta + ' kcal';
+  document.getElementById('calsBarDetail').innerHTML =
+    objLabel + ' · TDEE: ' + r.tdee + ' kcal · BMR: ' + r.bmr + ' kcal<br>'
+    + (perfil.sexo==='M'?'♂ Hombre':'♀ Mujer') + ' · ' + perfil.edad + ' años · ' + perfil.peso + ' kg · ' + perfil.altura + ' cm';
+  document.getElementById('calsResultBar').style.display = 'block';
+  startApp();
+}
+
+function editarPerfil(){
+  document.getElementById('inEdad').value = perfil.edad;
+  document.getElementById('inPeso').value = perfil.peso;
+  document.getElementById('inAltura').value = perfil.altura;
+  document.getElementById('spWelcome').style.display = 'none';
+  document.getElementById('spProfile').style.display = 'block';
+  document.getElementById('splash').style.display = 'flex';
+  document.getElementById('splash').classList.remove('out');
+  document.getElementById('splash').classList.add('profile-mode');
+  document.getElementById('splash').scrollTop = 0;
+  document.getElementById('app').style.display = 'none';
+  calcularPreview();
+}
+
+// live preview on input change
+document.addEventListener('input', function(e){
+  if(['inEdad','inPeso','inAltura'].includes(e.target.id)) calcularPreview();
+});
+
+function startApp(){
+  document.getElementById('splash').classList.add('out');
+  setTimeout(function(){
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    buildCatStrip();
+    buildCats();
+    buildDays();
+  }, 450);
+}
+
+// ═══════════════════════════════
+// NAV
+// ═══════════════════════════════
+function goStep(n){
+  [1,2,3].forEach(function(i){
+    document.getElementById('step'+i).classList.remove('on');
+    document.getElementById('sb'+i).classList.remove('on');
+    document.getElementById('ht'+i).classList.remove('on');
+  });
+  document.getElementById('step'+n).classList.add('on');
+  document.getElementById('sb'+n).classList.add('on');
+  document.getElementById('ht'+n).classList.add('on');
+  document.getElementById('pfill').style.width = (n * 33.3) + '%';
+  if(n === 2) buildDays();
+  if(n === 3) renderSuper();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// calorías calculadas por perfil
+
+// ═══════════════════════════════
+// PASO 1: CAT STRIP
+// ═══════════════════════════════
+function buildCatStrip(){
+  var strip = document.getElementById('catStrip');
+  strip.innerHTML = '';
+  CATEGORIAS.forEach(function(cat){
+    var n = elegidos[cat.id].size;
+    var div = document.createElement('div');
+    div.className = 'cat-pill' + (n > 0 ? ' active' : '');
+    div.id = 'pill-' + cat.id;
+    div.onclick = function(){ document.getElementById('cat-' + cat.id).scrollIntoView({behavior:'smooth', block:'start'}); };
+    div.innerHTML = cat.icon + ' ' + cat.label + ' <span class="cat-pill-ct" id="pillct-' + cat.id + '">' + (n || '') + '</span>';
+    strip.appendChild(div);
+  });
+}
+
+function updatePill(catId){
+  var n = elegidos[catId].size;
+  var pill = document.getElementById('pill-' + catId);
+  var ct   = document.getElementById('pillct-' + catId);
+  var badge = document.getElementById('badge-' + catId);
+  if(pill){ pill.className = 'cat-pill' + (n > 0 ? ' active' : ''); }
+  if(ct){ ct.textContent = n > 0 ? n : ''; }
+  if(badge){ badge.textContent = n > 0 ? n + ' sel' : '0'; badge.className = 'cat-section-badge' + (n > 0 ? ' has' : ''); }
+}
+
+// ═══════════════════════════════
+// PASO 1: CATEGORÍAS
+// ═══════════════════════════════
+function buildCats(){
+  var cont = document.getElementById('catsContainer');
+  cont.innerHTML = '';
+  CATEGORIAS.forEach(function(cat){
+    var n = elegidos[cat.id].size;
+    var sec = document.createElement('div');
+    sec.className = 'cat-section anim';
+    sec.id = 'cat-' + cat.id;
+
+    var hdr = '<div class="cat-section-hdr">'
+      + '<span class="cat-section-icon">' + cat.icon + '</span>'
+      + '<span class="cat-section-name">' + cat.label + '</span>'
+      + '<span class="cat-section-badge' + (n > 0 ? ' has' : '') + '" id="badge-' + cat.id + '">' + (n > 0 ? n + ' sel' : '0') + '</span>'
+      + '</div>';
+
+    var groups = '';
+    cat.grupos.forEach(function(g){
+      if(g.label) groups += '<div class="group-label">' + g.label + '</div>';
+      groups += '<div class="chips">';
+      g.items.forEach(function(p){
+        var isOn = elegidos[cat.id].has(p);
+        var cal  = getCal(p);
+        var hasR = !!RECETAS[p];
+        var sid  = safe(cat.id + '-' + p);
+        groups += '<div class="chip' + (isOn ? ' on' : '') + '" id="chip-' + sid + '"'
+          + ' data-cat="' + cat.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">'
+          + '<div class="chip-check">' + (isOn ? '✓' : '') + '</div>'
+          + '<span class="chip-name">' + p + '</span>'
+          + '<span class="chip-cal">' + cal + ' kcal</span>'
+          + (hasR ? '<button class="chip-rec" data-rec="' + p.replace(/"/g,'&quot;') + '">📖</button>' : '')
+          + '</div>';
+        if(p === 'Omelete con verduras'){
+          groups += buildSubpanel('om-' + cat.id, '🥚 ¿Con qué rellenas el omelete?', OMELETE_OPTS, 'om', isOn);
+        }
+        if(p === 'Huevo revuelto'){
+          groups += buildSubpanel('hv-' + cat.id, '🍳 ¿Cómo lo quieres?', HUEVO_OPTS, 'hv', isOn);
+        }
+        if(p === 'Tacos' || p === 'Quesadillas' || p === 'Gorditas'){
+          groups += buildSubpanel('at-' + cat.id + '-' + p, '🫓 ¿De qué los quieres?', ANTOJITO_OPTS, 'at-' + p, isOn);
+        }
+      });
+      groups += '</div>';
+    });
+
+    sec.innerHTML = hdr + groups;
+    // Event delegation for chips
+    sec.addEventListener('click', function(e){
+      var chip = e.target.closest('.chip');
+      var recBtn = e.target.closest('.chip-rec');
+      var subChip = e.target.closest('.sub-chip');
+      if(recBtn){ e.stopPropagation(); abrirReceta(recBtn.dataset.rec); return; }
+      if(subChip){
+        var sp = subChip.closest('.subpanel');
+        if(sp) toggleRelleno(sp.dataset.store, subChip.dataset.op, sp.dataset.spid);
+        return;
+      }
+      if(chip && !recBtn){ toggleChip(chip.dataset.cat, chip.dataset.p); }
+    });
+    cont.appendChild(sec);
+  });
+}
+function buildSubpanel(id, title, opts, store, visible){
+  var html = '<div class="subpanel' + (visible ? ' on' : '') + '" id="sp-' + id + '" data-store="' + store + '" data-spid="' + id + '">'
+    + '<div class="sub-title">' + title + '</div>'
+    + '<div class="sub-chips">';
+  opts.forEach(function(op){
+    var isOn = false;
+    if(store === 'om') isOn = omeRellenos.has(op);
+    else if(store === 'hv') isOn = huevoRellenos.has(op);
+    else if(store.startsWith('at-')){ var b = store.slice(3); isOn = antojRellenos[b] && antojRellenos[b].has(op); }
+    html += '<div class="sub-chip' + (isOn ? ' on' : '') + '" id="spc-' + safe(id+'-'+op) + '" data-op="' + op.replace(/"/g,'&quot;') + '">' + op + '</div>';
+  });
+  html += '</div><div class="sub-note" id="spn-' + id + '"></div></div>';
+  return html;
+}
+function toggleChip(catId, platillo){
+  var set = elegidos[catId];
+  var sid = safe(catId + '-' + platillo);
+  var chip = document.getElementById('chip-' + sid);
+  var isOn = set.has(platillo);
+  if(isOn){
+    set.delete(platillo);
+    if(chip){ chip.classList.remove('on'); chip.querySelector('.chip-check').textContent = ''; }
+    hideSubpanels(catId, platillo);
+  } else {
+    set.add(platillo);
+    if(chip){ chip.classList.add('on'); chip.querySelector('.chip-check').textContent = '✓'; }
+    showSubpanel(catId, platillo);
+  }
+  updatePill(catId);
+}
+
+function showSubpanel(catId, p){
+  var sp;
+  if(p === 'Omelete con verduras'){ sp = document.getElementById('sp-om-' + catId); }
+  else if(p === 'Huevo revuelto'){ sp = document.getElementById('sp-hv-' + catId); }
+  else if(p === 'Tacos' || p === 'Quesadillas' || p === 'Gorditas'){ sp = document.getElementById('sp-at-' + catId + '-' + p); }
+  if(sp) sp.classList.add('on');
+}
+
+function hideSubpanels(catId, p){
+  ['sp-om-'+catId, 'sp-hv-'+catId, 'sp-at-'+catId+'-'+p].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.classList.remove('on');
+  });
+}
+
+function toggleRelleno(store, opcion, spId){
+  var set;
+  if(store === 'om') set = omeRellenos;
+  else if(store === 'hv') set = huevoRellenos;
+  else { var b = store.slice(3); if(!antojRellenos[b]) antojRellenos[b] = new Set(); set = antojRellenos[b]; }
+  var chip = document.getElementById('spc-' + safe(spId + '-' + opcion));
+  if(set.has(opcion)){ set.delete(opcion); if(chip) chip.classList.remove('on'); }
+  else { set.add(opcion); if(chip) chip.classList.add('on'); }
+  var note = document.getElementById('spn-' + spId);
+  if(note){ var arr = [...set]; note.textContent = arr.length ? 'Con: ' + arr.join(', ') : ''; }
+}
+
+function limpiarTodo(){
+  if(!confirm('¿Limpiar toda la selección?')) return;
+  CATEGORIAS.forEach(function(c){ elegidos[c.id].clear(); });
+  DIAS.forEach(function(d){ SLOTS.forEach(function(s){ asignados[d][s.id].clear(); }); });
+  omeRellenos.clear(); huevoRellenos.clear();
+  Object.keys(antojRellenos).forEach(function(k){ antojRellenos[k].clear(); });
+  superDone.clear();
+  buildCatStrip();
+  buildCats();
+}
+
+// ═══════════════════════════════
+// PASO 2: DÍAS
+// ═══════════════════════════════
+function buildDays(){
+  var cont = document.getElementById('daysContainer');
+  cont.innerHTML = '';
+  DIAS.forEach(function(dia){
+    var kcalDia = calcKcalDia(dia);
+    var card = document.createElement('div');
+    card.className = 'day-card anim';
+    card.dataset.dia = dia;
+    var hdr = '<div class="day-card-hdr">'
+      + '<span class="day-card-name">' + dia + '</span>'
+      + (kcalDia > 0 ? '<span class="day-card-kcal">' + kcalDia + ' kcal</span>' : '')
+      + '<button class="day-card-clear" onclick="limpiarDia(this.closest(\'.day-card\').dataset.dia)">× limpiar</button>'
+      + '</div>';
+    var rows = '';
+    SLOTS.forEach(function(slot){
+      var available = [];
+      slot.cats.forEach(function(cid){ available = available.concat([...elegidos[cid]]); });
+      if(!available.length) return;
+      rows += '<div class="meal-row"><span class="meal-icon">' + slot.emoji + '</span><div class="meal-slot">'
+        + '<div class="meal-label">' + slot.label + '</div>'
+        + '<div class="meal-chips" id="mchips-' + safe(dia+'-'+slot.id) + '">';
+      if(!available.length){
+        rows += '<span class="meal-empty">Elige en el paso 1</span>';
+      } else {
+        available.forEach(function(p){
+          var isOn = asignados[dia][slot.id].has(p);
+          rows += '<div class="meal-chip' + (isOn ? ' on' : '') + '" id="mc-' + safe(dia+'-'+slot.id+'-'+p) + '" onclick="toggleAsignar(this.dataset.dia,this.dataset.slot,this.dataset.p)" data-dia="' + dia.replace(/"/g,'&quot;') + '" data-slot="' + slot.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">' + p + '</div>';
+        });
+      }
+      rows += '</div></div></div>';
+    });
+    card.innerHTML = hdr + rows;
+    cont.appendChild(card);
+  });
+}
+
+function calcKcalDia(dia){
+  var total = 0;
+  SLOTS.forEach(function(s){
+    asignados[dia][s.id].forEach(function(p){ total += getCal(p); });
+  });
+  return total;
+}
+
+function toggleAsignar(dia, slotId, platillo){
+  var set = asignados[dia][slotId];
+  var el = document.getElementById('mc-' + safe(dia + '-' + slotId + '-' + platillo));
+  if(set.has(platillo)){ set.delete(platillo); if(el) el.classList.remove('on'); }
+  else { set.add(platillo); if(el) el.classList.add('on'); }
+  // update kcal badge
+  var kcal = calcKcalDia(dia);
+  var card = document.querySelector('[id^="mc-' + safe(dia) + '"]');
+  // find the day-card-kcal for this day
+  var allCards = document.querySelectorAll('.day-card');
+  allCards.forEach(function(c){
+    var nm = c.querySelector('.day-card-name');
+    if(nm && nm.textContent === dia){
+      var badge = c.querySelector('.day-card-kcal');
+      if(!badge){ badge = document.createElement('span'); badge.className = 'day-card-kcal'; nm.parentNode.insertBefore(badge, nm.nextSibling); }
+      badge.textContent = kcal > 0 ? kcal + ' kcal' : '';
+    }
+  });
+}
+
+function limpiarDia(dia){
+  SLOTS.forEach(function(s){
+    asignados[dia][s.id].forEach(function(p){
+      var el = document.getElementById('mc-' + safe(dia+'-'+s.id+'-'+p));
+      if(el) el.classList.remove('on');
+    });
+    asignados[dia][s.id].clear();
+  });
+  // reset kcal
+  document.querySelectorAll('.day-card').forEach(function(c){
+    var nm = c.querySelector('.day-card-name');
+    if(nm && nm.textContent === dia){
+      var badge = c.querySelector('.day-card-kcal');
+      if(badge) badge.textContent = '';
+    }
+  });
+}
+
+// ═══════════════════════════════
+// SUGERIR MENÚ
+// ═══════════════════════════════
+function sugerirMenu(){
+  // Collect pools
+  var pools = {};
+  SLOTS.forEach(function(s){
+    pools[s.id] = [];
+    s.cats.forEach(function(cid){ pools[s.id] = pools[s.id].concat([...elegidos[cid]]); });
+  });
+  var hasAny = Object.values(pools).some(function(a){ return a.length > 0; });
+  if(!hasAny){
+    alert('Primero elige platillos en el Paso 1.');
+    return;
+  }
+  // Shuffle each pool
+  Object.keys(pools).forEach(function(k){
+    pools[k] = pools[k].sort(function(){ return Math.random() - .5; });
+  });
+  // Reset all assignments
+  DIAS.forEach(function(d){ SLOTS.forEach(function(s){ asignados[d][s.id].clear(); }); });
+  // Assign trying to stay near calMeta
+  DIAS.forEach(function(d, di){
+    SLOTS.forEach(function(slot){
+      var pool = pools[slot.id];
+      if(!pool.length) return;
+      // Pick item at rotating index so we spread repeats
+      var idx = di % pool.length;
+      asignados[d][slot.id].add(pool[idx]);
+    });
+  });
+  buildDays();
+  // Scroll to first day
+  var first = document.querySelector('.day-card');
+  if(first) first.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ═══════════════════════════════
+// PASO 3: SÚPER
+// ═══════════════════════════════
+function buildSuperList(){
+  var all = {};
+  function add(cat, item){
+    if(!all[cat]) all[cat] = new Set();
+    all[cat].add(item);
+  }
+  add('🧄 Básicos','Sal'); add('🧄 Básicos','Aceite'); add('🧄 Básicos','Pimienta negra');
+
+  var platillos = new Set();
+  CATEGORIAS.forEach(function(cat){ elegidos[cat.id].forEach(function(p){ platillos.add(p); }); });
+
+  platillos.forEach(function(p){
+    if(!INGREDIENTES[p]) return;
+    Object.entries(INGREDIENTES[p]).forEach(function(e){
+      var cat = e[0]; e[1].forEach(function(i){ add(cat, i); });
+    });
+    if(p === 'Omelete con verduras'){
+      omeRellenos.forEach(function(op){ var ing = RELLENO_ING[op]; if(!ing) return; Object.entries(ing).forEach(function(e){ e[1].forEach(function(i){ add(e[0], i); }); }); });
+    }
+    if(p === 'Huevo revuelto'){
+      huevoRellenos.forEach(function(op){ var ing = HUEVO_RELLENO_ING[op]; if(!ing) return; Object.entries(ing).forEach(function(e){ e[1].forEach(function(i){ add(e[0], i); }); }); });
+    }
+  });
+  return all;
+}
+
+function renderSuper(){
+  var cont = document.getElementById('superContainer');
+  var items = buildSuperList();
+  var hasDishes = CATEGORIAS.some(function(c){ return elegidos[c.id].size > 0; });
+  if(!hasDishes){
+    cont.innerHTML = '<div class="empty"><div class="empty-ico">🛒</div><div class="empty-t">Lista vacía</div><div class="empty-d">Elige platillos en el paso 1.</div></div>';
+    // summary
+    document.getElementById('superSummary').innerHTML = '';
+    return;
+  }
+  // Summary stats
+  var totalItems = Object.values(items).reduce(function(s, set){ return s + set.size; }, 0);
+  var totalPlatillos = 0;
+  CATEGORIAS.forEach(function(c){ totalPlatillos += elegidos[c.id].size; });
+  document.getElementById('superSummary').innerHTML =
+    '<div class="super-stat"><span class="super-stat-n">' + totalPlatillos + '</span><span class="super-stat-l">platillos</span></div>'
+    + '<div class="super-stat"><span class="super-stat-n">' + totalItems + '</span><span class="super-stat-l">ingredientes</span></div>'
+    + '<div class="super-stat"><span class="super-stat-n">2</span><span class="super-stat-l">personas</span></div>';
+
+  var ORDER = ['🥩 Carnes','🥦 Verduras','🧀 Lácteos','🫙 Abarrotes','🌶️ Chiles','🫓 Tortillas y pan','🧄 Básicos'];
+  var html = '';
+  ORDER.forEach(function(cat){
+    var set = items[cat]; if(!set || !set.size) return;
+    html += '<div class="super-cat-card"><div class="super-cat-title">' + cat + '</div>';
+    [...set].sort().forEach(function(item){
+      var key = cat + ':::' + item;
+      var done = superDone.has(key);
+      html += '<div class="s-item' + (done ? ' done' : '') + '" onclick="toggleSuper(this.dataset.key,this)" data-key="' + key.replace(/"/g,'&quot;') + '">'
+        + '<div class="s-check">' + (done ? '✓' : '') + '</div>'
+        + '<span class="s-text">' + item + '</span></div>';
+        + '<div class="s-check">' + (done ? '✓' : '') + '</div>'
+        + '<span class="s-text">' + item + '</span></div>';
+    });
+    html += '</div>';
+  });
+  cont.innerHTML = html;
+}
+
+function toggleSuper(key, el){
+  if(superDone.has(key)){ superDone.delete(key); el.classList.remove('done'); el.querySelector('.s-check').textContent = ''; }
+  else { superDone.add(key); el.classList.add('done'); el.querySelector('.s-check').textContent = '✓'; }
+}
+
+// ═══════════════════════════════
+// RECETAS
+// ═══════════════════════════════
+function abrirReceta(platillo){
+  var r = RECETAS[platillo];
+  var box = document.getElementById('rmContent');
+  if(!r){
+    box.innerHTML = '<div class="rm-title">' + platillo + '</div><p style="color:#8A8178;font-size:13px;margin-top:12px;">Receta no disponible.</p>';
+  } else {
+    box.innerHTML = '<div class="rm-title">' + platillo + '</div>'
+      + '<div class="rm-por">👥 ' + r.porciones + ' porciones · ' + (CALS[platillo] || '—') + ' kcal</div>'
+      + '<div class="rm-sec">Ingredientes</div>'
+      + '<ul class="rm-ings">' + r.ingredientes.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</ul>'
+      + '<div class="rm-sec">Preparación</div>'
+      + '<ol class="rm-steps">' + r.pasos.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ol>';
+  }
+  document.getElementById('rmBg').classList.add('on');
+}
+function cerrarReceta(){ document.getElementById('rmBg').classList.remove('on'); }
+
+// ═══════════════════════════════
+// PDF
+// ═══════════════════════════════
+function abrirPDF(){
+  var items = buildSuperList();
+  var date = new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var diasConPlan = DIAS.filter(function(d){ return SLOTS.some(function(s){ return asignados[d][s.id].size > 0; }); });
+
+  // Menu
+  var menuHTML = '';
+  if(diasConPlan.length){
+    diasConPlan.forEach(function(d){
+      var kcal = calcKcalDia(d);
+      menuHTML += '<div class="pdf-day-block"><div class="pdf-day-name">' + d + (kcal > 0 ? ' <span style="color:#aaa;font-weight:400;font-size:11px;">(' + kcal + ' kcal)</span>' : '') + '</div>';
+      SLOTS.forEach(function(s){
+        var arr = [...asignados[d][s.id]]; if(!arr.length) return;
+        arr.forEach(function(p){
+          menuHTML += '<div class="pdf-meal">' + s.emoji + ' ' + p + (CALS[p] ? ' <span style="color:#aaa;font-size:10px;">· ' + CALS[p] + ' kcal</span>' : '') + '</div>';
+        });
+      });
+      menuHTML += '</div>';
+    });
+  } else {
+    CATEGORIAS.forEach(function(cat){
+      if(!elegidos[cat.id].size) return;
+      menuHTML += '<div class="pdf-day-block"><div class="pdf-day-name">' + cat.label + '</div>';
+      elegidos[cat.id].forEach(function(p){ menuHTML += '<div class="pdf-meal">' + cat.icon + ' ' + p + '</div>'; });
+      menuHTML += '</div>';
+    });
+  }
+
+  // Super
+  var ORDER = ['🥩 Carnes','🥦 Verduras','🧀 Lácteos','🫙 Abarrotes','🌶️ Chiles','🫓 Tortillas y pan','🧄 Básicos'];
+  var superHTML = '<div class="pdf-2col">';
+  ORDER.forEach(function(cat){
+    var set = items[cat]; if(!set || !set.size) return;
+    superHTML += '<div><div class="pdf-cat-title">' + cat + '</div><ul class="pdf-list">';
+    [...set].sort().forEach(function(i){ superHTML += '<li>' + i + '</li>'; });
+    superHTML += '</ul></div>';
+  });
+  superHTML += '</div>';
+
+  // Recetas
+  var recHTML = '';
+  var seen = new Set();
+  CATEGORIAS.forEach(function(cat){
+    elegidos[cat.id].forEach(function(p){
+      if(seen.has(p)) return;
+      var r = RECETAS[p]; if(!r) return;
+      seen.add(p);
+      recHTML += '<div class="pdf-rec-block"><div class="pdf-rec-name">' + p + '</div>'
+        + '<div style="font-size:9px;color:#aaa;margin-bottom:4px;">Rinde ' + r.porciones + ' porciones · ' + (CALS[p]||'—') + ' kcal</div>'
+        + '<div class="pdf-rec-sub">Ingredientes</div>'
+        + '<ul class="pdf-rec-list">' + r.ingredientes.map(function(i){ return '<li>' + i + '</li>'; }).join('') + '</ul>'
+        + '<div class="pdf-rec-sub">Preparación</div>'
+        + '<ul class="pdf-rec-list">' + r.pasos.map(function(p,i){ return '<li><b>' + (i+1) + '.</b> ' + p + '</li>'; }).join('') + '</ul>'
+        + '</div>';
+    });
+  });
+
+  document.getElementById('pdfBody').innerHTML = '<div class="pdf-wrap">'
+    + '<div class="pdf-h1">🍳 Mi Plan de Cocina</div>'
+    + '<div class="pdf-script">' + date + ' · Para 2 personas · Meta: ' + calMeta + ' kcal/día</div>'
+    + '<div class="pdf-sec">Menú de la semana</div>' + (menuHTML || '<p style="color:#999;font-size:12px;">Sin menú asignado.</p>')
+    + '<div class="pdf-sec">Lista del súper</div>' + superHTML
+    + (recHTML ? '<div class="pdf-sec">Recetas</div>' + recHTML : '')
+    + '</div>';
+  document.getElementById('pdfBg').classList.add('on');
+}
+function cerrarPDF(){ document.getElementById('pdfBg').classList.remove('on'); }
+function imprimirPDF(){
+  var html = document.getElementById('pdfBody').innerHTML;
+  var w = window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mi Plan de Cocina</title>'
+    + '<style>*{box-sizing:border-box;margin:0;padding:0;}body{padding:28px 36px;font-family:Georgia,serif;color:#1a1a1a;background:#fff;}'
+    + '.pdf-h1{font-size:24px;color:#C4673A;margin-bottom:4px;font-weight:900;}'
+    + '.pdf-script{font-size:12px;color:#999;margin-bottom:20px;}'
+    + '.pdf-sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#C4673A;border-bottom:2px solid #F0D5C5;padding-bottom:4px;margin:22px 0 10px;}'
+    + '.pdf-day-block{margin-bottom:12px;break-inside:avoid;}'
+    + '.pdf-day-name{font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:3px;}'
+    + '.pdf-meal{font-size:11px;padding-left:10px;color:#444;margin-bottom:2px;font-family:Arial,sans-serif;}'
+    + '.pdf-2col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}'
+    + '.pdf-cat-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#C4673A;border-bottom:1px solid #F0D5C5;padding-bottom:3px;margin:12px 0 6px;}'
+    + '.pdf-list{list-style:none;padding:0;}'
+    + '.pdf-list li{font-size:11px;color:#333;padding:3px 0;border-bottom:1px solid #f0f0f0;font-family:Arial,sans-serif;display:flex;align-items:center;gap:5px;}'
+    + '.pdf-list li::before{content:"□";color:#ccc;font-size:10px;}'
+    + '.pdf-rec-block{break-inside:avoid;margin-bottom:16px;padding-bottom:14px;border-bottom:2px solid #F0D5C5;}'
+    + '.pdf-rec-name{font-size:13px;font-weight:900;color:#C4673A;margin-bottom:2px;}'
+    + '.pdf-rec-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#C4673A;border-bottom:1px solid #F0D5C5;padding-bottom:2px;margin:5px 0 4px;}'
+    + '.pdf-rec-list{list-style:none;padding:0;}'
+    + '.pdf-rec-list li{font-size:10px;color:#333;padding:2px 0;border-bottom:1px solid #f8f8f8;font-family:Arial,sans-serif;}'
+    + '@media print{body{padding:14px;}@page{margin:10mm;}}</style>'
+    + '</head><body>' + html + '</body></html>');
+  w.document.close();
+  setTimeout(function(){ w.print(); }, 600);
+}
+
+// ═══════════════════════════════
+// PWA
+// ═══════════════════════════════
+var deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('installBtn').classList.add('on');
+});
+function installApp(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(){ deferredPrompt = null; document.getElementById('installBtn').classList.remove('on'); });
+}
+</script>
+</body>
+</html>
