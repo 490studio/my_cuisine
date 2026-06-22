@@ -2200,12 +2200,13 @@ function abrirPDF(tipo){
           + '<div class="pdf-day-name">' + d + (kcal > 0 ? '<span class="pdf-day-kcal">' + kcal + ' kcal</span>' : '') + '</div>';
         SLOTS.forEach(function(s){
           var arr = [...asignados[d][s.id]]; if(!arr.length) return;
-          arr.forEach(function(p){
-            menuHTML += '<div class="pdf-meal-row">'
-              + '<span class="pdf-meal-slot">' + s.emoji + ' ' + s.label + '</span>'
-              + '<span class="pdf-meal-name">' + p + (CALS[p] ? '<span class="pdf-meal-cal">' + CALS[p] + ' kcal</span>' : '') + '</span>'
-              + '</div>';
-          });
+          menuHTML += '<div class="pdf-meal-row">'
+            + '<span class="pdf-meal-slot">' + s.emoji + ' ' + s.label + '</span>'
+            + '<ul class="pdf-meal-list">'
+            + arr.map(function(p){
+                return '<li>' + p + (CALS[p] ? ' <span class="pdf-meal-cal">' + CALS[p] + ' kcal</span>' : '') + '</li>';
+              }).join('')
+            + '</ul></div>';
         });
         menuHTML += '</div>';
       });
@@ -2301,9 +2302,12 @@ function imprimirPDF(){
     + '.pdf-day-block{margin-bottom:14px;break-inside:avoid;page-break-inside:avoid;}'
     + '.pdf-day-name{font-size:14px;font-weight:700;color:#1a1a1a;padding:6px 0;border-bottom:2px solid #F0D5C5;margin-bottom:6px;display:flex;align-items:center;gap:10px;}'
     + '.pdf-day-kcal{font-size:10px;font-weight:600;color:#C4673A;background:#FDF0E8;padding:2px 7px;border-radius:8px;font-family:Arial,sans-serif;}'
-    + '.pdf-meal-row{display:flex;align-items:baseline;gap:8px;padding:3px 0;border-bottom:1px solid #f5f5f5;}'
+    + '.pdf-meal-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #f5f5f5;}'
     + '.pdf-meal-slot{font-size:10px;font-weight:700;color:#8A8178;min-width:90px;flex-shrink:0;font-family:Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em;}'
     + '.pdf-meal-name{font-size:12px;color:#1a1a1a;flex:1;font-family:Arial,sans-serif;}'
+    + '.pdf-meal-list{list-style:none;padding:0;margin:0;flex:1;}'
+    + '.pdf-meal-list li{font-size:12px;color:#1a1a1a;font-family:Arial,sans-serif;padding:1px 0 1px 12px;position:relative;}'
+    + '.pdf-meal-list li::before{content:"·";position:absolute;left:0;color:#C4673A;font-weight:700;}'
     + '.pdf-meal-cal{font-size:10px;color:#aaa;margin-left:6px;font-family:Arial,sans-serif;}'
     /* Super */
     + '.pdf-super-note{font-size:11px;color:#8A8178;margin-bottom:16px;font-family:Arial,sans-serif;}'
