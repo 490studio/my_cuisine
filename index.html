@@ -397,6 +397,52 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 .hdr-prof{background:none;border:1.5px solid #E5E0D8;border-radius:20px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#4A443C;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;margin-right:4px;}
 .hdr-prof:hover{background:#F0E4DC;border-color:#C4673A;color:#C4673A;}
 
+/* ── DISCLAIMER ── */
+.disclaimer{
+  background:#FAFAF8;border:1.5px solid #E5E0D8;border-radius:12px;
+  padding:12px 14px;margin-bottom:20px;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.disclaimer-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.disclaimer-text{font-size:11px;color:#4A443C;line-height:1.6;}
+.disclaimer-text b{color:#1A1714;}
+.disclaimer-small{
+  font-size:10px;color:#8A8178;text-align:center;
+  line-height:1.5;margin-top:12px;padding:0 4px;
+}
+
+/* ── CONDICIONES PERFIL ── */
+.cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.cond-item{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 11px;border-radius:10px;
+  border:1.5px solid #E5E0D8;background:#FAFAF8;
+  cursor:pointer;transition:all .15s;
+}
+.cond-item.on{background:#F0E4DC;border-color:#C4673A;}
+.cond-item.on.blue{background:#EDF4FF;border-color:#4A7CB8;}
+.cond-item.on.green{background:#DDF0E4;border-color:#4A7C59;}
+.cond-item.on.purple{background:#F3EDFF;border-color:#7C59B8;}
+.cond-check{
+  width:16px;height:16px;border-radius:4px;border:1.5px solid #D4CFC5;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;transition:all .15s;
+}
+.cond-item.on .cond-check{background:#C4673A;border-color:#C4673A;}
+.cond-item.on.blue .cond-check{background:#4A7CB8;border-color:#4A7CB8;}
+.cond-item.on.green .cond-check{background:#4A7C59;border-color:#4A7C59;}
+.cond-item.on.purple .cond-check{background:#7C59B8;border-color:#7C59B8;}
+.cond-icon{font-size:16px;flex-shrink:0;}
+.cond-info{flex:1;}
+.cond-name{font-size:12px;font-weight:700;color:#1A1714;line-height:1.2;}
+.cond-adj{font-size:10px;color:#8A8178;margin-top:1px;}
+.cond-note{
+  background:#FDF6DC;border:1.5px solid #E5C896;border-radius:10px;
+  padding:10px 12px;margin-top:8px;display:none;
+  font-size:11px;color:#4A443C;line-height:1.6;
+}
+.cond-note.on{display:block;}
+
 /* ── ACCORDION ── */
 .acc-group{margin-bottom:6px;border:1.5px solid #E5E0D8;border-radius:12px;overflow:hidden;background:#FFFFFF;}
 .acc-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;background:#FAFAF8;transition:background .15s;user-select:none;-webkit-user-select:none;}
@@ -490,6 +536,16 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
   <div id="spProfile" style="display:none;width:100%;max-width:420px;text-align:left;">
     <div class="prof-title">Tu perfil</div>
     <div class="prof-sub">Para calcular tus calorías exactas</div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">ℹ️</span>
+      <div class="disclaimer-text">
+        <b>Nota importante:</b> Mi Cocina es una guía de planeación básica y <b>no es una aplicación médica</b>.
+        Los cálculos calóricos son aproximados y de referencia general. Esta app <b>no sustituye</b> la consulta
+        con un nutriólogo, médico o especialista en salud. El uso de la información es <b>responsabilidad
+        exclusiva del usuario</b>.
+      </div>
+    </div>
 
     <!-- Sexo -->
     <div class="prof-field">
@@ -586,10 +642,61 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
       </div>
     </div>
 
+    <!-- Condiciones especiales -->
+    <div class="prof-field">
+      <div class="prof-label">Situación especial <span style="font-size:10px;color:#8A8178;font-weight:400;text-transform:none;">(opcional)</span></div>
+      <div class="cond-grid" id="condGrid">
+        <div class="cond-item green" data-cond="embarazo" data-adj="300" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🤰</span>
+          <div class="cond-info"><div class="cond-name">Embarazo</div><div class="cond-adj">+300 kcal</div></div>
+        </div>
+        <div class="cond-item green" data-cond="lactancia" data-adj="500" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🍼</span>
+          <div class="cond-info"><div class="cond-name">Lactancia</div><div class="cond-adj">+500 kcal</div></div>
+        </div>
+        <div class="cond-item purple" data-cond="menopausia" data-adj="-150" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🌸</span>
+          <div class="cond-info"><div class="cond-name">Menopausia</div><div class="cond-adj">-150 kcal</div></div>
+        </div>
+        <div class="cond-item blue" data-cond="hipertension" data-adj="0" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">❤️</span>
+          <div class="cond-info"><div class="cond-name">Hipertensión</div><div class="cond-adj">Bajo sodio</div></div>
+        </div>
+        <div class="cond-item blue" data-cond="diabetes" data-adj="0" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🩸</span>
+          <div class="cond-info"><div class="cond-name">Diabetes</div><div class="cond-adj">Control glucémico</div></div>
+        </div>
+        <div class="cond-item blue" data-cond="colesterol" data-adj="0" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🫀</span>
+          <div class="cond-info"><div class="cond-name">Colesterol alto</div><div class="cond-adj">Bajo en grasas</div></div>
+        </div>
+        <div class="cond-item" data-cond="hipotiroidismo" data-adj="-200" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🦋</span>
+          <div class="cond-info"><div class="cond-name">Hipotiroidismo</div><div class="cond-adj">-200 kcal</div></div>
+        </div>
+        <div class="cond-item" data-cond="vegano" data-adj="0" onclick="toggleCond(this)">
+          <div class="cond-check"></div>
+          <span class="cond-icon">🌱</span>
+          <div class="cond-info"><div class="cond-name">Vegano/Vegetariano</div><div class="cond-adj">Sin carne</div></div>
+        </div>
+      </div>
+      <div class="cond-note" id="condNote"></div>
+    </div>
+
     <!-- Resultado preview -->
     <div class="prof-result" id="profResult"></div>
 
     <button class="sp-start" style="width:100%;margin-top:8px;" onclick="guardarPerfil()">Ver mi plan →</button>
+    <p class="disclaimer-small">
+      Al continuar aceptas que esta app es solo una guía de referencia y no sustituye consejo médico profesional.
+    </p>
     <button style="background:none;border:none;color:#8A8178;font-size:12px;margin-top:12px;cursor:pointer;font-family:Inter,sans-serif;" onclick="showWelcome()">← Regresar</button>
   </div>
 </div>
@@ -669,6 +776,9 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
         </div>
         <div style="flex:1;font-size:11px;color:#8A8178;line-height:1.6;" id="calsBarDetail"></div>
         <button class="btn btn-g btn-sm" onclick="editarPerfil()">Editar perfil</button>
+      </div>
+      <div style="font-size:10px;color:#C0BAB0;margin-top:8px;line-height:1.5;">
+        ⚠️ Valores de referencia aproximados. No sustituyen orientación de un profesional de salud.
       </div>
     </div>
 
@@ -1662,7 +1772,7 @@ function getCal(p){ return CALS[p] || 300; }
 // ═══════════════════════════════
 // PERFIL Y CALORÍAS
 // ═══════════════════════════════
-var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo:0 };
+var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo:0, condiciones:[] };
 var calMeta = 1800; // kcal diarias para UNA persona (planeamos para 2)
 
 function showProfile(){
@@ -1697,6 +1807,43 @@ function setObj(el){
   calcularPreview();
 }
 
+var COND_NOTES = {
+  embarazo:     '🤰 Embarazo: Se suman ~300 kcal extra. Prioriza proteínas, ácido fólico, hierro y calcio. Evita alimentos crudos.',
+  lactancia:    '🍼 Lactancia: Se suman ~500 kcal extra. Aumenta agua, calcio y proteína. Evita alcohol y cafeína en exceso.',
+  menopausia:   '🌸 Menopausia: Metabolismo más lento. Se reducen ~150 kcal. Prioriza calcio, vitamina D y fitoestrógenos.',
+  hipertension: '❤️ Hipertensión: Limita sal (menos de 2g/día). Favorece verduras, frutas, granos integrales. Evita embutidos y comida procesada.',
+  diabetes:     '🩸 Diabetes: Controla carbohidratos simples. Prefiere alimentos de bajo índice glucémico. Distribuye comidas en el día.',
+  colesterol:   '🫀 Colesterol alto: Reduce grasas saturadas y trans. Aumenta fibra soluble, pescado y aceite de oliva.',
+  hipotiroidismo:'🦋 Hipotiroidismo: Metabolismo reducido. Se restan ~200 kcal. Evita exceso de soya y crucíferas crudas.',
+  vegano:       '🌱 Vegano/Vegetariano: Asegura proteína completa combinando leguminosas y cereales. Suplementa B12, hierro y zinc.'
+};
+
+function toggleCond(el){
+  var cond = el.dataset.cond;
+  var idx  = perfil.condiciones.indexOf(cond);
+  if(idx === -1){
+    perfil.condiciones.push(cond);
+    el.classList.add('on');
+    el.querySelector('.cond-check').textContent = '✓';
+  } else {
+    perfil.condiciones.splice(idx, 1);
+    el.classList.remove('on');
+    el.querySelector('.cond-check').textContent = '';
+  }
+  // Update note
+  var note = document.getElementById('condNote');
+  if(note){
+    var notes = perfil.condiciones.map(function(c){ return COND_NOTES[c]||''; }).filter(Boolean);
+    if(notes.length){
+      note.innerHTML = notes.join('<br><br>');
+      note.classList.add('on');
+    } else {
+      note.classList.remove('on');
+    }
+  }
+  calcularPreview();
+}
+
 function calcTDEE(){
   var edad = parseInt(document.getElementById('inEdad').value) || 35;
   var peso = parseFloat(document.getElementById('inPeso').value) || 70;
@@ -1706,8 +1853,12 @@ function calcTDEE(){
     ? (10 * peso) + (6.25 * altura) - (5 * edad) + 5
     : (10 * peso) + (6.25 * altura) - (5 * edad) - 161;
   var tdee = Math.round(bmr * perfil.actividad);
-  var meta = tdee + perfil.objetivo;
-  return { bmr: Math.round(bmr), tdee: tdee, meta: meta };
+  var condAdj = perfil.condiciones.reduce(function(sum, c){
+    var el = document.querySelector('[data-cond="'+c+'"]');
+    return sum + (el ? parseInt(el.dataset.adj)||0 : 0);
+  }, 0);
+  var meta = tdee + perfil.objetivo + condAdj;
+  return { bmr: Math.round(bmr), tdee: tdee, meta: meta, condAdj: condAdj };
 }
 
 function calcularPreview(){
@@ -1715,6 +1866,7 @@ function calcularPreview(){
   var r = calcTDEE();
   var result = document.getElementById('profResult');
   var objLabel = perfil.objetivo < 0 ? 'bajar de peso' : perfil.objetivo > 0 ? 'subir de peso' : 'mantenerse';
+  var condText = r.condAdj !== 0 ? '<br>🩺 Ajuste por condición: <b>' + (r.condAdj > 0 ? '+' : '') + r.condAdj + ' kcal</b>' : '';
   result.innerHTML =
     '<div class="prof-result-kcal">' + r.meta + ' kcal/día</div>'
     + '<div class="prof-result-label">Tu meta para ' + objLabel + '</div>'
@@ -1722,6 +1874,7 @@ function calcularPreview(){
     + '🔥 Metabolismo basal: <b>' + r.bmr + ' kcal</b><br>'
     + '⚡ Gasto total (TDEE): <b>' + r.tdee + ' kcal</b><br>'
     + (perfil.objetivo !== 0 ? '🎯 Ajuste por objetivo: <b>' + (perfil.objetivo > 0 ? '+' : '') + perfil.objetivo + ' kcal</b>' : '🎯 Sin ajuste — mantenimiento')
+    + condText
     + '</div>';
   result.className = 'prof-result show';
 }
@@ -1742,9 +1895,11 @@ function guardarPerfil(){
   // Update cals bar
   var objLabel = perfil.objetivo < 0 ? '⬇️ Bajar de peso' : perfil.objetivo > 0 ? '⬆️ Subir de peso' : '⚖️ Mantenerse';
   document.getElementById('calsBarKcal').textContent = calMeta + ' kcal';
+  var condLabels = {embarazo:'🤰',lactancia:'🍼',menopausia:'🌸',hipertension:'❤️',diabetes:'🩸',colesterol:'🫀',hipotiroidismo:'🦋',vegano:'🌱'};
+  var condStr = perfil.condiciones.length ? ' · ' + perfil.condiciones.map(function(c){return condLabels[c]||c;}).join(' ') : '';
   document.getElementById('calsBarDetail').innerHTML =
     objLabel + ' · TDEE: ' + r.tdee + ' kcal · BMR: ' + r.bmr + ' kcal<br>'
-    + (perfil.sexo==='M'?'♂ Hombre':'♀ Mujer') + ' · ' + perfil.edad + ' años · ' + perfil.peso + ' kg · ' + perfil.altura + ' cm';
+    + (perfil.sexo==='M'?'♂ Hombre':'♀ Mujer') + ' · ' + perfil.edad + ' años · ' + perfil.peso + ' kg · ' + perfil.altura + ' cm' + condStr;
   document.getElementById('calsResultBar').style.display = 'block';
   startApp();
 }
