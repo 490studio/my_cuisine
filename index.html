@@ -1821,6 +1821,8 @@ function buildCats(){
           if(exists){ inp.style.borderColor='#C4673A'; inp.placeholder='Ya existe'; inp.value=''; return; }
           customOpciones[catId][glabel].push(val);
           if(pop) pop.style.display='none';
+          // Auto-select the new item
+          elegidos[catId].add(val);
           // Save plan state, rebuild, restore
           var saved={};
           CATEGORIAS.forEach(function(c){ saved[c.id]=[...elegidos[c.id]]; });
