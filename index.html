@@ -431,12 +431,12 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
 
 /* Estrella en cada chip */
 .chip-fav{
-  background:none;border:none;font-size:13px;cursor:pointer;
-  padding:0 2px;opacity:.35;transition:opacity .15s, transform .15s;
+  background:none;border:none;font-size:12px;cursor:pointer;
+  padding:0 2px;opacity:.25;transition:opacity .15s, transform .15s;
   flex-shrink:0;line-height:1;
 }
-.chip-fav:hover{opacity:.8;}
-.chip-fav.on{opacity:1;transform:scale(1.1);}
+.chip-fav:hover{opacity:.9;}
+.chip-fav.on{opacity:1;transform:scale(1.15);}
 
 /* Chips ocultos en modo favoritos */
 .chip.hidden-fav{display:none;}
@@ -894,14 +894,13 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
       <div class="fav-toggle-wrap">
         <div>
           <div class="fav-toggle-label">⭐ Mis favoritos</div>
-          <div class="fav-toggle-sub" id="favBarSub">Activa para ver solo tus platillos habituales</div>
+          <div class="fav-toggle-sub" id="favBarSub">Toca ☆ en cada platillo para guardarlo como favorito</div>
         </div>
         <label class="fav-switch" style="margin-left:auto;">
           <input type="checkbox" id="favToggleInput" onchange="toggleFavMode(this.checked)">
           <span class="fav-slider"></span>
         </label>
       </div>
-      <button class="fav-edit-btn" id="favEditBtn" onclick="toggleFavEditMode()">✏️ Editar</button>
     </div>
 
     <!-- Categories -->
@@ -1875,6 +1874,9 @@ var calMeta = 1800;
 var omeRellenos = new Set();
 var huevoRellenos = new Set();
 var antojRellenos = { Tacos: new Set(), Quesadillas: new Set(), Gorditas: new Set() };
+var porciones = 1;
+var calMode   = true;
+
 var customOpciones = {};  // customOpciones[catId][groupLabel] = [items]
 var favoritos = {};       // favoritos[catId] = Set of fav dish names
 var favMode = false;      // showing only favorites
@@ -2298,7 +2300,7 @@ function buildCats(){
               + '<span class="chip-name">' + p + '</span>'
               + '<span class="chip-cal">' + getCal(p) + ' kcal</span>'
               + (RECETAS[p] ? '<button class="chip-rec" data-rec="' + p.replace(/"/g,'&quot;') + '">&#128214;</button>' : '')
-              + '<button class="chip-fav' + (isFav?' on':'') + '" id="favbtn-' + sid + '" data-favcat="' + cat.id + '" data-favp="' + p.replace(/"/g,'&quot;') + '" style="display:none;">' + (isFav?'⭐':'☆') + '</button>'
+              + '<button class="chip-fav' + (isFav?' on':'') + '" id="favbtn-' + sid + '" data-favcat="' + cat.id + '" data-favp="' + p.replace(/"/g,'&quot;') + '">' + (isFav?'⭐':'☆') + '</button>'
               + '</div>';
           });
           var subkey = safe(cat.id + '-' + sub.label);
@@ -2330,7 +2332,7 @@ function buildCats(){
             + '<span class="chip-name">' + p + '</span>'
             + '<span class="chip-cal">' + getCal(p) + ' kcal</span>'
             + (RECETAS[p] ? '<button class="chip-rec" data-rec="' + p.replace(/"/g,'&quot;') + '">&#128214;</button>' : '')
-            + '<button class="chip-fav' + (isFav?' on':'') + '" id="favbtn-' + sid + '" data-favcat="' + cat.id + '" data-favp="' + p.replace(/"/g,'&quot;') + '" style="display:none;">' + (isFav?'⭐':'☆') + '</button>'
+            + '<button class="chip-fav' + (isFav?' on':'') + '" id="favbtn-' + sid + '" data-favcat="' + cat.id + '" data-favp="' + p.replace(/"/g,'&quot;') + '">' + (isFav?'⭐':'☆') + '</button>'
             + '</div>';
           if(p==='Omelete con verduras') groups += buildSubpanel('om-'+cat.id,'&#129370; Relleno',OMELETE_OPTS,'om',isOn);
           if(p==='Huevo revuelto') groups += buildSubpanel('hv-'+cat.id,'&#129370; Complemento',HUEVO_OPTS,'hv',isOn);
@@ -2428,9 +2430,7 @@ function buildCats(){
   // Apply favorites filter and show stars if in edit mode
   applyFavFilter();
   updateFavBar();
-  if(favEditMode){
-    document.querySelectorAll('.chip-fav').forEach(function(el){ el.style.display=''; });
-  }
+  // stars always visible
   // Auto-enable fav mode if has favorites and first build
   var input = document.getElementById('favToggleInput');
   if(input) input.checked = favMode;
@@ -2979,9 +2979,8 @@ function imprimirPDF(){
 window.addEventListener('load',function(){
   // Tour shown after profile, inside startApp
 });
-</script>
-</body>
-</htmlfunction compartirWhatsApp(){
+
+function compartirWhatsApp(){
   var richList = buildSuperListConCantidades();
   var ORDER = ['🥩 Carnes','🥦 Verduras','🧀 Lácteos','🫙 Abarrotes','🌶️ Chiles','🫓 Tortillas y pan','🧄 Básicos'];
   var CAT_EMOJI = {
@@ -3010,4 +3009,6 @@ window.addEventListener('load',function(){
   window.open('https://wa.me/?text=' + encodeURIComponent(lineas.join(sep)), '_blank');
 }
 
->
+</script>
+</body>
+</html>
