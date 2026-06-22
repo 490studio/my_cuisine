@@ -397,6 +397,55 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 .hdr-prof{background:none;border:1.5px solid #E5E0D8;border-radius:20px;padding:5px 10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:#4A443C;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;margin-right:4px;}
 .hdr-prof:hover{background:#F0E4DC;border-color:#C4673A;color:#C4673A;}
 
+/* ── FAVORITOS ── */
+.fav-bar{
+  background:#FFFFFF;border-bottom:1px solid #E5E0D8;
+  padding:10px 16px;display:flex;align-items:center;gap:10px;
+}
+.fav-toggle-wrap{display:flex;align-items:center;gap:8px;flex:1;}
+.fav-toggle-label{font-size:12px;font-weight:700;color:#1A1714;}
+.fav-toggle-sub{font-size:11px;color:#8A8178;}
+.fav-switch{
+  position:relative;width:44px;height:24px;flex-shrink:0;cursor:pointer;
+}
+.fav-switch input{opacity:0;width:0;height:0;position:absolute;}
+.fav-slider{
+  position:absolute;inset:0;background:#E5E0D8;border-radius:12px;
+  transition:background .2s;
+}
+.fav-slider::before{
+  content:'';position:absolute;width:18px;height:18px;
+  left:3px;bottom:3px;background:#fff;border-radius:50%;
+  transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+input:checked + .fav-slider{background:#C4673A;}
+input:checked + .fav-slider::before{transform:translateX(20px);}
+.fav-edit-btn{
+  background:none;border:1.5px solid #E5E0D8;border-radius:20px;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+  color:#4A443C;padding:5px 11px;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.fav-edit-btn:hover{border-color:#C4673A;color:#C4673A;}
+.fav-edit-btn.active{background:#FDF6DC;border-color:#B8860B;color:#B8860B;}
+
+/* Estrella en cada chip */
+.chip-fav{
+  background:none;border:none;font-size:13px;cursor:pointer;
+  padding:0 2px;opacity:.35;transition:opacity .15s, transform .15s;
+  flex-shrink:0;line-height:1;
+}
+.chip-fav:hover{opacity:.8;}
+.chip-fav.on{opacity:1;transform:scale(1.1);}
+
+/* Chips ocultos en modo favoritos */
+.chip.hidden-fav{display:none;}
+.acc-group.all-hidden{display:none;}
+.group-empty-fav{
+  font-size:11px;color:#8A8178;font-style:italic;
+  padding:6px 2px 4px;
+}
+
 /* ── MODO SELECTOR ── */
 .modo-cards{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px;margin:0 auto;}
 .modo-card{
@@ -838,6 +887,21 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
         <input class="search-input" id="searchInput" type="text" placeholder="Buscar platillo..." autocomplete="off" oninput="buscarPlatillo(this.value)">
       </div>
       <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- Favoritos bar -->
+    <div class="fav-bar" id="favBar">
+      <div class="fav-toggle-wrap">
+        <div>
+          <div class="fav-toggle-label">⭐ Mis favoritos</div>
+          <div class="fav-toggle-sub" id="favBarSub">Activa para ver solo tus platillos habituales</div>
+        </div>
+        <label class="fav-switch" style="margin-left:auto;">
+          <input type="checkbox" id="favToggleInput" onchange="toggleFavMode(this.checked)">
+          <span class="fav-slider"></span>
+        </label>
+      </div>
+      <button class="fav-edit-btn" id="favEditBtn" onclick="toggleFavEditMode()">✏️ Editar</button>
     </div>
 
     <!-- Categories -->
@@ -1812,6 +1876,25 @@ var omeRellenos = new Set();
 var huevoRellenos = new Set();
 var antojRellenos = { Tacos: new Set(), Quesadillas: new Set(), Gorditas: new Set() };
 var customOpciones = {};  // customOpciones[catId][groupLabel] = [items]
+var favoritos = {};       // favoritos[catId] = Set of fav dish names
+var favMode = false;      // showing only favorites
+var favEditMode = false;  // showing star buttons to edit favorites
+
+// Init favoritos sets
+CATEGORIAS.forEach(function(c){ favoritos[c.id] = new Set(); });
+
+// Load saved favorites from localStorage
+(function(){
+  try{
+    var saved = JSON.parse(localStorage.getItem('micocina_favs')||'{}');
+    Object.keys(saved).forEach(function(catId){
+      if(favoritos[catId]) favoritos[catId] = new Set(saved[catId]);
+    });
+    // If user has favorites, auto-enable fav mode
+    var total = Object.values(favoritos).reduce(function(a,s){return a+s.size;},0);
+    if(total > 0) favMode = true;
+  }catch(e){}
+})();
 
 // ── Helpers ──
 function safe(s){ return s.replace(/[^a-zA-Z0-9]/g, '-'); }
@@ -2077,6 +2160,99 @@ function updatePill(catId){
 // ═══════════════════════════════
 // PASO 1: CATEGORÍAS
 // ═══════════════════════════════
+function saveFavoritos(){
+  try{
+    var toSave = {};
+    Object.keys(favoritos).forEach(function(k){ toSave[k]=[...favoritos[k]]; });
+    localStorage.setItem('micocina_favs', JSON.stringify(toSave));
+  }catch(e){}
+}
+
+function toggleFav(catId, platillo, e){
+  e.stopPropagation();
+  var set = favoritos[catId];
+  var sid = 'favbtn-' + safe(catId+'-'+platillo);
+  var btn = document.getElementById(sid);
+  if(set.has(platillo)){
+    set.delete(platillo);
+    if(btn){ btn.classList.remove('on'); btn.textContent='☆'; }
+  } else {
+    set.add(platillo);
+    if(btn){ btn.classList.add('on'); btn.textContent='⭐'; }
+  }
+  saveFavoritos();
+  updateFavBar();
+}
+
+function toggleFavMode(on){
+  favMode = on;
+  var sub = document.getElementById('favBarSub');
+  if(sub) sub.textContent = on ? 'Mostrando solo tus favoritos' : 'Mostrando todos los platillos';
+  applyFavFilter();
+}
+
+function toggleFavEditMode(){
+  favEditMode = !favEditMode;
+  var btn = document.getElementById('favEditBtn');
+  if(btn){ btn.className = 'fav-edit-btn' + (favEditMode?' active':''); btn.textContent = favEditMode ? '✅ Listo' : '✏️ Editar'; }
+  // Show/hide stars
+  document.querySelectorAll('.chip-fav').forEach(function(el){
+    el.style.display = favEditMode ? '' : 'none';
+  });
+  if(!favEditMode) saveFavoritos();
+}
+
+function applyFavFilter(){
+  var input = document.getElementById('favToggleInput');
+  if(input) input.checked = favMode;
+  document.querySelectorAll('.chip').forEach(function(chip){
+    var catId = chip.dataset.cat;
+    var p     = chip.dataset.p;
+    if(!catId || !p) return;
+    var isFav = favoritos[catId] && favoritos[catId].has(p);
+    if(favMode && !isFav){
+      chip.classList.add('hidden-fav');
+    } else {
+      chip.classList.remove('hidden-fav');
+    }
+  });
+  // Hide accordion groups where all chips are hidden
+  document.querySelectorAll('.acc-group').forEach(function(grp){
+    var chips = grp.querySelectorAll('.chip');
+    var allHidden = chips.length > 0 && [...chips].every(function(c){ return c.classList.contains('hidden-fav'); });
+    grp.classList.toggle('all-hidden', favMode && allHidden);
+  });
+  // Show empty message per flat group
+  document.querySelectorAll('.chips').forEach(function(chipsEl){
+    var chips = chipsEl.querySelectorAll('.chip');
+    var allHidden = chips.length > 0 && [...chips].every(function(c){ return c.classList.contains('hidden-fav'); });
+    var existing = chipsEl.parentNode.querySelector('.group-empty-fav');
+    if(favMode && allHidden){
+      if(!existing){
+        var msg = document.createElement('div');
+        msg.className = 'group-empty-fav';
+        msg.textContent = 'Sin favoritos en este grupo — toca ✏️ Editar para agregar';
+        chipsEl.parentNode.insertBefore(msg, chipsEl.nextSibling);
+      }
+    } else {
+      if(existing) existing.remove();
+    }
+  });
+}
+
+function updateFavBar(){
+  var total = Object.values(favoritos).reduce(function(a,s){return a+s.size;},0);
+  var sub = document.getElementById('favBarSub');
+  if(!sub) return;
+  if(favMode){
+    sub.textContent = 'Mostrando ' + total + ' favorito' + (total!==1?'s':'');
+  } else {
+    sub.textContent = total > 0
+      ? total + ' favorito' + (total!==1?'s':'') + ' guardado' + (total!==1?'s':'')
+      : 'Activa para ver solo tus platillos habituales';
+  }
+}
+
 function buildCats(){
   var cont = document.getElementById('catsContainer');
   cont.innerHTML = '';
@@ -2115,12 +2291,14 @@ function buildCats(){
           }
           subItems.forEach(function(p){
             var isOn = elegidos[cat.id].has(p);
+            var isFav = favoritos[cat.id] && favoritos[cat.id].has(p);
             var sid = safe(cat.id + '-' + p);
             groups += '<div class="chip' + (isOn?' on':'') + '" id="chip-' + sid + '" data-cat="' + cat.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">'
               + '<div class="chip-check">' + (isOn?'&#10003;':'') + '</div>'
               + '<span class="chip-name">' + p + '</span>'
               + '<span class="chip-cal">' + getCal(p) + ' kcal</span>'
               + (RECETAS[p] ? '<button class="chip-rec" data-rec="' + p.replace(/"/g,'&quot;') + '">&#128214;</button>' : '')
+              + '<button class="chip-fav' + (isFav?' on':'') + '" id="favbtn-' + sid + '" data-favcat="' + cat.id + '" data-favp="' + p.replace(/"/g,'&quot;') + '" style="display:none;">' + (isFav?'⭐':'☆') + '</button>'
               + '</div>';
           });
           var subkey = safe(cat.id + '-' + sub.label);
@@ -2145,12 +2323,14 @@ function buildCats(){
         }
         allItems.forEach(function(p){
           var isOn = elegidos[cat.id].has(p);
+          var isFav = favoritos[cat.id] && favoritos[cat.id].has(p);
           var sid = safe(cat.id + '-' + p);
           groups += '<div class="chip' + (isOn?' on':'') + '" id="chip-' + sid + '" data-cat="' + cat.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">'
             + '<div class="chip-check">' + (isOn?'&#10003;':'') + '</div>'
             + '<span class="chip-name">' + p + '</span>'
             + '<span class="chip-cal">' + getCal(p) + ' kcal</span>'
             + (RECETAS[p] ? '<button class="chip-rec" data-rec="' + p.replace(/"/g,'&quot;') + '">&#128214;</button>' : '')
+            + '<button class="chip-fav' + (isFav?' on':'') + '" id="favbtn-' + sid + '" data-favcat="' + cat.id + '" data-favp="' + p.replace(/"/g,'&quot;') + '" style="display:none;">' + (isFav?'⭐':'☆') + '</button>'
             + '</div>';
           if(p==='Omelete con verduras') groups += buildSubpanel('om-'+cat.id,'&#129370; Relleno',OMELETE_OPTS,'om',isOn);
           if(p==='Huevo revuelto') groups += buildSubpanel('hv-'+cat.id,'&#129370; Complemento',HUEVO_OPTS,'hv',isOn);
@@ -2179,6 +2359,8 @@ function buildCats(){
       var actBtn  = e.target.closest('[data-action]');
       var accHdr  = e.target.closest('.acc-header');
 
+      var favBtn = e.target.closest('.chip-fav');
+      if(favBtn){ e.stopPropagation(); toggleFav(favBtn.dataset.favcat, favBtn.dataset.favp, e); return; }
       if(recBtn){ e.stopPropagation(); abrirReceta(recBtn.dataset.rec); return; }
       if(subChip){
         var sp = subChip.closest('.subpanel');
@@ -2206,10 +2388,14 @@ function buildCats(){
           if(!customOpciones[catId])customOpciones[catId]={};
           if(!customOpciones[catId][glabel])customOpciones[catId][glabel]=[];
           var exists=false;
-          CATEGORIAS.forEach(function(c){ if(c.id===catId) c.grupos.forEach(function(g){
-            if(g.items&&g.items.indexOf(val)!==-1)exists=true;
-            if(g.sub)g.sub.forEach(function(s){if(s.items.indexOf(val)!==-1)exists=true;});
-          });});
+          // Check duplicates only within the same category and group
+          CATEGORIAS.forEach(function(c){
+            if(c.id!==catId) return;
+            c.grupos.forEach(function(g){
+              if(g.items&&g.items.indexOf(val)!==-1)exists=true;
+              if(g.sub)g.sub.forEach(function(s){if(s.items.indexOf(val)!==-1)exists=true;});
+            });
+          });
           if(customOpciones[catId][glabel].indexOf(val)!==-1)exists=true;
           if(exists){inp.style.borderColor='#C4673A';inp.placeholder='Ya existe';inp.value='';return;}
           customOpciones[catId][glabel].push(val);
@@ -2239,6 +2425,15 @@ function buildCats(){
     });
     cont.appendChild(sec);
   });
+  // Apply favorites filter and show stars if in edit mode
+  applyFavFilter();
+  updateFavBar();
+  if(favEditMode){
+    document.querySelectorAll('.chip-fav').forEach(function(el){ el.style.display=''; });
+  }
+  // Auto-enable fav mode if has favorites and first build
+  var input = document.getElementById('favToggleInput');
+  if(input) input.checked = favMode;
 }
 
 function buildSubpanel(id, title, opts, store, visible){
