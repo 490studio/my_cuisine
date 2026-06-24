@@ -3462,9 +3462,7 @@ function reabrirTour(){
 
 // INIT
 window.addEventListener('load',function(){
-  try{
-    if(!localStorage.getItem('planeat_tour_off')) setTimeout(mostrarTour,800);
-  }catch(e){}
+  // Tour is shown inside startApp(), not here
 });
 </script>
 </body>
