@@ -1731,11 +1731,6 @@ function tc(cat){ return TRANSLATIONS.cats[cat] ? (TRANSLATIONS.cats[cat][LANG] 
 function setLang(lang){
   LANG = lang;
   try{ localStorage.setItem('planeat_lang', lang); }catch(e){}
-  // Update button styles
-  document.getElementById('btnES').style.background = lang==='es' ? '#C4673A' : 'transparent';
-  document.getElementById('btnES').style.color = lang==='es' ? '#fff' : '#C4673A';
-  document.getElementById('btnEN').style.background = lang==='en' ? '#C4673A' : 'transparent';
-  document.getElementById('btnEN').style.color = lang==='en' ? '#fff' : '#C4673A';
   applyLang();
 }
 
@@ -1756,10 +1751,12 @@ function applyLang(){
   var el = document.querySelector('.sp-sub'); if(el) el.textContent = t('splashTagline');
 
   // ── 3. Update button styles ──
-  var btnES = document.getElementById('btnES');
-  var btnEN = document.getElementById('btnEN');
-  if(btnES){ btnES.style.background = LANG==='es' ? '#C4673A' : 'transparent'; btnES.style.color = LANG==='es' ? '#fff' : '#C4673A'; }
-  if(btnEN){ btnEN.style.background = LANG==='en' ? '#C4673A' : 'transparent'; btnEN.style.color = LANG==='en' ? '#fff' : '#C4673A'; }
+  try{
+    var btnES = document.getElementById('btnES');
+    var btnEN = document.getElementById('btnEN');
+    if(btnES){ btnES.style.background = LANG==='es' ? '#C4673A' : 'transparent'; btnES.style.color = LANG==='es' ? '#fff' : '#C4673A'; }
+    if(btnEN){ btnEN.style.background = LANG==='en' ? '#C4673A' : 'transparent'; btnEN.style.color = LANG==='en' ? '#fff' : '#C4673A'; }
+  }catch(e){}
 
   // ── 4. Tour ──
   var skipBtn = document.querySelector('.tour-skip'); if(skipBtn) skipBtn.textContent = t('tourSkip');
@@ -2599,14 +2596,15 @@ var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo
 var calMeta = 1800; // kcal diarias para UNA persona (planeamos para 2)
 
 function showProfile(){
-  window._tourCallback = function(){ _doShowProfile(); window._tourCallback = null; };
+  // Always go to profile immediately
+  _doShowProfile();
+  // Show tour on top if first time (non-blocking)
   try{
     if(!localStorage.getItem('planeat_tour_off')){
-      mostrarTour();
-      return;
+      window._tourCallback = null; // no navigation needed after tour
+      setTimeout(mostrarTour, 100);
     }
   }catch(e){}
-  window._tourCallback();
 }
 function _doShowProfile(){
   // Make sure splash is visible
@@ -2829,14 +2827,15 @@ function iniciarModoFamilia(){
   var hdrKcal = document.getElementById('hdrKcal');
   if(hdrKcal) hdrKcal.textContent = LANG==='en' ? 'Family' : 'Familiar';
   // Show tour first if not disabled, then start app
-  window._tourCallback = function(){ startApp(); window._tourCallback = null; };
+  // Always start app immediately
+  startApp();
+  // Show tour on top if first time (non-blocking)
   try{
     if(!localStorage.getItem('planeat_tour_off')){
-      mostrarTour();
-      return;
+      window._tourCallback = null;
+      setTimeout(mostrarTour, 100);
     }
   }catch(e){}
-  window._tourCallback();
 }
 
 function startApp(){
@@ -3984,9 +3983,11 @@ function cerrarTour(){
     var chk = document.getElementById('tourNoShowChk');
     if(chk && chk.checked) localStorage.setItem('planeat_tour_off','1');
   }catch(e){}
-  var cb = window._tourCallback;
-  window._tourCallback = null;
-  if(typeof cb === 'function') try{ cb(); }catch(e){ console.error('tourCallback error:', e); }
+  // Execute any pending callback (reabrirTour etc.)
+  if(typeof window._tourCallback === 'function'){
+    try{ window._tourCallback(); }catch(e){}
+    window._tourCallback = null;
+  }
 }
 
 // ── Allow re-opening tour from settings (future use) ──
