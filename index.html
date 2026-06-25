@@ -1237,13 +1237,13 @@ var CATEGORIAS = [
   }
 ];
 var SLOTS_KEYS = [
-  {id:'desayuno', labelKey:'slotDesayuno', emoji:'🌅', cats:['desayuno']},
-  {id:'sopa',     labelKey:'slotSopa',     emoji:'🍲', cats:['sopa']},
-  {id:'fuerte',   labelKey:'slotFuerte',   emoji:'🍽️', cats:['fuerte']},
-  {id:'postre',   labelKey:'slotPostre',   emoji:'🍮', cats:['postre']},
-  {id:'cena',     labelKey:'slotCena',     emoji:'🌙', cats:['cena']}
+  {id:'desayuno', labelKey:'slotDesayuno', label:'Desayuno',     emoji:'🌅', cats:['desayuno']},
+  {id:'sopa',     labelKey:'slotSopa',     label:'Sopa',         emoji:'🍲', cats:['sopa']},
+  {id:'fuerte',   labelKey:'slotFuerte',   label:'Plato fuerte', emoji:'🍽️', cats:['fuerte']},
+  {id:'postre',   labelKey:'slotPostre',   label:'Postre',       emoji:'🍮', cats:['postre']},
+  {id:'cena',     labelKey:'slotCena',     label:'Cena',         emoji:'🌙', cats:['cena']}
 ];
-var SLOTS = SLOTS_KEYS.map(function(s){ return Object.assign({},s,{label:t(s.labelKey)}); });
+var SLOTS = SLOTS_KEYS.slice(); // start with Spanish defaults
 function refreshSLOTS(){ SLOTS = SLOTS_KEYS.map(function(s){ return Object.assign({},s,{label:t(s.labelKey)}); }); }
 
 // ══════════════════════════════════════════════════════
