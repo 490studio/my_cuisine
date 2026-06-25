@@ -2599,16 +2599,22 @@ var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo
 var calMeta = 1800; // kcal diarias para UNA persona (planeamos para 2)
 
 function showProfile(){
+  window._tourCallback = function(){ _doShowProfile(); window._tourCallback = null; };
   try{
     if(!localStorage.getItem('planeat_tour_off')){
-      window._tourCallback = function(){ _doShowProfile(); window._tourCallback = null; };
       mostrarTour();
       return;
     }
   }catch(e){}
-  _doShowProfile();
+  window._tourCallback();
 }
 function _doShowProfile(){
+  // Make sure splash is visible
+  var splashEl = document.getElementById('splash');
+  if(splashEl){
+    splashEl.style.display = 'flex';
+    splashEl.classList.remove('out');
+  }
   // Pre-fill form with saved values
   var inEdad=document.getElementById('inEdad'); if(inEdad) inEdad.value=perfil.edad;
   var inPeso=document.getElementById('inPeso'); if(inPeso) inPeso.value=perfil.peso;
@@ -2823,14 +2829,14 @@ function iniciarModoFamilia(){
   var hdrKcal = document.getElementById('hdrKcal');
   if(hdrKcal) hdrKcal.textContent = LANG==='en' ? 'Family' : 'Familiar';
   // Show tour first if not disabled, then start app
+  window._tourCallback = function(){ startApp(); window._tourCallback = null; };
   try{
     if(!localStorage.getItem('planeat_tour_off')){
-      window._tourCallback = function(){ startApp(); window._tourCallback = null; };
       mostrarTour();
       return;
     }
   }catch(e){}
-  startApp();
+  window._tourCallback();
 }
 
 function startApp(){
@@ -3973,14 +3979,14 @@ function tourNext(){
 }
 
 function cerrarTour(){
-  document.getElementById('tourOverlay').classList.remove('on');
-  var chk = document.getElementById('tourNoShowChk');
-  if(chk && chk.checked){
-    try{ localStorage.setItem('planeat_tour_off','1'); }catch(e){}
-  }
-  if(typeof window._tourCallback === 'function'){
-    window._tourCallback();
-  }
+  try{ document.getElementById('tourOverlay').classList.remove('on'); }catch(e){}
+  try{
+    var chk = document.getElementById('tourNoShowChk');
+    if(chk && chk.checked) localStorage.setItem('planeat_tour_off','1');
+  }catch(e){}
+  var cb = window._tourCallback;
+  window._tourCallback = null;
+  if(typeof cb === 'function') try{ cb(); }catch(e){ console.error('tourCallback error:', e); }
 }
 
 // ── Allow re-opening tour from settings (future use) ──
