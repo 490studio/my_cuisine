@@ -667,9 +667,9 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
       <div class="modo-card" onclick="iniciarModoFamilia()">
         <span class="modo-icon">🏠</span>
         <div class="modo-info">
-          <div class="modo-title">Planificador familiar</div>
-          <div class="modo-desc">Elige platillos, asigna días y genera la lista del súper. Sin contar calorías.</div>
-          <span class="modo-tag familia">Para toda la familia</span>
+          <div class="modo-title" data-i18n="modeFamily">Planificador familiar</div>
+          <div class="modo-desc" data-i18n="modeFamilyDesc">Elige platillos, asigna días y genera la lista del súper. Sin contar calorías.</div>
+          <span class="modo-tag familia" data-i18n="modeFamilyTag">Para toda la familia</span>
         </div>
         <span class="modo-arrow">›</span>
       </div>
@@ -677,9 +677,9 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
       <div class="modo-card" onclick="showProfile()">
         <span class="modo-icon">🥗</span>
         <div class="modo-info">
-          <div class="modo-title">Con seguimiento calórico</div>
-          <div class="modo-desc">Todo lo anterior más cálculo de calorías según tu perfil, objetivo y condición de salud.</div>
-          <span class="modo-tag personal">Personal</span>
+          <div class="modo-title" data-i18n="modeCal">Con seguimiento calórico</div>
+          <div class="modo-desc" data-i18n="modeCalDesc2">Todo lo anterior más cálculo de calorías según tu perfil, objetivo y condición de salud.</div>
+          <span class="modo-tag personal" data-i18n="modeCalTag2">Personal</span>
         </div>
         <span class="modo-arrow">›</span>
       </div>
@@ -688,8 +688,8 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
   </div>
 
   <div id="spProfile" style="position:relative;z-index:1;display:none;width:100%;max-width:420px;text-align:left;">
-    <div class="prof-title">Tu perfil</div>
-    <div class="prof-sub">Para calcular tus calorías exactas</div>
+    <div class="prof-title" data-i18n="profileTitle">Tu perfil</div>
+    <div class="prof-sub" data-i18n="profileSub">Para calcular tus calorías exactas</div>
 
     <div class="disclaimer">
       <span class="disclaimer-icon">ℹ️</span>
@@ -703,16 +703,16 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
 
     <!-- Sexo -->
     <div class="prof-field">
-      <div class="prof-label">Sexo biológico</div>
+      <div class="prof-label" data-i18n="labelSexBio">Sexo biológico</div>
       <div class="prof-toggle">
-        <button class="ptog on" id="togM" onclick="setSexo('M')">♂ Hombre</button>
-        <button class="ptog" id="togF" onclick="setSexo('F')">♀ Mujer</button>
+        <button class="ptog on" id="togM" onclick="setSexo('M')" data-i18n="sexM">♂ Hombre</button>
+        <button class="ptog" id="togF" onclick="setSexo('F')" data-i18n="sexF">♀ Mujer</button>
       </div>
     </div>
 
     <!-- Edad -->
     <div class="prof-field">
-      <div class="prof-label">Edad</div>
+      <div class="prof-label" data-i18n="labelAge2">Edad</div>
       <div class="prof-input-row">
         <input class="prof-input" id="inEdad" type="number" min="10" max="100" placeholder="años" value="35">
         <span class="prof-unit">años</span>
@@ -721,7 +721,7 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
 
     <!-- Peso -->
     <div class="prof-field">
-      <div class="prof-label">Peso actual</div>
+      <div class="prof-label" data-i18n="labelWeight2">Peso actual</div>
       <div class="prof-input-row">
         <input class="prof-input" id="inPeso" type="number" min="30" max="250" placeholder="kg" value="70">
         <span class="prof-unit">kg</span>
@@ -730,7 +730,7 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
 
     <!-- Estatura -->
     <div class="prof-field">
-      <div class="prof-label">Estatura</div>
+      <div class="prof-label" data-i18n="labelHeight2">Estatura</div>
       <div class="prof-input-row">
         <input class="prof-input" id="inAltura" type="number" min="100" max="220" placeholder="cm" value="165">
         <span class="prof-unit">cm</span>
@@ -739,27 +739,27 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
 
     <!-- Actividad -->
     <div class="prof-field">
-      <div class="prof-label">Nivel de actividad</div>
+      <div class="prof-label" data-i18n="labelActivity2">Nivel de actividad</div>
       <div class="prof-acts">
         <div class="pact" data-val="1.2" onclick="setAct(this)">
           <span class="pact-ico">🛋️</span>
-          <span class="pact-name">Sedentario</span>
-          <span class="pact-desc">Sin ejercicio</span>
+          <span class="pact-name" data-i18n="actSed">Sedentario</span>
+          <span class="pact-desc" data-i18n="actSedDesc">Sin ejercicio</span>
         </div>
         <div class="pact on" data-val="1.375" onclick="setAct(this)">
           <span class="pact-ico">🚶</span>
-          <span class="pact-name">Ligero</span>
-          <span class="pact-desc">1-3 días/sem</span>
+          <span class="pact-name" data-i18n="actLight">Ligero</span>
+          <span class="pact-desc" data-i18n="actLightDesc">1-3 días/sem</span>
         </div>
         <div class="pact" data-val="1.55" onclick="setAct(this)">
           <span class="pact-ico">🏃</span>
-          <span class="pact-name">Moderado</span>
-          <span class="pact-desc">3-5 días/sem</span>
+          <span class="pact-name" data-i18n="actMod">Moderado</span>
+          <span class="pact-desc" data-i18n="actModDesc">3-5 días/sem</span>
         </div>
         <div class="pact" data-val="1.725" onclick="setAct(this)">
           <span class="pact-ico">💪</span>
-          <span class="pact-name">Intenso</span>
-          <span class="pact-desc">6-7 días/sem</span>
+          <span class="pact-name" data-i18n="actActive">Intenso</span>
+          <span class="pact-desc" data-i18n="actActiveDesc">6-7 días/sem</span>
         </div>
       </div>
     </div>
@@ -862,10 +862,10 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
     <span class="tour-icon" id="tourIcon"></span>
     <div class="tour-title" id="tourTitle"></div>
     <div class="tour-desc" id="tourDesc"></div>
-    <button class="tour-btn" id="tourNextBtn" onclick="tourNext()">Siguiente</button>
-    <button class="tour-skip" onclick="cerrarTour()">Saltar tutorial</button>
+    <button class="tour-btn" id="tourNextBtn" onclick="tourNext()"></button>
+    <button class="tour-skip" onclick="cerrarTour()"></button>
     <label class="tour-no-show" id="tourNoShowWrap">
-      <input type="checkbox" id="tourNoShowChk"> No volver a mostrar al iniciar
+      <input type="checkbox" id="tourNoShowChk">
     </label>
   </div>
 </div>
@@ -1030,7 +1030,7 @@ input:checked + .fav-slider::before{transform:translateX(20px);}
   <!-- PASO 3 -->
   <div class="sec" id="step3">
     <div class="super-hdr">
-      <div class="super-hdr-title">Lista del súper</div>
+      <div class="super-hdr-title" data-i18n="listSuperTitle">Lista del súper</div>
       <div class="super-hdr-sub">Toca cada ingrediente para tacharlo</div>
       <div class="super-summary" id="superSummary"></div>
     </div>
@@ -1335,6 +1335,61 @@ var TRANSLATIONS = {
     portions:        {es:'porciones',        en:'servings'},
     tourSkip:        {es:'Saltar tutorial',  en:'Skip tutorial'},
     tourNoShow:      {es:'No volver a mostrar al iniciar', en:'Don\'t show again at startup'},
+    // Splash modes
+    modeCalDesc2:    {es:'Todo lo anterior más cálculo de calorías según tu perfil, objetivo y condición de salud.', en:'All of the above plus calorie calculation based on your profile, goal and health condition.'},
+    modeCalTag2:     {es:'Personal',                      en:'Personal'},
+    // Profile form
+    labelSexBio:     {es:'Sexo biológico',                en:'Biological sex'},
+    labelAge2:       {es:'Edad',                          en:'Age'},
+    labelWeight2:    {es:'Peso actual',                   en:'Current weight'},
+    labelHeight2:    {es:'Estatura',                      en:'Height'},
+    labelActivity2:  {es:'Nivel de actividad',            en:'Activity level'},
+    actSedDesc:      {es:'Sin ejercicio',                 en:'No exercise'},
+    actLightDesc:    {es:'1-2 días/sem',                  en:'1-2 days/wk'},
+    actModDesc:      {es:'3-4 días/sem',                  en:'3-4 days/wk'},
+    actActiveDesc:   {es:'5-6 días/sem',                  en:'5-6 days/wk'},
+    actVeryDesc:     {es:'Diario intenso',                en:'Daily intense'},
+    labelPortions2:  {es:'Personas en casa',              en:'People at home'},
+    labelGoal:       {es:'Objetivo',                      en:'Goal'},
+    goalLose:        {es:'Bajar peso',                    en:'Lose weight'},
+    goalMaintain:    {es:'Mantener',                      en:'Maintain'},
+    goalGain:        {es:'Subir peso',                    en:'Gain weight'},
+    btnSavePerfil:   {es:'¡Empezar a planear!',           en:'Start planning!'},
+    btnSkipPerfil:   {es:'Continuar sin perfil',          en:'Continue without profile'},
+    btnSavedPerfil:  {es:'✓ Usar mi perfil guardado',     en:'✓ Use my saved profile'},
+    disclaimerTitle: {es:'Nota importante:',              en:'Important note:'},
+    disclaimerText:  {es:'PlanEat es una guía de planeación básica y', en:'PlanEat is a basic planning guide and'},
+    noMedical:       {es:'no es una aplicación médica',   en:'is not a medical application'},
+    disclaimerText2: {es:'Los cálculos calóricos son aproximados y de referencia general. Esta app', en:'Calorie calculations are approximate and for general reference. This app'},
+    noReplace:       {es:'no sustituye',                  en:'does not replace'},
+    disclaimerText3: {es:'la consulta con un nutriólogo, médico o especialista en salud. El uso de la información es', en:'consultation with a nutritionist, doctor or health specialist. Use of information is'},
+    userResp:        {es:'responsabilidad exclusiva del usuario', en:'the sole responsibility of the user'},
+    // Header tabs
+    hdrStep1:        {es:'Elegir',                        en:'Pick'},
+    hdrStep2:        {es:'Planear',                       en:'Plan'},
+    hdrStep3:        {es:'Lista',                         en:'List'},
+    // Step 1 header
+    searchBtn:       {es:'🔍 Buscar',                    en:'🔍 Search'},
+    favBtn:          {es:'⭐ Favs',                       en:'⭐ Favs'},
+    // Step 3
+    listEmptyTitle:  {es:'Lista vacía',                   en:'Empty list'},
+    listEmptyDesc:   {es:'Elige platillos en el paso 1.', en:'Choose dishes in step 1.'},
+    // PDF titles
+    pdfMenuTitle:    {es:'Descargar PDF',                 en:'Download PDF'},
+    pdfMenuSub:      {es:'Elige qué quieres descargar',   en:'Choose what to download'},
+    pdfOptPlan:      {es:'Planeación semanal',            en:'Weekly meal plan'},
+    pdfOptPlanDesc:  {es:'Menú día por día con platillos asignados', en:'Day-by-day menu with assigned dishes'},
+    pdfOptSuper:     {es:'Lista de compras',              en:'Shopping list'},
+    pdfOptSuperDesc: {es:'Ingredientes con cantidades por categoría', en:'Ingredients by category'},
+    pdfOptRecipes:   {es:'Recetas',                       en:'Recipes'},
+    pdfOptRecipesDesc:{es:'Ingredientes y preparación de tus platillos', en:'Ingredients and instructions for your dishes'},
+    // Misc JS strings
+    listSuperTitle:  {es:'Lista del súper',               en:'Shopping list'},
+    noRecipes:       {es:'Elige platillos en el Paso 1 para ver sus recetas.', en:'Choose dishes in Step 1 to view their recipes.'},
+    assignHint2:     {es:'Toca un platillo para asignarlo al día seleccionado', en:'Tap a dish to assign it to the selected day'},
+    confirmCal:      {es:t('confirmCal'), en:'You are in family mode. Switch to calorie tracking mode?'},
+    backupFile:      {es:'planeat-backup',                en:'planeat-backup'},
+    backupSaved:     {es:'Archivo descargado. Guárdalo en iCloud, Google Drive o tus notas.', en:'File downloaded. Save it to iCloud, Google Drive or your notes.'},
     tourNext:        {es:'Siguiente',        en:'Next'},
     tourStart:       {es:'¡Comenzar!',       en:'Let\'s go!'},
     // PDF
@@ -1685,36 +1740,35 @@ function setLang(lang){
 }
 
 function applyLang(){
-  // Splash texts
-  var el;
-  el = document.querySelector('.sp-sub'); if(el) el.textContent = t('splashTagline');
-  // Mode cards
-  var cards = document.querySelectorAll('.modo-card');
-  if(cards[0]){
-    cards[0].querySelector('.modo-title') && (cards[0].querySelector('.modo-title').textContent = t('modeFamily'));
-    cards[0].querySelector('.modo-desc') && (cards[0].querySelector('.modo-desc').textContent = t('modeFamilyDesc'));
-    var tag0 = cards[0].querySelector('.modo-tag'); if(tag0) tag0.textContent = t('modeFamilyTag');
-  }
-  if(cards[1]){
-    cards[1].querySelector('.modo-title') && (cards[1].querySelector('.modo-title').textContent = t('modeCal'));
-    cards[1].querySelector('.modo-desc') && (cards[1].querySelector('.modo-desc').textContent = t('modeCalDesc'));
-    var tag1 = cards[1].querySelector('.modo-tag'); if(tag1) tag1.textContent = t('modeCalTag');
-  }
-  // Profile
-  el = document.querySelector('.prof-title'); if(el) el.textContent = t('profileTitle');
-  el = document.querySelector('.prof-sub'); if(el) el.textContent = t('profileSub');
-  // Tour buttons
+  // ── 1. Translate all data-i18n elements automatically ──
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var key = el.getAttribute('data-i18n');
+    var val = TRANSLATIONS.ui[key];
+    if(!val) return;
+    var txt = val[LANG] || val.es;
+    // Preserve prefix symbols like ♂ ♀ if present
+    if(el.id === 'togM') el.textContent = '♂ ' + txt;
+    else if(el.id === 'togF') el.textContent = '♀ ' + txt;
+    else el.textContent = txt;
+  });
+
+  // ── 2. Splash tagline ──
+  var el = document.querySelector('.sp-sub'); if(el) el.textContent = t('splashTagline');
+
+  // ── 3. Update button styles ──
+  var btnES = document.getElementById('btnES');
+  var btnEN = document.getElementById('btnEN');
+  if(btnES){ btnES.style.background = LANG==='es' ? '#C4673A' : 'transparent'; btnES.style.color = LANG==='es' ? '#fff' : '#C4673A'; }
+  if(btnEN){ btnEN.style.background = LANG==='en' ? '#C4673A' : 'transparent'; btnEN.style.color = LANG==='en' ? '#fff' : '#C4673A'; }
+
+  // ── 4. Tour ──
   var skipBtn = document.querySelector('.tour-skip'); if(skipBtn) skipBtn.textContent = t('tourSkip');
-  var noShow = document.querySelector('.tour-no-show'); if(noShow){ var chk = noShow.querySelector('input'); noShow.innerHTML=''; if(chk) noShow.appendChild(chk); noShow.appendChild(document.createTextNode(' '+t('tourNoShow'))); }
-  // Update tour steps content if tour is open
-  if(document.getElementById('tourOverlay').classList.contains('on')) renderTourStep();
-  // Tabs
-  var tabs = document.querySelectorAll('.tab-btn');
-  var tabKeys = ['tabPick','tabPlan','tabList'];
-  tabs.forEach(function(tab,i){ if(tabKeys[i]) tab.querySelector('span:last-child') && (tab.querySelector('span:last-child').textContent = t(tabKeys[i])); });
-  // Search placeholder
+  if(document.getElementById('tourOverlay') && document.getElementById('tourOverlay').classList.contains('on')) renderTourStep();
+
+  // ── 5. Search placeholder ──
   var srch = document.getElementById('searchInput'); if(srch) srch.placeholder = t('searchPlaceholder');
-  // Re-render categories if app is running
+
+  // ── 6. Re-render app if running ──
   if(typeof refreshSLOTS === 'function') refreshSLOTS();
   if(typeof renderCats === 'function' && document.getElementById('catStrip')) renderCats();
   if(typeof renderPlan === 'function' && document.getElementById('planGrid')) renderPlan();
@@ -2699,7 +2753,7 @@ function guardarPerfil(){
 function editarPerfilOCambiarModo(){
   if(calMeta === 0){
     // In familia mode — offer to switch
-    if(confirm('Estás en modo familiar. ¿Quieres cambiar a modo con seguimiento calórico?')){
+    if(confirm(t('confirmCal'))){
       showWelcome();
       document.getElementById('splash').style.display = 'flex';
       document.getElementById('splash').classList.remove('out');
@@ -2766,7 +2820,7 @@ function iniciarModoFamilia(){
   if(bar) bar.style.display = 'none';
   // Skip profile, go straight to app
   var hdrKcal = document.getElementById('hdrKcal');
-  if(hdrKcal) hdrKcal.textContent = 'Familiar';
+  if(hdrKcal) hdrKcal.textContent = LANG==='en' ? 'Family' : 'Familiar';
   // Show tour first if not disabled, then start app
   try{
     if(!localStorage.getItem('planeat_tour_off')){
@@ -3543,7 +3597,7 @@ function renderSuper(){
   var items = buildSuperList();
   var hasDishes = CATEGORIAS.some(function(c){ return elegidos[c.id].size > 0; });
   if(!hasDishes){
-    cont.innerHTML = '<div class="empty"><div class="empty-ico">🛒</div><div class="empty-t">Lista vacía</div><div class="empty-d">Elige platillos en el paso 1.</div></div>';
+    cont.innerHTML = '<div class="empty"><div class="empty-ico">🛒</div><div class="empty-t">'+t('listEmptyTitle')+'</div><div class="empty-d">'+t('listEmptyDesc')+'</div></div>';
     // summary
     document.getElementById('superSummary').innerHTML = '';
     return;
@@ -3804,7 +3858,7 @@ function abrirPDF(tipo){
           +'</div></div>';
       });
     });
-    if(!recHTML) recHTML='<p style="color:#999;font-size:13px;">Elige platillos en el Paso 1 para ver sus recetas.</p>';
+    if(!recHTML) recHTML='<p style="color:#999;font-size:13px;">'+t('noRecipes')+'</p>';
     if(body) body.innerHTML = buildPDFWrap('Recetas de la Semana', date, recHTML);
     if(foot) foot.innerHTML = '<button class="btn btn-p btn-sm" onclick="imprimirPDF()">🖨 Imprimir / PDF</button>'
       + '<button class="btn btn-g btn-sm" onclick="abrirPDFMenu()">← Regresar</button>';
@@ -3872,7 +3926,7 @@ function compartirWhatsApp(){
     '🫙 Abarrotes':'🫙','🌶️ Chiles':'🌶️','🫓 Tortillas y pan':'🫓','🧄 Básicos':'🧄'
   };
   var lineas = [
-    '*🛒 Lista del súper*',
+    t('waTitle')+
     '_PlanEat — ' + new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long'}) + '_',
     '_Para ' + porciones + ' persona' + (porciones>1?'s':'') + '_',
     ''
@@ -3888,7 +3942,7 @@ function compartirWhatsApp(){
     });
     lineas.push('');
   });
-  lineas.push('_Generado con PlanEat 🌽_');
+  lineas.push('_'+( LANG==='en' ? 'Generated with PlanEat 🌽' : 'Generado con PlanEat 🌽')+'_');
   var sep = '\n';
   window.open('https://wa.me/?text=' + encodeURIComponent(lineas.join(sep)), '_blank');
 }
@@ -3922,7 +3976,7 @@ function exportarJSON(){
   document.body.appendChild(a); a.click();
   document.body.removeChild(a); URL.revokeObjectURL(url);
   var res=document.getElementById('backupResult');
-  res.textContent='Archivo descargado. Guárdalo en iCloud, Google Drive o tus notas.';
+  res.textContent=t('backupSaved');
   res.className='backup-result on';
 }
 
@@ -4018,8 +4072,14 @@ function renderTourStep(){
   if(btn) btn.textContent = tourStep === TOUR_STEPS.length - 1 ? t('tourStart') : t('tourNext');
   var skip = document.querySelector('.tour-skip');
   if(skip) skip.textContent = t('tourSkip');
-  var noShow = document.getElementById('tourNoShowWrap');
-  if(noShow){ var chk = document.getElementById('tourNoShowChk'); noShow.innerHTML = ''; if(chk) noShow.appendChild(chk); else { chk = document.createElement('input'); chk.type='checkbox'; chk.id='tourNoShowChk'; noShow.appendChild(chk); } noShow.appendChild(document.createTextNode(' '+t('tourNoShow'))); }
+  var noShowLabel = document.getElementById('tourNoShowWrap');
+  if(noShowLabel){
+    var chk = document.getElementById('tourNoShowChk');
+    noShowLabel.innerHTML = '';
+    if(!chk){ chk = document.createElement('input'); chk.type='checkbox'; chk.id='tourNoShowChk'; }
+    noShowLabel.appendChild(chk);
+    noShowLabel.appendChild(document.createTextNode(' ' + t('tourNoShow')));
+  }
 }
 
 function tourNext(){
