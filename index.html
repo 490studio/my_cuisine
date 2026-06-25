@@ -2545,6 +2545,17 @@ var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo
 var calMeta = 1800; // kcal diarias para UNA persona (planeamos para 2)
 
 function showProfile(){
+  // Show tour first if not disabled, then show profile
+  try{
+    if(!localStorage.getItem('planeat_tour_off')){
+      mostrarTour();
+      window._tourCallback = function(){ _doShowProfile(); window._tourCallback = null; };
+      return;
+    }
+  }catch(e){}
+  _doShowProfile();
+}
+function _doShowProfile(){
   // Pre-fill form with saved values
   var inEdad=document.getElementById('inEdad'); if(inEdad) inEdad.value=perfil.edad;
   var inPeso=document.getElementById('inPeso'); if(inPeso) inPeso.value=perfil.peso;
@@ -2756,6 +2767,15 @@ function iniciarModoFamilia(){
   // Skip profile, go straight to app
   var hdrKcal = document.getElementById('hdrKcal');
   if(hdrKcal) hdrKcal.textContent = 'Familiar';
+  // Show tour first if not disabled, then start app
+  try{
+    if(!localStorage.getItem('planeat_tour_off')){
+      mostrarTour();
+      // Override cerrarTour to also call startApp after tour
+      window._tourCallback = function(){ startApp(); window._tourCallback = null; };
+      return;
+    }
+  }catch(e){}
   startApp();
 }
 
@@ -4013,10 +4033,12 @@ function tourNext(){
 
 function cerrarTour(){
   document.getElementById('tourOverlay').classList.remove('on');
-  // If checkbox is checked, save preference
   var chk = document.getElementById('tourNoShowChk');
   if(chk && chk.checked){
     try{ localStorage.setItem('planeat_tour_off','1'); }catch(e){}
+  }
+  if(typeof window._tourCallback === 'function'){
+    window._tourCallback();
   }
 }
 
@@ -4031,7 +4053,6 @@ window.addEventListener('load',function(){
   try{
     var saved = localStorage.getItem('planeat_lang');
     if(saved){ LANG = saved; setLang(LANG); } else { setLang('es'); }
-    if(!localStorage.getItem('planeat_tour_off')) setTimeout(mostrarTour, 800);
   }catch(e){}
 });
 </script>
