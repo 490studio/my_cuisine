@@ -2619,6 +2619,7 @@ function buildCats(){
           if(customOpciones[catId][glabel].indexOf(val)!==-1)exists=true;
           if(exists){inp.style.borderColor='#C4673A';inp.placeholder='Ya existe';inp.value='';return;}
           customOpciones[catId][glabel].push(val);
+          try{ localStorage.setItem('planeat_custom', JSON.stringify(customOpciones)); }catch(e){}
           elegidos[catId].add(val);
           if(pop)pop.style.display='none';
           var saved={};
@@ -3557,6 +3558,23 @@ function borrarPlan(idx){
 
 // INIT
 window.addEventListener('load',function(){
+  // Load saved perfil
+  try{
+    var savedPerfil = localStorage.getItem('planeat_perfil');
+    if(savedPerfil) perfil = Object.assign(perfil, JSON.parse(savedPerfil));
+  }catch(e){}
+  // Load saved custom dishes
+  try{
+    var savedCustom = localStorage.getItem('planeat_custom');
+    if(savedCustom) customOpciones = JSON.parse(savedCustom);
+  }catch(e){}
+  // Show saved profile button if perfil exists
+  try{
+    if(localStorage.getItem('planeat_perfil')){
+      var btn = document.getElementById('btnSkipPerfil');
+      if(btn) btn.style.display = 'block';
+    }
+  }catch(e){}
 });
 </script>
 </body>
