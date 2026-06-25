@@ -210,6 +210,25 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 .chip.on .chip-cal{color:#C4673A;}
 .chip-rec{background:none;border:none;font-size:13px;cursor:pointer;padding:0;opacity:.5;transition:opacity .15s;flex-shrink:0;}
 .chip-rec:hover{opacity:1;}
+.add-chip-btn{
+  display:flex;align-items:center;gap:10px;
+  width:100%;padding:10px 14px;border-radius:var(--rs);
+  border:1.5px dashed #C4673A;background:transparent;
+  cursor:pointer;transition:all .15s;
+  font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+  color:#C4673A;text-align:left;
+  margin-top:2px;
+}
+.add-chip-btn:hover{background:#FDF5F0;}
+.add-chip-btn:active{transform:scale(.99);}
+.add-chip-btn::before{
+  content:'＋';
+  width:18px;height:18px;border-radius:50%;
+  border:1.5px solid #C4673A;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;flex-shrink:0;line-height:1;
+  padding-bottom:1px;
+}
 
 /* ── SUBPANEL ── */
 .subpanel{
@@ -1705,6 +1724,46 @@ var DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'
 var DIAS_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 function getDias(){ return LANG==='en' ? DIAS_EN : DIAS; }
 var CHILAQUILES_OPTS = ['Pollo','Arrachera','Guisado de res','Verdes','Rojos','Chipotle','Divorciados'];
+var EXTRAS_OPTS = {
+  'Hotcakes':           ['Fruta','Miel','Mermelada','Crema batida','Mantequilla','Jarabe de maple','Nutella'],
+  'Crepas dulces':      ['Fruta','Nutella','Mermelada','Cajeta','Crema batida','Helado'],
+  'Pan francés':        ['Fruta','Miel','Mermelada','Crema batida','Azúcar y canela','Maple'],
+  'Waffles':            ['Fruta','Miel','Mermelada','Crema batida','Helado','Maple','Nutella'],
+  'Pancakes de avena':  ['Fruta','Miel','Mermelada','Crema batida','Maple'],
+  'Omelete con verduras':['Queso','Jitomate','Espinacas','Champiñones','Cebolla','Pimiento'],
+  'Omelete de claras':  ['Queso','Espinacas','Jitomate','Champiñones','Cebolla'],
+  'Huevo benedictino':  ['Jamón','Salmón ahumado','Espinacas','Aguacate'],
+  'Toast de aguacate':  ['Jitomate cherry','Huevo pochado','Salmón ahumado','Chile seco','Queso feta','Limón'],
+  'Avena con fruta':    ['Plátano','Fresas','Mango','Miel','Chía','Granola','Coco rallado'],
+  'Bowl de açaí':       ['Granola','Plátano','Fresas','Mango','Miel','Coco rallado','Chía'],
+  'Smoothie bowl':      ['Granola','Fruta','Miel','Chía','Coco rallado'],
+  'Fruta con yogurt granola y miel': ['Fresas','Mango','Plátano','Miel extra','Granola extra','Chía'],
+  'Espagueti a la Boloñesa': ['Queso parmesano','Albahaca','Pan de ajo'],
+  'Lasaña':             ['Queso parmesano','Albahaca','Pan de ajo','Ensalada verde'],
+  'Pasta con pesto':    ['Queso parmesano','Piñones','Albahaca','Tomate cherry'],
+  'Hamburguesa de res': ['Queso','Tocino','Aguacate','Cebolla caramelizada','Champiñones','Huevo estrellado','Jalapeño'],
+  'Milanesa empanizada':['Limón','Ensalada','Mostaza','Mayonesa'],
+  'Pechuga a la plancha':['Limón','Ensalada verde','Aguacate','Salsa'],
+  'Pollo al horno con papas': ['Romero','Ajo','Limón','Ensalada'],
+  'Carne asada':        ['Guacamole','Cebollita','Limón','Salsa','Tortillas','Frijoles'],
+  'Arrachera':          ['Guacamole','Cebollita','Limón','Salsa','Tortillas'],
+  'Costillas BBQ':      ['Papas','Coleslaw','Mazorca'],
+  'Pozole rojo':        ['Lechuga','Rábanos','Orégano','Tostadas','Limón','Cebolla'],
+  'Pozole blanco':      ['Lechuga','Rábanos','Orégano','Tostadas','Limón','Cebolla'],
+  'Caldo de Pollo':     ['Limón','Chile serrano','Cilantro','Aguacate','Tortillas'],
+  'Sopa de tortilla':   ['Crema','Queso fresco','Aguacate','Chile pasilla'],
+  'Cochinita Pibil':    ['Cebollas encurtidas','Habanero','Aguacate','Tortillas','Limón'],
+  'Carnitas':           ['Guacamole','Salsa','Tortillas','Limón','Cebolla','Cilantro'],
+  'Camarones a la diabla': ['Arroz blanco','Tortillas','Limón','Aguacate'],
+  'Camarones al mojo de ajo': ['Limón','Arroz blanco','Pan'],
+  'Pescado zarandeado': ['Limón','Cebolla morada','Aguacate','Tortillas'],
+  'Ceviche de pescado': ['Tostadas','Aguacate','Limón extra','Pepino'],
+  'Tacos de pollo':     ['Guacamole','Crema','Queso','Salsa','Limón','Cebolla','Cilantro'],
+  'Enchiladas verdes':  ['Crema','Queso fresco','Cebolla','Aguacate'],
+  'Enchiladas suizas':  ['Crema','Queso manchego','Aguacate'],
+  'Enchiladas rojas':   ['Crema','Queso fresco','Cebolla','Lechuga'],
+  'Chilaquiles':        ['Crema','Queso fresco','Aguacate','Cebolla','Huevo estrellado'],
+};
 var ANTOJITO_OPTS = ['Guisado del día','Frijoles','Queso','Chorizo','Papa con chorizo','Pollo','Tinga','Chicharrón','Rajas con crema','Picadillo','Flor de calabaza','Champiñones'];
 var OMELETE_OPTS  = ['Espinacas','Champiñones','Queso','A la mexicana','Pollo','Jamón','Salchicha'];
 var HUEVO_OPTS    = ['Jamón','Salchicha','Chorizo','Tocino','A la mexicana','Nopales'];
@@ -2446,6 +2505,7 @@ var omeRellenos = new Set();
 var huevoRellenos = new Set();
 var antojRellenos = { Tacos: new Set(), Quesadillas: new Set(), Gorditas: new Set() };
 var chilaRellenos = new Set();
+var extraRellenos = {}; // keyed by dish name
 var porciones = 1;
 var calMode   = true;
 
@@ -2910,7 +2970,7 @@ function buildCats(){
           if(p==='Chilaquiles') groups += buildSubpanel('ch-'+cat.id,'&#127998; Estilo',CHILAQUILES_OPTS,'ch',isOn);
           });
           var subkey = safe(cat.id + '-' + sub.label);
-          groups += '<button class="add-chip-btn" data-cat="' + cat.id + '" data-glabel="' + sub.label.replace(/"/g,'&quot;') + '" data-gkey="' + subkey + '">+ Agregar</button>';
+          groups += '<button class="add-chip-btn" data-cat="' + cat.id + '" data-glabel="' + sub.label.replace(/"/g,'&quot;') + '" data-gkey="' + subkey + '">+ ' + (LANG==='en'?'Add':'Agregar') + '</button>';
           groups += '<div id="addpop-' + subkey + '" style="display:none;" class="add-popover">'
             + '<div class="add-popover-title">+ Agregar platillo</div>'
             + '<input class="add-popover-input" id="addinp-' + subkey + '" type="text" placeholder="Nombre..." autocomplete="off">'
@@ -2947,7 +3007,7 @@ function buildCats(){
         });
         groups += '</div>';
         var gkey = safe(cat.id+'-'+(g.label||'main'));
-        groups += '<button class="add-chip-btn" data-cat="' + cat.id + '" data-glabel="' + (g.label||'').replace(/"/g,'&quot;') + '" data-gkey="' + gkey + '">+ Agregar platillo</button>';
+        groups += '<button class="add-chip-btn" data-cat="' + cat.id + '" data-glabel="' + (g.label||'').replace(/"/g,'&quot;') + '" data-gkey="' + gkey + '">+ ' + (LANG==='en'?'Add dish':'Agregar platillo') + '</button>';
         groups += '<div id="addpop-' + gkey + '" style="display:none;" class="add-popover">'
           + '<div class="add-popover-title">+ Agregar platillo</div>'
           + '<input class="add-popover-input" id="addinp-' + gkey + '" type="text" placeholder="Nombre..." autocomplete="off">'
@@ -3052,6 +3112,7 @@ function buildSubpanel(id, title, opts, store, visible){
     if(store === 'om') isOn = omeRellenos.has(op);
     else if(store === 'hv') isOn = huevoRellenos.has(op);
     else if(store === 'ch') isOn = chilaRellenos.has(op);
+    else if(store.startsWith('ex-')){ var ek2=store.slice(3); isOn = extraRellenos[ek2] && extraRellenos[ek2].has(op); }
     else if(store.startsWith('at-')){ var b = store.slice(3); isOn = antojRellenos[b] && antojRellenos[b].has(op); }
     html += '<div class="sub-chip' + (isOn ? ' on' : '') + '" id="spc-' + safe(id+'-'+op) + '" data-op="' + op.replace(/"/g,'&quot;') + '">' + op + '</div>';
   });
@@ -3081,11 +3142,12 @@ function showSubpanel(catId, p){
   else if(p === 'Huevo revuelto'){ sp = document.getElementById('sp-hv-' + catId); }
   else if(p === 'Tacos' || p === 'Quesadillas' || p === 'Gorditas'){ sp = document.getElementById('sp-at-' + catId + '-' + p); }
   else if(p === 'Chilaquiles'){ sp = document.getElementById('sp-ch-' + catId); }
+  else if(EXTRAS_OPTS[p]){ sp = document.getElementById('sp-ex-' + catId + '-' + p.replace(/[^a-zA-Z]/g,'')); }
   if(sp) sp.classList.add('on');
 }
 
 function hideSubpanels(catId, p){
-  ['sp-om-'+catId, 'sp-hv-'+catId, 'sp-at-'+catId+'-'+p, 'sp-ch-'+catId].forEach(function(id){
+  var toHide=['sp-om-'+catId,'sp-hv-'+catId,'sp-at-'+catId+'-'+p,'sp-ch-'+catId]; if(EXTRAS_OPTS[p]) toHide.push('sp-ex-'+catId+'-'+p.replace(/[^a-zA-Z]/g,'')); toHide.forEach(function(id){
     var el = document.getElementById(id); if(el) el.classList.remove('on');
   });
 }
@@ -3095,6 +3157,7 @@ function toggleRelleno(store, opcion, spId){
   if(store === 'om') set = omeRellenos;
   else if(store === 'hv') set = huevoRellenos;
   else if(store === 'ch') set = chilaRellenos;
+  else if(store.startsWith('ex-')){ var ek=store.slice(3); if(!extraRellenos[ek]) extraRellenos[ek]=new Set(); set=extraRellenos[ek]; }
   else { var b = store.slice(3); if(!antojRellenos[b]) antojRellenos[b] = new Set(); set = antojRellenos[b]; }
   var chip = document.getElementById('spc-' + safe(spId + '-' + opcion));
   if(set.has(opcion)){ set.delete(opcion); if(chip) chip.classList.remove('on'); }
@@ -3107,7 +3170,7 @@ function limpiarTodo(){
   if(!confirm('¿Limpiar toda la selección?')) return;
   CATEGORIAS.forEach(function(c){ elegidos[c.id].clear(); });
   DIAS.forEach(function(d){ SLOTS.forEach(function(s){ asignados[d][s.id].clear(); }); });
-  omeRellenos.clear(); huevoRellenos.clear(); chilaRellenos.clear();
+  omeRellenos.clear(); huevoRellenos.clear(); chilaRellenos.clear(); extraRellenos={};
   Object.keys(antojRellenos).forEach(function(k){ antojRellenos[k].clear(); });
   superDone.clear();
   buildCatStrip();
@@ -3937,18 +4000,6 @@ function renderTourStep(){
   if(skip) skip.textContent = t('tourSkip');
   var noShow = document.getElementById('tourNoShowWrap');
   if(noShow){ var chk = document.getElementById('tourNoShowChk'); noShow.innerHTML = ''; if(chk) noShow.appendChild(chk); else { chk = document.createElement('input'); chk.type='checkbox'; chk.id='tourNoShowChk'; noShow.appendChild(chk); } noShow.appendChild(document.createTextNode(' '+t('tourNoShow'))); }
-}
-
-  // Dots
-  var dots = '';
-  TOUR_STEPS.forEach(function(_, i){
-    dots += '<div class="tour-dot' + (i === tourStep ? ' on' : '') + '"></div>';
-  });
-  document.getElementById('tourDots').innerHTML = dots;
-
-  // Last step: change button text
-  var btn = document.getElementById('tourNextBtn');
-  if(btn) btn.textContent = tourStep === TOUR_STEPS.length - 1 ? '¡Comenzar!' : 'Siguiente';
 }
 
 function tourNext(){
