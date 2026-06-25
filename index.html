@@ -1770,8 +1770,8 @@ function applyLang(){
 
   // ── 6. Re-render app if running ──
   if(typeof refreshSLOTS === 'function') refreshSLOTS();
-  if(typeof renderCats === 'function' && document.getElementById('catStrip')) renderCats();
-  if(typeof renderPlan === 'function' && document.getElementById('planGrid')) renderPlan();
+  if(typeof buildCatStrip === 'function' && document.getElementById('catStrip')){ buildCatStrip(); buildCats(); }
+  if(typeof buildDays === 'function' && document.getElementById('daysContainer')) buildDays();
 }
 
 var DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
@@ -2729,7 +2729,7 @@ function guardarPerfil(){
   var peso = parseFloat(document.getElementById('inPeso').value);
   var altura = parseFloat(document.getElementById('inAltura').value);
   if(!edad || !peso || !altura || edad < 10 || peso < 30 || altura < 100){
-    alert('Por favor completa todos los datos correctamente.');
+    alert(LANG==='en'?'Please complete all fields correctly.':'Por favor completa todos los datos correctamente.');
     return;
   }
   perfil.edad = edad; perfil.peso = peso; perfil.altura = altura;
@@ -2746,6 +2746,8 @@ function guardarPerfil(){
     objLabel + ' · TDEE: ' + r.tdee + ' kcal · BMR: ' + r.bmr + ' kcal<br>'
     + (perfil.sexo==='M'?'♂ Hombre':'♀ Mujer') + ' · ' + perfil.edad + ' años · ' + perfil.peso + ' kg · ' + perfil.altura + ' cm' + condStr;
   document.getElementById('calsResultBar').style.display = 'block';
+  // Save profile to localStorage
+  try{ localStorage.setItem('planeat_perfil', JSON.stringify(perfil)); }catch(e){}
   startApp();
 }
 
@@ -3015,13 +3017,13 @@ function buildCats(){
         groups += '<div class="acc-group" id="accg-' + gid + '">'
           + '<div class="acc-header" data-gid="' + gid + '">'
           + '<span class="acc-icon">' + g.label.charAt(0) + g.label.charAt(1) + '</span>'
-          + '<span class="acc-name">' + g.label.slice(3) + '</span>'
+          + '<span class="acc-name">' + tc(g.label).slice(3) + '</span>'
           + '<span class="acc-badge" style="' + (selCnt===0?'opacity:.3':'') + '">' + (selCnt||'0') + '</span>'
           + '<span class="acc-arrow" id="arr-' + gid + '">&#8250;</span>'
           + '</div>'
           + '<div class="acc-body" id="accb-' + gid + '" style="display:none;">';
         g.sub.forEach(function(sub){
-          groups += '<div class="acc-sub-label">' + sub.label + '</div>';
+          groups += '<div class="acc-sub-label">' + tc(sub.label) + '</div>';
           groups += '<div class="chips">';
           var subItems = sub.items.slice();
           if(customOpciones[cat.id] && customOpciones[cat.id][sub.label]){
@@ -3442,125 +3444,6 @@ function sugerirMenu(){
 }
 
 
-function buildDays(){
-  var cont = document.getElementById('daysContainer');
-  cont.innerHTML = '';
-  getDias().forEach(function(dia){
-    var kcalDia = calcKcalDia(dia);
-    var card = document.createElement('div');
-    card.className = 'day-card anim';
-    card.dataset.dia = dia;
-    var hdr = '<div class="day-card-hdr">'
-      + '<span class="day-card-name">' + dia + '</span>'
-      + (kcalDia > 0 ? '<span class="day-card-kcal">' + (porciones > 1 ? Math.round(kcalDia/porciones) + ' kcal/persona' : kcalDia + ' kcal') + '</span>' + calFlag(kcalDia) : '')
-      + '<button class="day-card-clear" onclick="limpiarDia(this.closest(\'.day-card\').dataset.dia)">× limpiar</button>'
-      + '</div>';
-    var rows = '';
-    SLOTS.forEach(function(slot){
-      var available = [];
-      slot.cats.forEach(function(cid){ available = available.concat([...elegidos[cid]]); });
-      if(!available.length) return;
-      rows += '<div class="meal-row"><span class="meal-icon">' + slot.emoji + '</span><div class="meal-slot">'
-        + '<div class="meal-label">' + slot.label + '</div>'
-        + '<div class="meal-chips" id="mchips-' + safe(dia+'-'+slot.id) + '">';
-      if(!available.length){
-        rows += '<span class="meal-empty">Elige en el paso 1</span>';
-      } else {
-        available.forEach(function(p){
-          var isOn = asignados[dia][slot.id].has(p);
-          rows += '<div class="meal-chip' + (isOn ? ' on' : '') + '" id="mc-' + safe(dia+'-'+slot.id+'-'+p) + '" onclick="toggleAsignar(this.dataset.dia,this.dataset.slot,this.dataset.p)" data-dia="' + dia.replace(/"/g,'&quot;') + '" data-slot="' + slot.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">' + p + '</div>';
-        });
-      }
-      rows += '</div></div></div>';
-    });
-    card.innerHTML = hdr + rows;
-    cont.appendChild(card);
-  });
-}
-
-function calcKcalDia(dia){
-  var total = 0;
-  SLOTS.forEach(function(s){
-    asignados[dia][s.id].forEach(function(p){ total += Math.round((CALS[p]||300)*porciones); });
-  });
-  return total;
-}
-
-function toggleAsignar(dia, slotId, platillo){
-  var set = asignados[dia][slotId];
-  var el = document.getElementById('mc-' + safe(dia + '-' + slotId + '-' + platillo));
-  if(set.has(platillo)){ set.delete(platillo); if(el) el.classList.remove('on'); }
-  else { set.add(platillo); if(el) el.classList.add('on'); }
-  // update kcal badge
-  var kcal = calcKcalDia(dia);
-  var card = document.querySelector('[id^="mc-' + safe(dia) + '"]');
-  // find the day-card-kcal for this day
-  var allCards = document.querySelectorAll('.day-card');
-  allCards.forEach(function(c){
-    var nm = c.querySelector('.day-card-name');
-    if(nm && nm.textContent === dia){
-      var badge = c.querySelector('.day-card-kcal');
-      if(!badge){ badge = document.createElement('span'); badge.className = 'day-card-kcal'; nm.parentNode.insertBefore(badge, nm.nextSibling); }
-      badge.textContent = kcal > 0 ? kcal + ' kcal' : '';
-    }
-  });
-}
-
-function limpiarDia(dia){
-  SLOTS.forEach(function(s){
-    asignados[dia][s.id].forEach(function(p){
-      var el = document.getElementById('mc-' + safe(dia+'-'+s.id+'-'+p));
-      if(el) el.classList.remove('on');
-    });
-    asignados[dia][s.id].clear();
-  });
-  // reset kcal
-  document.querySelectorAll('.day-card').forEach(function(c){
-    var nm = c.querySelector('.day-card-name');
-    if(nm && nm.textContent === dia){
-      var badge = c.querySelector('.day-card-kcal');
-      if(badge) badge.textContent = '';
-    }
-  });
-}
-
-// ═══════════════════════════════
-// SUGERIR MENÚ
-// ═══════════════════════════════
-function sugerirMenu(){
-  // Collect pools
-  var pools = {};
-  SLOTS.forEach(function(s){
-    pools[s.id] = [];
-    s.cats.forEach(function(cid){ pools[s.id] = pools[s.id].concat([...elegidos[cid]]); });
-  });
-  var hasAny = Object.values(pools).some(function(a){ return a.length > 0; });
-  if(!hasAny){
-    alert('Primero elige platillos en el Paso 1.');
-    return;
-  }
-  // Shuffle each pool
-  Object.keys(pools).forEach(function(k){
-    pools[k] = pools[k].sort(function(){ return Math.random() - .5; });
-  });
-  // Reset all assignments
-  DIAS.forEach(function(d){ SLOTS.forEach(function(s){ asignados[d][s.id].clear(); }); });
-  // Assign trying to stay near calMeta
-  getDias().forEach(function(d, di){
-    SLOTS.forEach(function(slot){
-      var pool = pools[slot.id];
-      if(!pool.length) return;
-      // Pick item at rotating index so we spread repeats
-      var idx = di % pool.length;
-      asignados[d][slot.id].add(pool[idx]);
-    });
-  });
-  buildDays();
-  // Scroll to first day
-  var first = document.querySelector('.day-card');
-  if(first) first.scrollIntoView({behavior:'smooth', block:'start'});
-}
-
 // ═══════════════════════════════
 // PASO 3: SÚPER
 // ═══════════════════════════════
@@ -3925,7 +3808,7 @@ function compartirWhatsApp(){
   };
   var lineas = [
     t('waTitle')+
-    '_PlanEat — ' + new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long'}) + '_',
+    '_PlanEat — ' + new Date().toLocaleDateString(LANG==='en'?'en-US':'es-MX',{day:'numeric',month:'long'}) + '_',
     '_Para ' + porciones + ' persona' + (porciones>1?'s':'') + '_',
     ''
   ];
@@ -4104,6 +3987,94 @@ function cerrarTour(){
 function reabrirTour(){
   try{ localStorage.removeItem('planeat_tour_off'); }catch(e){}
   mostrarTour();
+}
+
+// ═══════════════════════════════
+// PORCIONES & CAL MODE
+// ═══════════════════════════════
+function setPorciones(n){
+  porciones = n;
+  document.querySelectorAll('.porc-btn').forEach(function(b){ b.classList.remove('on'); });
+  var btn = document.getElementById('porc'+n);
+  if(btn) btn.classList.add('on');
+  if(typeof buildCatStrip === 'function') { buildCatStrip(); buildCats(); }
+  if(typeof buildDays === 'function') buildDays();
+}
+
+function toggleCalMode(){
+  calMode = !calMode;
+  var toggle = document.getElementById('calToggle');
+  if(toggle) toggle.className = calMode ? 'cal-toggle on' : 'cal-toggle';
+  document.querySelectorAll('.chip-cal').forEach(function(el){ el.style.display = calMode ? '' : 'none'; });
+  document.querySelectorAll('.day-card-kcal').forEach(function(el){ el.style.display = calMode ? '' : 'none'; });
+  if(typeof buildDays === 'function') buildDays();
+}
+
+// ═══════════════════════════════
+// PLANES GUARDADOS
+// ═══════════════════════════════
+function abrirPlanes(){
+  var lista = document.getElementById('planesLista');
+  if(!lista) return;
+  var planes = [];
+  try{ planes = JSON.parse(localStorage.getItem('planeat_planes')||'[]'); }catch(e){}
+  if(!planes.length){
+    lista.innerHTML = '<p style="color:#8A8178;font-size:13px;text-align:center;padding:16px 0;">'+(LANG==='en'?'No saved plans yet.':'No hay planes guardados todavía.')+'</p>';
+  } else {
+    lista.innerHTML = planes.map(function(p,i){
+      return '<div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #F0EDE8;">'
+        +'<div style="flex:1;font-size:13px;font-family:Inter,sans-serif;color:#1A1714;">'+p.nombre+'</div>'
+        +'<button onclick="cargarPlan('+i+')" style="background:#C4673A;color:#fff;border:none;border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;">'+(LANG==="en"?"Load":"Cargar")+"</button>"
+        +'<button onclick="borrarPlan('+i+')" style="background:#F4F1EC;color:#8A8178;border:none;border-radius:20px;padding:5px 10px;font-size:11px;cursor:pointer;">✕</button>'
+        +'</div>';
+    }).join('');
+  }
+  var ov = document.getElementById('planesOverlay');
+  if(ov) ov.classList.add('on');
+}
+
+function cerrarPlanes(){
+  var ov = document.getElementById('planesOverlay');
+  if(ov) ov.classList.remove('on');
+}
+
+function guardarPlanActual(){
+  var nombre = prompt(LANG==='en'?'Name for this plan:':'Nombre para este plan:', (LANG==='en'?'Plan ':'Plan ') + new Date().toLocaleDateString(LANG==='en'?'en-US':'es-MX'));
+  if(!nombre) return;
+  var planes = [];
+  try{ planes = JSON.parse(localStorage.getItem('planeat_planes')||'[]'); }catch(e){}
+  // Serialize asignados
+  var snap = {};
+  DIAS.forEach(function(d){
+    snap[d] = {};
+    SLOTS.forEach(function(s){ snap[d][s.id] = [...asignados[d][s.id]]; });
+  });
+  planes.unshift({ nombre: nombre, fecha: new Date().toISOString(), datos: snap });
+  if(planes.length > 20) planes = planes.slice(0,20);
+  try{ localStorage.setItem('planeat_planes', JSON.stringify(planes)); }catch(e){}
+  alert((LANG==='en'?'Plan saved: ':'Plan guardado: ') + nombre);
+}
+
+function cargarPlan(idx){
+  var planes = [];
+  try{ planes = JSON.parse(localStorage.getItem('planeat_planes')||'[]'); }catch(e){}
+  var p = planes[idx];
+  if(!p) return;
+  DIAS.forEach(function(d){
+    SLOTS.forEach(function(sl){
+      asignados[d][sl.id] = new Set(p.datos[d] && p.datos[d][sl.id] ? p.datos[d][sl.id] : []);
+    });
+  });
+  if(typeof buildDays === 'function') buildDays();
+  cerrarPlanes();
+}
+
+function borrarPlan(idx){
+  var planes = [];
+  try{ planes = JSON.parse(localStorage.getItem('planeat_planes')||'[]'); }catch(e){}
+  planes.splice(idx,1);
+  try{ localStorage.setItem('planeat_planes', JSON.stringify(planes)); }catch(e){}
+  abrirPlanes();
 }
 
 // INIT
