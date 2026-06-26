@@ -3618,13 +3618,6 @@ window.addEventListener('load',function(){
     var savedCustom = localStorage.getItem('planeat_custom');
     if(savedCustom) customOpciones = JSON.parse(savedCustom);
   }catch(e){}
-  // Show saved profile button if perfil exists
-  try{
-    if(localStorage.getItem('planeat_perfil')){
-      var btn = document.getElementById('btnSkipPerfil');
-      if(btn) btn.style.display = 'block';
-    }
-  }catch(e){}
 });
 </script>
 </body>
