@@ -2071,12 +2071,14 @@ var perfil = { sexo:'M', edad:35, peso:70, altura:165, actividad:1.375, objetivo
 var calMeta = 1800; // kcal diarias para UNA persona (planeamos para 2)
 
 function showProfile(){
-  // Show tour first, then profile
-  window._tourCallback = function(){ _doShowProfile(); window._tourCallback = null; };
-  var showTour = false;
-  try{ showTour = !localStorage.getItem('planeat_tour_off'); }catch(e){}
-  if(showTour){ try{ mostrarTour(); return; }catch(e){} }
-  _doShowProfile();
+  var tourSeen = false;
+  try{ tourSeen = !!localStorage.getItem('planeat_tour_off'); }catch(e){}
+  if(!tourSeen){
+    window._tourCallback = function(){ window._tourCallback = null; _doShowProfile(); };
+    mostrarTour();
+  } else {
+    _doShowProfile();
+  }
 }
 function _doShowProfile(){
   // Make sure splash is visible
@@ -2298,16 +2300,15 @@ function iniciarModoFamilia(){
   // Skip profile, go straight to app
   var hdrKcal = document.getElementById('hdrKcal');
   if(hdrKcal) hdrKcal.textContent = 'Familiar';
-  // Show tour first if not disabled, then start app
   // Always start app immediately
-  startApp();
-  // Show tour on top if first time (non-blocking)
-  try{
-    if(!localStorage.getItem('planeat_tour_off')){
-      window._tourCallback = null;
-      setTimeout(mostrarTour, 100);
-    }
-  }catch(e){}
+  var tourSeen = false;
+  try{ tourSeen = !!localStorage.getItem('planeat_tour_off'); }catch(e){}
+  if(!tourSeen){
+    window._tourCallback = function(){ window._tourCallback = null; startApp(); };
+    mostrarTour();
+  } else {
+    startApp();
+  }
 }
 
 function startApp(){
