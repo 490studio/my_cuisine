@@ -1151,22 +1151,19 @@ var CATEGORIAS = [
       {label:'🫓 Sándwiches y tortas', items:['Sándwich de jamón y queso','Club sándwich','Torta de jamón','Torta de milanesa','Torta de pierna','Baguette de carnes frías','Bagel de salmón ahumado','Bagel de huevo con jamón y aguacate','Toast de aguacate','Tostadas francesas']},
       {label:'🌮 Guisado', items:['Chilaquiles','Enfrijoladas','Puntas de filete en salsa','Papas con chorizo']},
       {label:'🥗 Saludable', items:['Fruta con yogurt granola y miel','Avena con fruta','Bowl de açaí','Smoothie bowl','Tazón de frutas con chía','Pancakes de avena','Tostada con mantequilla de cacahuate']},
-      {label:'🌮 Antojitos', items:['Molletes a la Mexicana','Tacos','Quesadillas','Gorditas','Crepas saladas','Tostadas']},
-      {label:'🥑 Acompañamientos', items:['Frijoles','Aguacate','Tocino','Fruta','Nopales']},
-      {label:'☕ Bebidas', items:['Café americano','Café con leche','Capuchino','Té','Jugo de naranja','Jugo verde','Agua fresca','Agua natural','Leche','Licuado de frutas','Licuado de proteína','Smoothie','Chocolate caliente']}
+      {label:'🌮 Antojitos', items:['Molletes a la Mexicana','Tacos','Quesadillas','Gorditas','Crepas saladas','Tostadas']}
     ]
   },
-  { id:'sopa', icon:'🍲', label:'Sopas & Arroces',
+  { id:'sopa', icon:'🍲', label:'Comida',
     grupos:[
-      {label:'🥣 Caldos', items:['Caldo Tlalpeño','Caldo de Pollo','Pozole rojo','Pozole blanco','Menudo']},
-      {label:'🫕 Cremas', items:['Crema de calabaza','Crema de zanahoria','Crema de chayote','Crema de champiñones','Crema de elote','Crema de espinacas']},
-      {label:'🍜 Sopas', items:['Sopa de pasta','Sopa de tortilla','Sopa de papa','Sopa de verduras','Sopa de lentejas','Sopa de fideo']},
-      {label:'🍚 Arroz', items:['Arroz rojo','Arroz blanco','Arroz blanco al vapor','Arroz verde']}
-    ]
-  },
-  { id:'fuerte', icon:'🍽️', label:'Comidas',
-    acordeon: true,
-    grupos:[
+      { label:'🥣 Caldos & Cremas', sub:[
+        {label:'Caldos', items:['Caldo Tlalpeño','Caldo de Pollo','Pozole rojo','Pozole blanco','Menudo']},
+        {label:'Cremas', items:['Crema de calabaza','Crema de zanahoria','Crema de chayote','Crema de champiñones','Crema de elote','Crema de espinacas']}
+      ]},
+      { label:'🍜 Sopas & Arroces', sub:[
+        {label:'Sopas', items:['Sopa de pasta','Sopa de tortilla','Sopa de papa','Sopa de verduras','Sopa de lentejas','Sopa de fideo']},
+        {label:'Arroces', items:['Arroz rojo','Arroz blanco','Arroz blanco al vapor','Arroz verde']}
+      ]},
       { label:'🥩 Res', sub:[
         {label:'Guisados', items:['Bistec a la Mexicana','Bistec en chile pasilla','Bistec en chipotle','Ropa vieja','Picadillo','Carne en su jugo','Tinga de res','Res en salsa verde','Res con verduras']},
         {label:'Cortes y parrilla', items:['Carne asada','Arrachera','Filete a la plancha','Costillas BBQ','Rib eye al carbón']},
@@ -1180,41 +1177,21 @@ var CATEGORIAS = [
       { label:'🐷 Cerdo', sub:[
         {label:'Guisados', items:['Carne de puerco con verdolagas','Chicharrón guisado','Chicharrón prensado guisado','Espinazo en salsa verde','Verdolagas con espinazo en salsa verde','Costillas en salsa roja','Puerco en salsa verde']},
         {label:'Parrilla y especialidades', items:['Chuletas ahumadas','Costillas BBQ de cerdo','Cochinita Pibil','Carnitas','Pierna de cerdo al horno','Lomo de cerdo al horno']},
-        {label:'Con embutidos', items:['Alambre de chuleta ahumada','Papas con chorizo','Chorizo con huevo']}
+        {label:'Con embutidos', items:['Alambre de chuleta ahumada','Chorizo con huevo']}
       ]},
       { label:'🐟 Mariscos', sub:[
         {label:'Camarones', items:['Camarones a la diabla','Camarones al mojo de ajo','Camarones al ajillo','Camarones empanizados','Camarones en crema chipotle','Aguachile de camarón']},
-        {label:'Pescado', items:['Filete empanizado','Filete a la veracruzana','Filete al mojo de ajo','Pescado zarandeado','Ceviche de pescado']},
-        {label:'Atún y otros', items:['Croquetas de Atún','Ensalada de Atún','Codo con atún y jamón','Ensalada de surimi']}
+        {label:'Pescado', items:['Filete empanizado','Filete a la veracruzana','Filete al mojo de ajo','Pescado zarandeado','Ceviche de pescado','Croquetas de Atún','Ensalada de Atún','Codo con atún y jamón','Ensalada de surimi']}
       ]},
-      { label:'🥦 Vegetariano', sub:[
-        {label:'Guisados', items:['Rajas con crema y elote','Champiñones al ajillo','Espinacas con queso','Calabazas con queso','Nopales guisados','Lentejas guisadas','Flor de calabaza guisada','Panela asada en salsa verde','Panela a la plancha']},
-        {label:'Pasta y arroz', items:['Espagueti rojo','Espagueti blanco','Espagueti verde','Arroz chino con verduras','Pasta con pesto']},
-        {label:'Elaborados', items:['Pastel Azteca','Enchiladas rojas de queso','Quesadillas de flor de calabaza']}
+      { label:'🌱 Vegetariano', sub:[
+        {label:'Rápidos', items:['Rajas con crema y elote','Champiñones al ajillo','Espinacas con queso','Calabazas con queso','Nopales guisados','Lentejas guisadas','Flor de calabaza guisada']},
+        {label:'Mexicanos', items:['Panela asada en salsa verde','Panela a la plancha','Enchiladas rojas de queso','Quesadillas de flor de calabaza','Pastel Azteca']},
+        {label:'Especiales', items:['Espagueti rojo','Espagueti blanco','Espagueti verde','Arroz chino con verduras','Pasta con pesto','Encacahuatado','Hamburguesa de res','Papas rellenas','Enchiladas rojas','Arroz chino con pollo','Arroz chino con res','Arroz chino con camarón']}
       ]},
-      { label:'🍝 Especiales', sub:[
-        {label:'Arroz chino', items:['Arroz chino con pollo','Arroz chino con res','Arroz chino con camarón']},
-        {label:'Mixtos', items:['Encacahuatado','Hamburguesa de res','Papas rellenas','Enchiladas rojas','Enchiladas verdes','Enchiladas suizas']}
-      ]},
-      { label:'🫓 Antojitos comida', sub:[
-        {label:'Con relleno', items:['Tacos','Quesadillas','Gorditas']},
-        {label:'Otros', items:['Tostadas de pollo','Burritos de pollo','Tlayudas','Huaraches']}
-      ]},
-      {label:'🥑 Acompañamientos', items:['Frijoles','Guacamole','Ensalada verde','Ensalada mixta','Papas al perejil','Puré de papa','Verduras al vapor','Spaghetti rojo','Spaghetti blanco','Spaghetti verde']},
-      {label:'🥤 Bebidas', items:['Agua fresca','Agua natural','Agua mineral','Refresco','Limonada','Jamaica','Horchata','Tepache','Cerveza','Vino','Jugo de naranja']}
+      {label:'🍮 Postres', items:['Arroz con leche','Ensalada de manzana','Flan Napolitano','Gelatina','Pastel de tres leches','Churros']}
     ]
   },
-  { id:'postre', icon:'🍮', label:'Postres',
-    grupos:[{label:'', items:['Arroz con leche','Ensalada de manzana','Flan Napolitano','Gelatina','Pastel de tres leches','Churros']}]
-  },
-  { id:'extras', icon:'✨', label:'Extras & Complementos',
-    grupos:[
-      {label:'🌶️ Salsas y aderezos', items:['Salsa verde','Salsa roja','Salsa habanero','Guacamole','Aderezo ranch','Aderezo italiano','Gravy','Gravy naranja soya jengibre']},
-      {label:'🧀 Toppings', items:['Crema','Queso fresco','Queso parmesano','Panela','Mantequilla','Mermelada','Limones','Cilantro','Cebolla','Cebolla morada encurtida','Chiles en vinagre']},
-      {label:'🫓 Pan y tortillas', items:['Tortillas de maíz','Tortillas de harina','Pan bolillo','Pan tostado','Totopos','Tostadas']},
-    ]
-  },
-  { id:'cena', icon:'🌙', label:'Cenas',
+{ id:'cena', icon:'🌙', label:'Cenas',
     acordeon: true,
     grupos:[
       { label:'🌮 Guisados', sub:[
@@ -1230,15 +1207,36 @@ var CATEGORIAS = [
         {label:'Frío', items:['Ensalada de Atún','Ensalada de surimi','Ensalada verde con pollo']},
         {label:'Caliente', items:['Croquetas de Atún','Codo con atún y jamón','Sopa de verduras','Sopa de lentejas']}
       ]},
-      {label:'🥑 Acompañamientos', items:['Frijoles','Guacamole','Ensalada verde','Verduras al vapor','Puré de papa','Papas al perejil']},
       {label:'🥤 Bebidas', items:['Agua fresca','Agua natural','Agua mineral','Té','Manzanilla','Leche caliente','Chocolate caliente','Refresco','Limonada','Cerveza','Vino']}
+    ]
+  },
+{ id:'bebidas', icon:'🥤', label:'Bebidas',
+    grupos:[
+      {label:'☕ Calientes', items:['Café americano','Café con leche','Capuchino','Té','Chocolate caliente','Manzanilla','Leche caliente']},
+      {label:'🥤 Frías y naturales', items:['Jugo de naranja','Jugo verde','Agua fresca','Agua natural','Leche','Licuado de frutas','Licuado de proteína','Smoothie','Agua mineral','Limonada','Jamaica','Horchata','Tepache']},
+      {label:'🍺 Otras', items:['Refresco','Cerveza','Vino']}
+    ]
+  },
+  { id:'extras', icon:'✨', label:'Extras & Complementos',
+    grupos:[
+      {label:'🌶️ Salsas y aderezos', items:['Salsa verde','Salsa roja','Salsa habanero','Guacamole','Aderezo ranch','Aderezo italiano','Gravy','Gravy naranja soya jengibre']},
+      {label:'🧀 Toppings', items:['Crema','Queso fresco','Queso parmesano','Panela','Mantequilla','Mermelada','Limones','Cilantro','Cebolla','Cebolla morada encurtida','Chiles en vinagre']},
+      {label:'🫓 Pan y tortillas', items:['Tortillas de maíz','Tortillas de harina','Pan bolillo','Pan tostado','Totopos','Tostadas']}
+    ]
+  },
+  { id:'acomp', icon:'🥑', label:'Acompañamientos',
+    grupos:[
+      {label:'🥑 Acompañamientos', items:['Frijoles','Aguacate','Guacamole','Tocino','Fruta','Nopales','Ensalada verde','Verduras al vapor','Puré de papa','Papas al perejil','Arroz blanco al vapor','Ensalada mixta']}
     ]
   }
 ];
 var SLOTS = [
   {id:'desayuno', label:'Desayuno', emoji:'🌅', cats:['desayuno']},
-  {id:'comida',   label:'Comida',   emoji:'🍽️', cats:['sopa','fuerte','postre','extras']},
-  {id:'cena',     label:'Cena',     emoji:'🌙', cats:['cena']}
+  {id:'comida',   label:'Comida',   emoji:'🍽️', cats:['sopa']},
+  {id:'cena',     label:'Cena',     emoji:'🌙', cats:['cena']},
+  {id:'bebidas',  label:'Bebidas',  emoji:'🥤', cats:['bebidas']},
+  {id:'extras',   label:'Extras',   emoji:'✨', cats:['extras']},
+  {id:'acomp',    label:'Acomp.',   emoji:'🥑', cats:['acomp']}
 ];
 
 // ══════════════════════════════════════════════════════
