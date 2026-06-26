@@ -310,7 +310,8 @@ body{font-family:'Inter',sans-serif;background:#FAFAF8;background:var(--bg);colo
 }
 .meal-chip.on{background:#F0E4DC;border-color:#C4673A;color:#C4673A;font-weight:600;}
 .meal-slot{flex:1;}
-.meal-empty{font-size:11px;color:#C0BAB0;font-style:italic;}
+.meal-subcat-hdr{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#C4673A;padding:6px 0 2px;width:100%;border-top:1px solid #F0EDE8;margin-top:4px;}
+.meal-subcat-hdr:first-child{border-top:none;margin-top:0;padding-top:2px;}font-size:11px;color:#C0BAB0;font-style:italic;}
 
 /* ── PASO 3: SÚPER ── */
 .super-hdr{background:#FFFFFF;padding:20px 16px 14px;border-bottom:1px solid #E5E0D8;}
@@ -2733,6 +2734,11 @@ function limpiarTodo(){
 function buildDays(){
   var cont = document.getElementById('daysContainer');
   cont.innerHTML = '';
+
+  // Category label map for subcategory headers inside Comida
+  var CAT_LABELS = {};
+  CATEGORIAS.forEach(function(c){ CAT_LABELS[c.id] = c.label; });
+
   DIAS.forEach(function(dia){
     var kcalDia = calcKcalDia(dia);
     var card = document.createElement('div');
@@ -2745,20 +2751,43 @@ function buildDays(){
       + '</div>';
     var rows = '';
     SLOTS.forEach(function(slot){
-      var available = [];
-      slot.cats.forEach(function(cid){ available = available.concat([...elegidos[cid]]); });
-      if(!available.length) return;
+      // Check if any cat in this slot has selected dishes
+      var hasAny = slot.cats.some(function(cid){ return elegidos[cid] && elegidos[cid].size > 0; });
+      if(!hasAny) return;
+
       rows += '<div class="meal-row"><span class="meal-icon">' + slot.emoji + '</span><div class="meal-slot">'
         + '<div class="meal-label">' + slot.label + '</div>'
         + '<div class="meal-chips" id="mchips-' + safe(dia+'-'+slot.id) + '">';
-      if(!available.length){
-        rows += '<span class="meal-empty">Elige en el paso 1</span>';
+
+      if(slot.cats.length === 1){
+        // Single category — no subheader needed
+        var cid = slot.cats[0];
+        var items = [...(elegidos[cid] || [])];
+        if(!items.length){
+          rows += '<span class="meal-empty">Elige en el paso 1</span>';
+        } else {
+          items.forEach(function(p){
+            var isOn = asignados[dia][slot.id].has(p);
+            rows += '<div class="meal-chip' + (isOn ? ' on' : '') + '" id="mc-' + safe(dia+'-'+slot.id+'-'+p) + '" onclick="toggleAsignar(this.dataset.dia,this.dataset.slot,this.dataset.p)" data-dia="' + dia.replace(/"/g,'&quot;') + '" data-slot="' + slot.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">' + p + '</div>';
+          });
+        }
       } else {
-        available.forEach(function(p){
-          var isOn = asignados[dia][slot.id].has(p);
-          rows += '<div class="meal-chip' + (isOn ? ' on' : '') + '" id="mc-' + safe(dia+'-'+slot.id+'-'+p) + '" onclick="toggleAsignar(this.dataset.dia,this.dataset.slot,this.dataset.p)" data-dia="' + dia.replace(/"/g,'&quot;') + '" data-slot="' + slot.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">' + p + '</div>';
+        // Multiple categories — show subheader for each
+        var anyShown = false;
+        slot.cats.forEach(function(cid){
+          var items = [...(elegidos[cid] || [])];
+          if(!items.length) return;
+          anyShown = true;
+          var catLabel = CAT_LABELS[cid] || cid;
+          rows += '<div class="meal-subcat-hdr">' + catLabel + '</div>';
+          items.forEach(function(p){
+            var isOn = asignados[dia][slot.id].has(p);
+            rows += '<div class="meal-chip' + (isOn ? ' on' : '') + '" id="mc-' + safe(dia+'-'+slot.id+'-'+p) + '" onclick="toggleAsignar(this.dataset.dia,this.dataset.slot,this.dataset.p)" data-dia="' + dia.replace(/"/g,'&quot;') + '" data-slot="' + slot.id + '" data-p="' + p.replace(/"/g,'&quot;') + '">' + p + '</div>';
+          });
         });
+        if(!anyShown) rows += '<span class="meal-empty">Elige en el paso 1</span>';
       }
+
       rows += '</div></div></div>';
     });
     card.innerHTML = hdr + rows;
